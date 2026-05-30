@@ -277,6 +277,13 @@ class IrohTransportNode:
 
     async def start(self) -> IrohEndpoint:
         """Initialise the transport and return endpoint descriptor."""
+        import os
+        if os.environ.get("FL_MOCK_IROH", "0") == "1":
+            log.info("FL_MOCK_IROH=1 — forcing mock transport (iroh bypassed)")
+            self._mock_mode = True
+            self._mock = _MockTransport(self._node_id, self._mock_bandwidth)
+            self._iroh_node_id_str = f"mock-{self._node_id}"
+            return self._mock.endpoint_info()
         try:
             import iroh  # type: ignore[import]
 

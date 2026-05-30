@@ -1,0 +1,80 @@
+# =============================================================================
+# FL-Iroh — .gitignore
+# =============================================================================
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+MANIFEST
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── Datasets (large binary data — download via setup_env.sh) ─────────────────
+data/
+# Keep the directory so git tracks the placeholder
+!data/.gitkeep
+
+# ── Experiment results ────────────────────────────────────────────────────────
+results/
+# Keep directory structure
+!results/.gitkeep
+!results/e1/.gitkeep
+!results/e2/.gitkeep
+!results/e3/.gitkeep
+!results/e5/.gitkeep
+!results/e6/.gitkeep
+!results/logs/.gitkeep
+!results/metadata/.gitkeep
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.dockerignore
+docker/.buildx-cache/
+
+# ── Large archives ────────────────────────────────────────────────────────────
+*.tar.gz
+*.tar.bz2
+*.zip
+*.tgz
+
+# ── Logs and temp files ───────────────────────────────────────────────────────
+*.log
+*.out
+*.err
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Environment / secrets ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Coverage / testing ───────────────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── SLURM runtime artifacts ───────────────────────────────────────────────────
+slurm*.out
+slurm*.err

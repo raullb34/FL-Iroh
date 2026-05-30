@@ -170,9 +170,11 @@ async def main_async(args: argparse.Namespace) -> None:
     results_dir = Path(args.results_dir)
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    configs = [("iid", 0.5)]
     if args.noniid:
-        configs += [("dirichlet", alpha) for alpha in ALPHA_VALUES]
+        # Legacy flag: run IID + all non-IID variants in sequence
+        configs = [("iid", 0.5)] + [("dirichlet", alpha) for alpha in ALPHA_VALUES]
+    else:
+        configs = [(args.partition, args.alpha)]
 
     for partition, alpha in configs:
         await run_arch_b(
@@ -193,8 +195,13 @@ def main() -> None:
     parser.add_argument("--rounds",      type=int,  default=50)
     parser.add_argument("--n-clients",   type=int,  default=10)
     parser.add_argument("--dataset",     default="cifar10")
+    parser.add_argument("--partition",   default="iid",
+                        choices=["iid", "dirichlet"],
+                        help="Data partition: 'iid' or 'dirichlet' (non-IID)")
+    parser.add_argument("--alpha",       type=float, default=0.5,
+                        help="Dirichlet α (only used with --partition dirichlet)")
     parser.add_argument("--noniid",      action="store_true",
-                        help="Also run non-IID variants (α = 0.1 / 0.5 / 1.0)")
+                        help="Legacy: run IID + all non-IID variants sequentially")
     parser.add_argument("--results-dir", default="results/e2")
     args = parser.parse_args()
     asyncio.run(main_async(args))
