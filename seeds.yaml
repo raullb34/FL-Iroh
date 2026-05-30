@@ -1,0 +1,12 @@
+# seeds.yaml — reproducibility seed registry
+# All experiments read their seeds from here.
+# NOTE: changing these invalidates all published results.
+
+data_partition: 42         # Dirichlet partition seed
+model_init:     123        # torch.manual_seed before model instantiation
+churn_simulator: 456       # churn_simulator.py random choices
+experiment_e1:  789        # E1 microbenchmark — iteration ordering
+experiment_e2:  101        # E2 centralized FL run
+experiment_e3:  202        # E3 NAT traversal
+experiment_e5:  303        # E5 churn resilience
+experiment_e6:  404        # E6 CoAP overhead

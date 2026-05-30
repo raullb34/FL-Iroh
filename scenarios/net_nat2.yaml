@@ -1,0 +1,13 @@
+# scenarios/net_nat2.yaml
+# Double NAT (home router behind ISP/carrier NAT — common in IPv4-exhausted ISPs).
+# Applied via docker-compose.nat2.yml overlay.
+name: net_nat2
+description: "Double NAT — home router behind carrier-grade NAT"
+netem:
+  delay: 20ms
+  jitter: 5ms
+  correlation: 30
+nat: double
+packet_loss_pct: 0
+extra_latency_ms: 20
+bandwidth_limit: null

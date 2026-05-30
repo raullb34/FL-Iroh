@@ -1,0 +1,44 @@
+FROM python:3.11-slim
+
+# System dependencies for aiocoap, iproute2/tc (for netem in containers)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        iproute2 \
+        iputils-ping \
+        iptables \
+        tcpdump \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 1. Install all heavy deps (cached layer — only re-runs if pyproject.toml changes)
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir \
+        "aiocoap[websockets,prettyprint]" \
+        cbor2 \
+        numpy scikit-learn \
+        pydantic \
+        structlog \
+        aiofiles click pyyaml rich tqdm pandas \
+        iroh \
+ && pip install --no-cache-dir \
+        torch torchvision \
+        --extra-index-url https://download.pytorch.org/whl/cpu
+
+# 2. Application source (separate layer — rebuilt only when code changes)
+COPY fl_coap_iroh/ ./fl_coap_iroh/
+
+# 3. Install the package itself (fast, no deps to re-download)
+RUN pip install --no-cache-dir --no-deps -e .
+
+# Non-root user for security
+RUN useradd -m fluser
+USER fluser
+
+# Expose CoAP (UDP) and Iroh (QUIC/UDP) ports
+EXPOSE 5683/udp 11204/udp
+
+ENV PYTHONUNBUFFERED=1 \
+    FL_DATA_DIR=/app/data \
+    FL_RESULTS_DIR=/app/results

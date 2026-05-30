@@ -1,0 +1,2 @@
+FROM fl-coap-iroh-base:latest
+CMD ["fl-server"]

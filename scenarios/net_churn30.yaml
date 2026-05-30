@@ -1,0 +1,13 @@
+# scenarios/net_churn30.yaml
+# LAN + 30% client churn per round — tests robustness to intermittent clients.
+# Churn is implemented by churn_simulator.py (docker pause/unpause).
+name: net_churn30
+description: "LAN + 30% client churn per round (pause/unpause)"
+netem: {}
+nat: false
+packet_loss_pct: 0
+extra_latency_ms: 0
+bandwidth_limit: null
+churn:
+  rate: 0.30          # fraction of active clients paused each round
+  resume_after: 1     # rounds before paused client resumes

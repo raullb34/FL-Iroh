@@ -1,0 +1,12 @@
+# scenarios/net_loss5.yaml
+# LAN with 5% packet loss — tests reliability / retransmission overhead.
+name: net_loss5
+description: "LAN + 5% random packet loss"
+netem:
+  delay: 5ms
+  jitter: 1ms
+  loss: 5%
+nat: false
+packet_loss_pct: 5
+extra_latency_ms: 5
+bandwidth_limit: null

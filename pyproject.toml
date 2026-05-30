@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fl-coap-iroh"
+version = "0.1.0"
+description = "Federated Learning with CoAP/CoRE control plane and Iroh/QUIC P2P data plane for edge/NAT-constrained environments"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "PhD Candidate" }]
+keywords = ["federated-learning", "coap", "iroh", "quic", "edge-computing", "p2p", "nat-traversal"]
+
+dependencies = [
+    # CoAP control plane (no DTLS extra — avoids DTLSSocket build deps)
+    "aiocoap[websockets,prettyprint]>=0.4.7",
+    "cbor2>=5.6.3",
+    # P2P transport (Iroh/QUIC)
+    "iroh>=0.25.0",
+    # Machine learning
+    "torch>=2.2.0",
+    "torchvision>=0.17.0",
+    "numpy>=1.26.0",
+    "scikit-learn>=1.4.0",
+    # Data models
+    "pydantic>=2.6.0",
+    # Logging & observability
+    "structlog>=24.1.0",
+    # Utilities
+    "aiofiles>=23.2.1",
+    "click>=8.1.7",
+    "pyyaml>=6.0.1",
+    "rich>=13.7.0",
+    "tqdm>=4.66.0",
+    "pandas>=2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.0.0",
+    "ruff>=0.3.0",
+    "mypy>=1.9.0",
+]
+notebooks = [
+    "jupyter>=1.0.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "plotly>=5.20.0",
+]
+
+[project.scripts]
+fl-node    = "fl_coap_iroh.cli:node_cli"
+fl-server  = "fl_coap_iroh.cli:server_cli"
+fl-bench   = "fl_coap_iroh.cli:benchmark_cli"
+fl-discover = "fl_coap_iroh.cli:discover_cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["fl_coap_iroh"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true

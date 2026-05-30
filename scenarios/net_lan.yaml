@@ -1,0 +1,9 @@
+# scenarios/net_lan.yaml
+# Baseline: direct LAN, no NAT, no packet manipulation.
+name: net_lan
+description: "Local network — no NAT, no latency injection"
+netem: {}          # no tc-netem rules
+nat: false
+packet_loss_pct: 0
+extra_latency_ms: 0
+bandwidth_limit: null

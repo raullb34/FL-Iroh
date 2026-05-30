@@ -1,0 +1,12 @@
+# scenarios/net_lat50.yaml
+# LAN with 50ms additional latency — models mobile/satellite backhaul.
+name: net_lat50
+description: "LAN + 50ms additional latency (satellite/slow mobile backhaul)"
+netem:
+  delay: 50ms
+  jitter: 10ms
+  correlation: 75
+nat: false
+packet_loss_pct: 0
+extra_latency_ms: 50
+bandwidth_limit: null

@@ -1,0 +1,93 @@
+# =============================================================================
+# docker-compose.nat1.yml — single NAT override
+#
+# Wraps client containers behind a NAT gateway so that the server can
+# no longer reach clients directly (symmetric/cone NAT).
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.nat1.yml up
+# =============================================================================
+
+networks:
+  fl_nat1:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+
+services:
+  # NAT gateway: has one leg on fl_net (public) and one on fl_nat1 (private)
+  nat-gateway:
+    image: alpine:3.19
+    container_name: nat-gateway
+    cap_add:
+      - NET_ADMIN
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.100
+      fl_nat1:
+        ipv4_address: 192.168.10.1
+    command: >
+      sh -c "
+        echo 1 > /proc/sys/net/ipv4/ip_forward &&
+        iptables -t nat -A POSTROUTING -s 192.168.10.0/24 -o eth0 -j MASQUERADE &&
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  # Override clients to live behind the NAT
+  fl-client-1:
+    networks:
+      fl_net: null      # disconnect from direct fl_net
+      fl_nat1:
+        ipv4_address: 192.168.10.11
+    depends_on:
+      nat-gateway:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_nat1"
+
+  fl-client-2:
+    networks:
+      fl_net: null
+      fl_nat1:
+        ipv4_address: 192.168.10.12
+    depends_on:
+      nat-gateway:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_nat1"
+
+  fl-client-3:
+    networks:
+      fl_net: null
+      fl_nat1:
+        ipv4_address: 192.168.10.13
+    depends_on:
+      nat-gateway:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_nat1"
+
+  fl-client-4:
+    networks:
+      fl_net: null
+      fl_nat1:
+        ipv4_address: 192.168.10.14
+    depends_on:
+      nat-gateway:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_nat1"
+
+  fl-client-5:
+    networks:
+      fl_net: null
+      fl_nat1:
+        ipv4_address: 192.168.10.15
+    depends_on:
+      nat-gateway:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_nat1"

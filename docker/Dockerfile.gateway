@@ -1,0 +1,6 @@
+# Gateway node for Architecture C (Hierarchical FL edge).
+#
+# Acts as a CoAP Resource Directory for its local cluster, aggregates
+# locally, and connects to the global aggregator via Iroh (NAT traversal).
+FROM fl-coap-iroh-base:latest
+CMD ["fl-node", "--role", "gateway"]

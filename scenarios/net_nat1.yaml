@@ -1,0 +1,13 @@
+# scenarios/net_nat1.yaml
+# Single NAT (typical home router).
+# Applied via docker-compose.nat1.yml overlay.
+name: net_nat1
+description: "Single NAT — home-router topology (MASQUERADE)"
+netem:
+  delay: 10ms
+  jitter: 2ms
+  correlation: 25
+nat: single
+packet_loss_pct: 0
+extra_latency_ms: 10
+bandwidth_limit: null

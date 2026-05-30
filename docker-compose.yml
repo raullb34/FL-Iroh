@@ -1,0 +1,155 @@
+# =============================================================================
+# docker-compose.yml — Architecture B (Centralized FL over Iroh)
+#
+# Topology:
+#   fl-server      172.20.0.10   CoAP:5683  Iroh:11204
+#   fl-client-{N}  172.20.0.1{N} CoAP:5684  Iroh:auto
+#
+# Usage:
+#   docker compose build
+#   docker compose up
+#
+# Override network scenario:
+#   FL_SCENARIO=net_nat1 docker compose -f docker-compose.yml \
+#       -f docker-compose.nat1.yml up
+# =============================================================================
+
+x-client-base: &client-base
+  build:
+    context: .
+    dockerfile: docker/Dockerfile.base
+  command: fl-node
+  volumes:
+    - ./results:/app/results
+    - ./data:/app/data
+  depends_on:
+    fl-server:
+      condition: service_healthy
+  environment: &client-env
+    FL_SERVER_HOST: "172.20.0.10"
+    FL_SERVER_COAP_PORT: "5683"
+    FL_DATASET: "${FL_DATASET:-cifar10}"
+    FL_PARTITION: "${FL_PARTITION:-iid}"
+    FL_ALPHA: "${FL_ALPHA:-0.5}"
+    FL_N_CLIENTS: "${FL_N_CLIENTS:-10}"
+    FL_ROUNDS: "${FL_ROUNDS:-50}"
+    FL_SCENARIO: "${FL_SCENARIO:-net_lan}"
+    FL_ARCHITECTURE: "${FL_ARCHITECTURE:-B}"
+    FL_RELAY_URL: "${FL_RELAY_URL:-}"
+    FL_SEED: "${FL_SEED:-42}"
+    FL_RESULTS_DIR: "/app/results"
+    FL_DATA_DIR: "/app/data"
+
+networks:
+  fl_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+  # ------------------------------------------------------------------
+  # FL Server / Aggregator
+  # ------------------------------------------------------------------
+  fl-server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.base
+    command: fl-server
+    container_name: fl-server
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "5683:5683/udp"
+      - "11204:11204/udp"
+    volumes:
+      - ./results:/app/results
+      - ./data:/app/data
+    environment:
+      FL_NODE_ID: "server"
+      FL_COAP_PORT: "5683"
+      FL_DATASET: "${FL_DATASET:-cifar10}"
+      FL_PARTITION: "${FL_PARTITION:-iid}"
+      FL_ALPHA: "${FL_ALPHA:-0.5}"
+      FL_ROUNDS: "${FL_ROUNDS:-50}"
+      FL_MIN_CLIENTS: "${FL_MIN_CLIENTS:-2}"
+      FL_LOCAL_EPOCHS: "${FL_LOCAL_EPOCHS:-1}"
+      FL_LR: "${FL_LR:-0.01}"
+      FL_RELAY_URL: "${FL_RELAY_URL:-}"
+      FL_SCENARIO: "${FL_SCENARIO:-net_lan}"
+      FL_ARCHITECTURE: "${FL_ARCHITECTURE:-B}"
+      FL_SEED: "${FL_SEED:-42}"
+      FL_RESULTS_DIR: "/app/results"
+      FL_DATA_DIR: "/app/data"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import asyncio, aiocoap; asyncio.run(aiocoap.Context.create_client_context())"]
+      interval: 5s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
+  # ------------------------------------------------------------------
+  # FL Clients  (10 clients, each with a different partition index)
+  # ------------------------------------------------------------------
+  fl-client-1:
+    <<: *client-base
+    container_name: fl-client-1
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.11
+    environment:
+      <<: *client-env
+      FL_NODE_ID: "client-1"
+      FL_COAP_PORT: "5684"
+      FL_PARTITION_IDX: "0"
+
+  fl-client-2:
+    <<: *client-base
+    container_name: fl-client-2
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.12
+    environment:
+      <<: *client-env
+      FL_NODE_ID: "client-2"
+      FL_COAP_PORT: "5684"
+      FL_PARTITION_IDX: "1"
+
+  fl-client-3:
+    <<: *client-base
+    container_name: fl-client-3
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.13
+    environment:
+      <<: *client-env
+      FL_NODE_ID: "client-3"
+      FL_COAP_PORT: "5684"
+      FL_PARTITION_IDX: "2"
+
+  fl-client-4:
+    <<: *client-base
+    container_name: fl-client-4
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.14
+    environment:
+      <<: *client-env
+      FL_NODE_ID: "client-4"
+      FL_COAP_PORT: "5684"
+      FL_PARTITION_IDX: "3"
+
+  fl-client-5:
+    <<: *client-base
+    container_name: fl-client-5
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.15
+    environment:
+      <<: *client-env
+      FL_NODE_ID: "client-5"
+      FL_COAP_PORT: "5684"
+      FL_PARTITION_IDX: "4"

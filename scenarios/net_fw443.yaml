@@ -1,0 +1,15 @@
+# scenarios/net_fw443.yaml
+# Strict firewall — only port 443/TCP outbound allowed.
+# Iroh must relay via HTTPS/443. All UDP blocked.
+name: net_fw443
+description: "Strict firewall — UDP blocked, only TCP:443 allowed (relay-only)"
+netem:
+  delay: 15ms
+  jitter: 3ms
+nat: single
+packet_loss_pct: 0
+extra_latency_ms: 15
+bandwidth_limit: null
+firewall:
+  block_udp: true
+  allow_tcp_443: true

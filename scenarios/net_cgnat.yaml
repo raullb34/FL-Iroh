@@ -1,0 +1,13 @@
+# scenarios/net_cgnat.yaml
+# Carrier-Grade NAT (RFC 6598, 100.64.0.0/10) — most restrictive: full-cone blocked.
+# Applied via docker-compose.nat2.yml overlay with CGNAT prefix.
+name: net_cgnat
+description: "Carrier-Grade NAT — symmetric NAT, no hole-punching fallback except relay"
+netem:
+  delay: 30ms
+  jitter: 10ms
+  correlation: 50
+nat: cgnat
+packet_loss_pct: 0
+extra_latency_ms: 30
+bandwidth_limit: null

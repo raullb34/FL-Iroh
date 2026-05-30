@@ -1,0 +1,123 @@
+# =============================================================================
+# docker-compose.nat2.yml — double NAT (CGNAT) override
+#
+# Two cascaded NAT layers:
+#   Server sits on fl_net (172.20.0.x)
+#   nat-gateway-outer: fl_net ↔ fl_nat_outer (10.64.0.x)   [ISP/carrier NAT]
+#   nat-gateway-inner: fl_nat_outer ↔ fl_nat_inner (10.0.0.x)  [home router NAT]
+#   Clients sit on fl_nat_inner
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.nat2.yml up
+# =============================================================================
+
+networks:
+  fl_nat_outer:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.64.0.0/24
+
+  fl_nat_inner:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
+
+services:
+  nat-gateway-outer:
+    image: alpine:3.19
+    container_name: nat-gateway-outer
+    cap_add:
+      - NET_ADMIN
+    networks:
+      fl_net:
+        ipv4_address: 172.20.0.200
+      fl_nat_outer:
+        ipv4_address: 10.64.0.1
+    command: >
+      sh -c "
+        echo 1 > /proc/sys/net/ipv4/ip_forward &&
+        iptables -t nat -A POSTROUTING -s 10.64.0.0/24 -o eth0 -j MASQUERADE &&
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  nat-gateway-inner:
+    image: alpine:3.19
+    container_name: nat-gateway-inner
+    cap_add:
+      - NET_ADMIN
+    networks:
+      fl_nat_outer:
+        ipv4_address: 10.64.0.2
+      fl_nat_inner:
+        ipv4_address: 10.0.0.1
+    command: >
+      sh -c "
+        echo 1 > /proc/sys/net/ipv4/ip_forward &&
+        iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o eth0 -j MASQUERADE &&
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+    depends_on:
+      nat-gateway-outer:
+        condition: service_started
+
+  # Override clients to live behind the double NAT
+  fl-client-1:
+    networks:
+      fl_net: null
+      fl_nat_inner:
+        ipv4_address: 10.0.0.11
+    depends_on:
+      nat-gateway-inner:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_cgnat"
+
+  fl-client-2:
+    networks:
+      fl_net: null
+      fl_nat_inner:
+        ipv4_address: 10.0.0.12
+    depends_on:
+      nat-gateway-inner:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_cgnat"
+
+  fl-client-3:
+    networks:
+      fl_net: null
+      fl_nat_inner:
+        ipv4_address: 10.0.0.13
+    depends_on:
+      nat-gateway-inner:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_cgnat"
+
+  fl-client-4:
+    networks:
+      fl_net: null
+      fl_nat_inner:
+        ipv4_address: 10.0.0.14
+    depends_on:
+      nat-gateway-inner:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_cgnat"
+
+  fl-client-5:
+    networks:
+      fl_net: null
+      fl_nat_inner:
+        ipv4_address: 10.0.0.15
+    depends_on:
+      nat-gateway-inner:
+        condition: service_started
+    environment:
+      FL_SCENARIO: "net_cgnat"
