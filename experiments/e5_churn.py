@@ -159,6 +159,7 @@ async def run_churn_experiment(
 
     # Run FL — server and clients must run concurrently
     async def _run_client(client, n_rounds: int) -> None:
+        log.info("[%s] client task started (mock=%s)", client.node_id, client._transport.mock_mode)
         for r in range(1, n_rounds + 1):
             try:
                 await client.run_round(r)

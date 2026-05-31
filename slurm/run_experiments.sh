@@ -158,6 +158,7 @@ case "${TASK_ID}" in
         ;;
 
     1)  # E2 — FL convergence, IID data partition
+        export FL_MOCK_IROH=1   # mock transport: asyncio.Queue bypasses iroh/Tokio threading
         run_exp "e2_iid" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -165,6 +166,7 @@ case "${TASK_ID}" in
         ;;
 
     2)  # E2 — FL convergence, non-IID Dirichlet α=0.1 (high heterogeneity)
+        export FL_MOCK_IROH=1
         run_exp "e2_noniid_01" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -172,6 +174,7 @@ case "${TASK_ID}" in
         ;;
 
     3)  # E2 — FL convergence, non-IID Dirichlet α=0.5 then α=1.0
+        export FL_MOCK_IROH=1
         run_exp "e2_noniid_05" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -184,6 +187,7 @@ case "${TASK_ID}" in
         ;;
 
     4)  # E5 — Churn resilience (0 / 10 / 30 / 50 % per-round churn)
+        export FL_MOCK_IROH=1
         run_exp "e5_churn" "e5" \
             "experiments.e5_churn" \
             --rounds 100 --n-clients 10 --dataset cifar10 \

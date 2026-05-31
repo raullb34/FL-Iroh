@@ -156,6 +156,7 @@ async def run_arch_b(
     # Run FL — server and clients must run concurrently:
     # server sends model → clients receive, train, send update → server aggregates
     async def _run_client(client: FLClient, n_rounds: int) -> None:
+        log.info("[%s] client task started (mock=%s)", client.node_id, client._transport.mock_mode)
         for r in range(1, n_rounds + 1):
             try:
                 await client.run_round(r)
@@ -167,8 +168,6 @@ async def run_arch_b(
         *[_run_client(c, rounds) for c in clients],
         return_exceptions=True,
     )
-
-    # Stop all
     for c in clients:
         await c.stop()
     await server.stop()
