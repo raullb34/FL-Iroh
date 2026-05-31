@@ -153,8 +153,20 @@ async def run_arch_b(
         clients.append(client)
         server.register_client(f"client-{i}", ep)
 
-    # Run FL
-    await server.run_rounds(n_rounds=rounds)
+    # Run FL — server and clients must run concurrently:
+    # server sends model → clients receive, train, send update → server aggregates
+    async def _run_client(client: FLClient, n_rounds: int) -> None:
+        for r in range(1, n_rounds + 1):
+            try:
+                await client.run_round(r)
+            except Exception as exc:
+                log.error("[%s] round %d error: %s", client.node_id, r, exc)
+
+    await asyncio.gather(
+        server.run_rounds(n_rounds=rounds),
+        *[_run_client(c, rounds) for c in clients],
+        return_exceptions=True,
+    )
 
     # Stop all
     for c in clients:

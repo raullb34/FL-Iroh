@@ -157,7 +157,19 @@ async def run_churn_experiment(
 
     server._select_clients = churned_select  # type: ignore[method-assign]
 
-    await server.run_rounds(n_rounds=rounds)
+    # Run FL — server and clients must run concurrently
+    async def _run_client(client, n_rounds: int) -> None:
+        for r in range(1, n_rounds + 1):
+            try:
+                await client.run_round(r)
+            except Exception as exc:
+                log.error("[%s] round %d error: %s", client.node_id, r, exc)
+
+    await asyncio.gather(
+        server.run_rounds(n_rounds=rounds),
+        *[_run_client(c, rounds) for c in clients],
+        return_exceptions=True,
+    )
 
     for c in clients:
         await c.stop()
