@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import csv
+import errno
 import logging
 import time
 from pathlib import Path
@@ -57,8 +58,8 @@ def _write_csv(path: Path, rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
-async def _spin_up_servers(n_nodes: int, base_port: int = 15683) -> list[object]:
-    """Start n_nodes independent CoAP servers to measure realistic WKC size."""
+async def _spin_up_servers(n_nodes: int, base_port: int = 20000) -> list[tuple]:
+    """Start n_nodes independent CoAP servers, skipping any ports already in use."""
     from fl_coap_iroh.coap.server import FLCoapServer
     from fl_coap_iroh.types import (
         AvailabilityInfo, ComputeCapabilities, EnergyState,
@@ -70,6 +71,7 @@ async def _spin_up_servers(n_nodes: int, base_port: int = 15683) -> list[object]
         distribution="iid", feature_dim=[3, 32, 32],
     )
     servers = []
+    port = base_port
     for i in range(n_nodes):
         caps = NodeCapabilities(
             node_id      = f"node-{i}",
@@ -77,14 +79,23 @@ async def _spin_up_servers(n_nodes: int, base_port: int = 15683) -> list[object]
             compute      = ComputeCapabilities(cpu_cores=2),
             availability = AvailabilityInfo(status=NodeStatus.READY),
         )
-        s = FLCoapServer(
-            node_id              = f"node-{i}",
-            capabilities         = caps,
-            dataset_descriptor   = _dummy_ds,
-            coap_port            = base_port + i,
-        )
-        await s.start()
-        servers.append((s, base_port + i))
+        while True:
+            s = FLCoapServer(
+                node_id              = f"node-{i}",
+                capabilities         = caps,
+                dataset_descriptor   = _dummy_ds,
+                coap_port            = port,
+            )
+            try:
+                await s.start()
+                servers.append((s, port))
+                port += 1
+                break
+            except OSError as exc:
+                if exc.errno == errno.EADDRINUSE:
+                    port += 1   # port in use by system service — try next
+                    continue
+                raise
     return servers
 
 
@@ -107,19 +118,20 @@ async def measure_discovery(
     rows: list[dict] = []
     servers = await _spin_up_servers(n_nodes, base_port)
     hosts = ["127.0.0.1"] * n_nodes
+    first_port = servers[0][1]  # actual bound port (may differ from base_port if skipped)
 
     for i in range(n_iter):
         t0 = time.monotonic()
         try:
             # Measure /.well-known/core on first server as proxy for overhead
-            async with FLCoapClient("127.0.0.1", base_port) as cl:
+            async with FLCoapClient("127.0.0.1", first_port) as cl:
                 link_str, total_bytes, duration_ms = await cl.get_core_link_format()
 
             # Optionally measure semantic discovery (all nodes)
             if use_filter:
                 results, disc_ms = await FLCoapClient.discover_capable_nodes(
                     hosts=hosts,
-                    port=base_port,
+                    port=first_port,
                     min_energy_pct=0.0,
                     required_role=None,
                 )
