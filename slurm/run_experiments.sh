@@ -160,33 +160,33 @@ case "${TASK_ID}" in
     1)  # E2 — FL convergence, IID data partition
         run_exp "e2_iid" "e2" \
             "experiments.e2_centralized_fl" \
-            --rounds 50 --n-clients 10 --dataset cifar10 \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition iid
         ;;
 
     2)  # E2 — FL convergence, non-IID Dirichlet α=0.1 (high heterogeneity)
         run_exp "e2_noniid_01" "e2" \
             "experiments.e2_centralized_fl" \
-            --rounds 50 --n-clients 10 --dataset cifar10 \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition dirichlet --alpha 0.1
         ;;
 
     3)  # E2 — FL convergence, non-IID Dirichlet α=0.5 then α=1.0
         run_exp "e2_noniid_05" "e2" \
             "experiments.e2_centralized_fl" \
-            --rounds 50 --n-clients 10 --dataset cifar10 \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition dirichlet --alpha 0.5
 
         run_exp "e2_noniid_10" "e2" \
             "experiments.e2_centralized_fl" \
-            --rounds 50 --n-clients 10 --dataset cifar10 \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition dirichlet --alpha 1.0
         ;;
 
     4)  # E5 — Churn resilience (0 / 10 / 30 / 50 % per-round churn)
         run_exp "e5_churn" "e5" \
             "experiments.e5_churn" \
-            --rounds 50 --n-clients 10 --dataset cifar10 \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
             --churn-rates "0.0,0.1,0.3,0.5"
         ;;
 
