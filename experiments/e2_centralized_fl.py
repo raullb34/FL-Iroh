@@ -147,7 +147,8 @@ async def run_arch_b(
             architecture       = "B",
         )
         client.metrics = MetricsCollector(f"client-{i}", scenario, "B", str(results_dir))
-        ep = await client.start()
+        await client.start()
+        ep = client.iroh_endpoint        # FLClient.start() returns None; endpoint stored internally
         client.set_server_endpoint(server_ep)
         clients.append(client)
         server.register_client(f"client-{i}", ep)
