@@ -62,7 +62,12 @@ async def _spin_up_servers(n_nodes: int, base_port: int = 15683) -> list[object]
     from fl_coap_iroh.coap.server import FLCoapServer
     from fl_coap_iroh.types import (
         AvailabilityInfo, ComputeCapabilities, EnergyState,
-        NodeCapabilities, NodeRole, NodeStatus,
+        DatasetDescriptor, NodeCapabilities, NodeRole, NodeStatus,
+    )
+    _dummy_ds = DatasetDescriptor(
+        dataset_id="e6-dummy", dataset_name="cifar10",
+        samples=0, classes=list(range(10)), iid=True,
+        distribution="iid", feature_dim=[3, 32, 32],
     )
     servers = []
     for i in range(n_nodes):
@@ -73,8 +78,10 @@ async def _spin_up_servers(n_nodes: int, base_port: int = 15683) -> list[object]
             availability = AvailabilityInfo(status=NodeStatus.READY),
         )
         s = FLCoapServer(
-            capabilities = caps,
-            coap_port    = base_port + i,
+            node_id              = f"node-{i}",
+            capabilities         = caps,
+            dataset_descriptor   = _dummy_ds,
+            coap_port            = base_port + i,
         )
         await s.start()
         servers.append((s, base_port + i))

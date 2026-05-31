@@ -142,11 +142,13 @@ async def run_churn_experiment(
         clients.append(client)
         server.register_client(f"client-{i}", ep)
 
-    # Override server client selection to inject churn
+    # Override server client selection to inject churn.
+    # _select_clients is stored as an instance attribute (plain function, not bound method),
+    # so it is called as churned_select() with no arguments.
     original_select = server._select_clients
 
-    def churned_select(available):
-        selected = original_select(available)
+    def churned_select():
+        selected = original_select()
         if churn_rate <= 0.0:
             return selected
         n_churn = max(0, round(len(selected) * churn_rate))
