@@ -183,7 +183,7 @@ async def main_async(args: argparse.Namespace) -> None:
     results_dir.mkdir(parents=True, exist_ok=True)
 
     all_rows: list[dict] = []
-    base_port = 15683
+    base_port = 20000  # start well above common service ports (was 15683, hit port 16000)
     for n_nodes in N_NODES_VALUES:
         for use_filter in (False, True):
             filt_label = "semantic" if use_filter else "none"
