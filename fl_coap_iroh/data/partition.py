@@ -71,8 +71,8 @@ def load_cifar10(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     ])
 
     def _load():
-        train = datasets.CIFAR10(data_dir, train=True,  download=False, transform=train_tf)
-        test  = datasets.CIFAR10(data_dir, train=False, download=False, transform=test_tf)
+        train = datasets.CIFAR10(data_dir, train=True,  download=True, transform=train_tf)
+        test  = datasets.CIFAR10(data_dir, train=False, download=True, transform=test_tf)
         return train, test
 
     return _load_with_retry(_load)
