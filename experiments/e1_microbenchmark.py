@@ -134,13 +134,16 @@ async def bench_http2(n_iter: int, payload_sizes: list[int]) -> list[dict]:
         log.warning("aiohttp not installed — skipping HTTP/2 benchmark")
         return rows
 
-    # Simple echo server
+    # Simple echo server — raise client_max_size so payloads up to 200 MB are accepted.
+    # aiohttp's default (1 MB) returns 413 for larger payloads, making throughput look
+    # artificially high (the 413 response arrives instantly).
     async def handler(request: web.Request) -> web.Response:
         body = await request.read()
         return web.Response(body=body, content_type="application/octet-stream")
 
-    runner = web.AppRunner(web.Application())
-    runner.app.router.add_post("/", handler)
+    app = web.Application(client_max_size=200 * 1024 * 1024)  # 200 MB
+    app.router.add_post("/", handler)
+    runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, "127.0.0.1", 0)
     await site.start()
@@ -154,7 +157,9 @@ async def bench_http2(n_iter: int, payload_sizes: list[int]) -> list[dict]:
                 t0 = time.monotonic()
                 try:
                     async with session.post(f"http://127.0.0.1:{port}/", data=data) as resp:
-                        await resp.read()
+                        body = await resp.read()
+                        if resp.status != 200:
+                            raise RuntimeError(f"HTTP {resp.status}: {body[:120]}")
                     dur_ms = (time.monotonic() - t0) * 1000
                     rows.append({
                         "transport"      : "http2",
