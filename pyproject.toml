@@ -16,7 +16,7 @@ dependencies = [
     "aiocoap[websockets,prettyprint]>=0.4.7",
     "cbor2>=5.6.3",
     # P2P transport (Iroh/QUIC)
-    "iroh>=0.25.0",
+    "iroh>=0.35.0",
     # Machine learning
     "torch>=2.2.0",
     "torchvision>=0.17.0",
@@ -26,6 +26,8 @@ dependencies = [
     "pydantic>=2.6.0",
     # Logging & observability
     "structlog>=24.1.0",
+    # HTTP/2 baseline transport (E1 benchmark — optional: skipped gracefully if absent)
+    "aiohttp>=3.9.0",
     # Utilities
     "aiofiles>=23.2.1",
     "click>=8.1.7",

@@ -135,7 +135,12 @@ async def measure_discovery(
                     min_energy_pct=0.0,
                     required_role=None,
                 )
-                total_bytes = sum(1 for _ in results)  # count as proxy; real bytes in transfer log
+                # Bytes: n_nodes × one CoAP response each (capabilities+endpoint ≈ 2×
+                # the /.well-known/core response).  We probe the first server once to
+                # get a real per-node byte count rather than a hardcoded constant.
+                async with FLCoapClient("127.0.0.1", first_port) as _probe:
+                    _, _node_bytes, _ = await _probe.get_core_link_format()
+                total_bytes = _node_bytes * n_nodes
                 duration_ms = disc_ms
             else:
                 duration_ms = (time.monotonic() - t0) * 1000
