@@ -130,9 +130,12 @@ class FLClient:
         t_round = time.monotonic()
 
         # 1. Receive global model
+        # Timeout must exceed server's ROUND_TIMEOUT_SEC (900s) so a desync'd client
+        # can wait for the server to finish the current round and send the next model,
+        # self-correcting within one round instead of drifting permanently.
         log.info("[%s] Round %d — receiving model…", self.node_id, round_num)
         global_params, recv_stats = await self._transport.receive_tensors(
-            ALPN_FL_MODEL, timeout=120.0
+            ALPN_FL_MODEL, timeout=1800.0
         )
         self.model.load_state_dict(global_params)
         self.metrics.record_transfer(recv_stats, round_num, "recv")
