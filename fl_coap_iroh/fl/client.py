@@ -84,6 +84,7 @@ class FLClient:
             coap_port          = coap_port,
         )
         self._transport = IrohTransportNode(node_id=node_id, relay_url=relay_url)
+        self._receive_timeout: float = 1800.0
         self.metrics    = MetricsCollector(
             node_id=node_id, scenario=scenario, architecture=architecture
         )
@@ -135,7 +136,7 @@ class FLClient:
         # self-correcting within one round instead of drifting permanently.
         log.info("[%s] Round %d — receiving model…", self.node_id, round_num)
         global_params, recv_stats = await self._transport.receive_tensors(
-            ALPN_FL_MODEL, timeout=1800.0
+            ALPN_FL_MODEL, timeout=self._receive_timeout
         )
         self.model.load_state_dict(global_params)
         self.metrics.record_transfer(recv_stats, round_num, "recv")

@@ -136,6 +136,7 @@ async def run_churn_experiment(
             architecture       = "B",
         )
         client.metrics = MetricsCollector(f"client-{i}", scenario, "B", str(results_dir))
+        client._receive_timeout = 60.0  # mock transport; short timeout avoids 1800s stalls on churned rounds
         await client.start()
         ep = client.iroh_endpoint        # FLClient.start() returns None; endpoint stored internally
         client.set_server_endpoint(server_ep)
@@ -166,11 +167,12 @@ async def run_churn_experiment(
             except Exception as exc:
                 log.error("[%s] round %d error: %s", client.node_id, r, exc)
 
-    await asyncio.gather(
-        server.run_rounds(n_rounds=rounds),
-        *[_run_client(c, rounds) for c in clients],
-        return_exceptions=True,
-    )
+    server_task = asyncio.create_task(server.run_rounds(n_rounds=rounds))
+    client_tasks = [asyncio.create_task(_run_client(c, rounds)) for c in clients]
+    await server_task
+    for t in client_tasks:
+        t.cancel()
+    await asyncio.gather(*client_tasks, return_exceptions=True)
 
     for c in clients:
         await c.stop()
