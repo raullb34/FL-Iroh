@@ -12,6 +12,8 @@
 #   3 — E2  FL convergence, Dirichlet α=0.5+1.0 (~12-18 h)
 #   4 — E5  churn resilience  (0/10/30/50 %)    (~20-28 h)
 #   5 — E3  NAT traversal mock + E6 CoAP overhead (~1-2 h)
+#   6 — E2  crop IID + Dirichlet α=0.1/0.5/1.0  (~12-18 h)
+#   7 — E5  churn resilience, crop dataset       (~20-28 h)
 # =============================================================================
 #SBATCH --job-name=fl_iroh_exp
 #SBATCH --partition=all
@@ -208,6 +210,37 @@ case "${TASK_ID}" in
         run_exp "e6_coap_overhead" "e6" \
             "experiments.e6_coap_overhead" \
             --n-iter 30
+        ;;
+
+    6)  # E2 — FL convergence with Crop Recommendation dataset (all partitions)
+        export FL_MOCK_IROH=1
+        run_exp "e2_crop_iid" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset crop \
+            --partition iid
+
+        run_exp "e2_crop_noniid_01" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset crop \
+            --partition dirichlet --alpha 0.1
+
+        run_exp "e2_crop_noniid_05" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset crop \
+            --partition dirichlet --alpha 0.5
+
+        run_exp "e2_crop_noniid_10" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset crop \
+            --partition dirichlet --alpha 1.0
+        ;;
+
+    7)  # E5 — Churn resilience with Crop Recommendation dataset
+        export FL_MOCK_IROH=1
+        run_exp "e5_crop_churn" "e5" \
+            "experiments.e5_churn" \
+            --rounds 100 --n-clients 10 --dataset crop \
+            --churn-rates "0.0,0.1,0.3,0.5"
         ;;
 
     *)  echo "ERROR: unexpected SLURM_ARRAY_TASK_ID=${TASK_ID}"

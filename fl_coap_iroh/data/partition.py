@@ -5,6 +5,9 @@ Supported datasets:
   cifar10  — 50K train / 10K test, 10 classes, 32×32 RGB
   mnist    — 60K train / 10K test, 10 classes, 28×28 greyscale
   fmnist   — same shape as MNIST (Fashion-MNIST)
+  crop     — Crop Recommendation (2200 samples, 7 features, 22 classes)
+             Place CSV at data/Crop_recommendation.csv
+             Download: kaggle datasets download -d atharvaingle/crop-recommendation-dataset
 
 Partitioning strategies:
   iid        — random shuffle, equal split
@@ -20,11 +23,12 @@ from __future__ import annotations
 
 import logging
 import time
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import torch
-from torch.utils.data import Dataset, Subset
+from torch.utils.data import Dataset, Subset, TensorDataset
 from torchvision import datasets, transforms
 
 log = logging.getLogger(__name__)
@@ -106,8 +110,85 @@ def load_fmnist(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     return _load_with_retry(_load)
 
 
+def load_crop(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
+    """
+    Crop Recommendation Dataset — tabular, 7 features, 22 crop classes.
+
+    Expected file: <data_dir>/Crop_recommendation.csv
+    Download: kaggle datasets download -d atharvaingle/crop-recommendation-dataset
+
+    Features: N, P, K, temperature, humidity, ph, rainfall (all float32)
+    Labels:   22 crop types encoded as integers 0-21
+
+    Split: 80% train / 20% test, stratified by class, seed=42.
+    """
+    import csv
+
+    csv_path = Path(data_dir) / "Crop_recommendation.csv"
+    if not csv_path.exists():
+        raise FileNotFoundError(
+            f"Crop Recommendation CSV not found at {csv_path}.\n"
+            "Download it with:\n"
+            "  kaggle datasets download -d atharvaingle/crop-recommendation-dataset\n"
+            "  unzip crop-recommendation-dataset.zip -d data/"
+        )
+
+    feature_cols = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
+    label_col = "label"
+
+    rows: list[list[float]] = []
+    raw_labels: list[str] = []
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append([float(row[c]) for c in feature_cols])
+            raw_labels.append(row[label_col].strip())
+
+    # Encode string labels to integers (sorted for reproducibility)
+    classes = sorted(set(raw_labels))
+    class_to_idx = {c: i for i, c in enumerate(classes)}
+    int_labels = [class_to_idx[l] for l in raw_labels]
+
+    X = np.array(rows, dtype=np.float32)
+    y = np.array(int_labels, dtype=np.int64)
+
+    # Z-score normalise features globally (acceptable since this is a
+    # centralised preprocessing step before FL partitioning)
+    X = (X - X.mean(axis=0)) / (X.std(axis=0) + 1e-8)
+
+    # Stratified 80/20 split
+    rng = np.random.default_rng(42)
+    train_idx: list[int] = []
+    test_idx: list[int] = []
+    for c in range(len(classes)):
+        idx = np.where(y == c)[0]
+        rng.shuffle(idx)
+        split = max(1, int(len(idx) * 0.8))
+        train_idx.extend(idx[:split].tolist())
+        test_idx.extend(idx[split:].tolist())
+
+    X_train = torch.tensor(X[train_idx])
+    y_train = torch.tensor(y[train_idx])
+    X_test  = torch.tensor(X[test_idx])
+    y_test  = torch.tensor(y[test_idx])
+
+    train_ds = TensorDataset(X_train, y_train)
+    test_ds  = TensorDataset(X_test,  y_test)
+
+    log.info(
+        "Crop dataset loaded: %d train / %d test  |  %d classes  |  %d features",
+        len(train_ds), len(test_ds), len(classes), len(feature_cols),
+    )
+    return train_ds, test_ds
+
+
 def load_dataset(name: str, data_dir: str = "./data") -> tuple[Dataset, Dataset]:
-    loaders = {"cifar10": load_cifar10, "mnist": load_mnist, "fmnist": load_fmnist}
+    loaders = {
+        "cifar10": load_cifar10,
+        "mnist":   load_mnist,
+        "fmnist":  load_fmnist,
+        "crop":    load_crop,
+    }
     if name not in loaders:
         raise ValueError(f"Unknown dataset '{name}'. Choose from {list(loaders)}")
     return loaders[name](data_dir)

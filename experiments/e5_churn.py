@@ -61,6 +61,7 @@ async def run_churn_experiment(
     from fl_coap_iroh.fl.server import FLServer
     from fl_coap_iroh.metrics.collector import MetricsCollector
     from fl_coap_iroh.models.cnn import SimpleCNN
+    from fl_coap_iroh.models.agri_mlp import AgriMLP
     from fl_coap_iroh.types import (
         AvailabilityInfo, ComputeCapabilities, DatasetDescriptor,
         NodeCapabilities, NodeRole, NodeStatus, TrainingPolicy,
@@ -79,7 +80,12 @@ async def run_churn_experiment(
         seed=seeds.get("data_partition", 42),
     )
 
-    server_model = SimpleCNN()
+    def _make_model():
+        if dataset == "crop":
+            return AgriMLP()
+        return SimpleCNN()
+
+    server_model = _make_model()
     server_caps  = NodeCapabilities(
         node_id      = "server",
         role         = NodeRole.AGGREGATOR,
@@ -108,7 +114,7 @@ async def run_churn_experiment(
     clients = []
     for i in range(n_clients):
         torch.manual_seed(seeds.get("model_init", 123) + i)
-        model = SimpleCNN()
+        model = _make_model()
         caps = NodeCapabilities(
             node_id      = f"client-{i}",
             role         = NodeRole.CLIENT,
@@ -119,10 +125,10 @@ async def run_churn_experiment(
             dataset_id   = f"client-{i}",
             dataset_name = dataset,
             samples      = len(partitions[i]),
-            classes      = list(range(10)),
+            classes      = list(range(22 if dataset == "crop" else 10)),
             iid          = True,
             distribution = "iid",
-            feature_dim  = [32, 32, 3],
+            feature_dim  = [7] if dataset == "crop" else [32, 32, 3],
         )
         client = FLClient(
             node_id            = f"client-{i}",
