@@ -545,25 +545,12 @@ def _detect_conn_type(connection: object) -> ConnType:
         info = connection.conn_type()  # type: ignore[attr-defined]
         s = str(info).lower()
         r = repr(info).lower()
-        log.warning("DEBUG conn_type() str=%r repr=%r type=%s", s, r, type(info).__name__)
         if "direct" in s or "direct" in r:
             return ConnType.DIRECT
         if "relay" in s or "relay" in r or "mixed" in r:
             return ConnType.RELAY
-    except AttributeError:
-        # conn_type() not available on this connection object (e.g. server-side accept)
-        log.warning("DEBUG conn_type() AttributeError — trying remote_address()")
-        try:
-            addr = str(connection.remote_address())  # type: ignore[attr-defined]
-            log.warning("DEBUG remote_address()=%r", addr)
-            if "relay" in addr.lower():
-                return ConnType.RELAY
-            if ":" in addr and "." in addr:
-                return ConnType.DIRECT
-        except Exception as e:
-            log.warning("DEBUG remote_address() failed: %s", e)
-    except Exception as e:
-        log.warning("DEBUG conn_type() exception: %s: %s", type(e).__name__, e)
+    except Exception:
+        pass
     return ConnType.UNKNOWN
 
 
