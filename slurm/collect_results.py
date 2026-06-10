@@ -256,7 +256,7 @@ def _header(title: str) -> None:
 
 
 def _print_e1(e1: dict) -> None:
-    _header("E1 · Communication Microbenchmark")
+    _header("E1 · Communication Microbenchmark  (iroh_relay_wan = PC↔RPi 300km WAN)")
     if e1.get("status") != "ok":
         print(f"  [no data — {e1.get('status')}]")
         return
