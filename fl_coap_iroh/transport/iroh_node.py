@@ -483,12 +483,18 @@ class IrohTransportNode:
         if received_hash != expected_hash:
             raise ValueError("SHA-256 integrity check failed — payload corrupted")
 
+        transfer_ms = (time.monotonic() - t_start) * 1000
+
+        # If conn_type API unavailable, infer from transfer latency
+        if conn_type == ConnType.UNKNOWN:
+            conn_type = infer_conn_type_from_latency(transfer_ms)
+
         stats = TransferStats(
             bytes_payload        = payload_len,
             bytes_on_wire        = payload_len + _OVERHEAD_BYTES,
             conn_type            = conn_type,
             conn_time_ms         = conn_time_ms,
-            transfer_duration_ms = (time.monotonic() - t_start) * 1000,
+            transfer_duration_ms = transfer_ms,
         )
         log.info(
             "recv %dB via %s in %.0fms",
@@ -536,7 +542,6 @@ class IrohTransportNode:
 def _detect_conn_type(connection: object) -> ConnType:
     """Extract ConnType from an iroh Connection object."""
     try:
-        # Try conn_type() method (iroh 0.35+)
         info = connection.conn_type()  # type: ignore[attr-defined]
         s = str(info).lower()
         r = repr(info).lower()
@@ -546,14 +551,32 @@ def _detect_conn_type(connection: object) -> ConnType:
         if "relay" in s or "relay" in r or "mixed" in r:
             return ConnType.RELAY
     except AttributeError:
+        # conn_type() not available on this connection object (e.g. server-side accept)
+        log.warning("DEBUG conn_type() AttributeError — trying remote_address()")
         try:
             addr = str(connection.remote_address())  # type: ignore[attr-defined]
+            log.warning("DEBUG remote_address()=%r", addr)
             if "relay" in addr.lower():
                 return ConnType.RELAY
             if ":" in addr and "." in addr:
                 return ConnType.DIRECT
-        except Exception:
-            pass
+        except Exception as e:
+            log.warning("DEBUG remote_address() failed: %s", e)
     except Exception as e:
         log.warning("DEBUG conn_type() exception: %s: %s", type(e).__name__, e)
     return ConnType.UNKNOWN
+
+
+def infer_conn_type_from_latency(duration_ms: float) -> ConnType:
+    """
+    Heuristic: infer connection type from transfer latency when iroh API
+    does not expose conn_type directly.
+
+    Thresholds (empirical, European relay ~50-100ms RTT):
+      < 5ms  → likely direct (same LAN)
+      5-200ms → relay (intercontinental relay adds 40-150ms)
+      > 200ms → relay or congested
+    """
+    if duration_ms < 5.0:
+        return ConnType.DIRECT
+    return ConnType.RELAY
