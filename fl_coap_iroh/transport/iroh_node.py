@@ -146,47 +146,62 @@ class _MockTransport:
 
 
 # ---------------------------------------------------------------------------
-# iroh 0.35 accept-side helpers (ProtocolHandler pattern)
+# iroh accept-side helpers (ProtocolHandler pattern)
 # ---------------------------------------------------------------------------
 
-class _IrohAcceptQueue:
-    """Collects incoming iroh Connections (from the ProtocolHandler callback)
-    and exposes them to async consumers via an asyncio.Queue.
+@dataclass
+class _AcceptedTransfer:
+    """Pre-read transfer placed in the accept queue by the ProtocolHandler.
 
-    One instance is shared across all registered ALPNs so that
-    ``get_for_alpn`` can skip-and-requeue connections that don't match.
+    Reading the stream *inside* the handler avoids cross-thread use of iroh
+    Connection objects, which is the root cause of accept_uni() failures when
+    called from the main asyncio event loop after the handler returns.
+    """
+    alpn             : bytes
+    payload          : bytes
+    conn_type        : "ConnType"
+    recv_start_ms    : float      # monotonic ms when accept() was called
+    recv_done_ms     : float      # monotonic ms when last byte was read
+
+
+class _IrohAcceptQueue:
+    """Collects pre-read _AcceptedTransfer objects (from the ProtocolHandler
+    callback) and exposes them to async consumers via an asyncio.Queue.
+
+    All iroh API calls (accept_uni, read_exact) happen inside the handler so
+    no Connection object crosses the thread boundary.
     """
 
     def __init__(self) -> None:
-        self._queue: asyncio.Queue = asyncio.Queue()
+        self._queue: asyncio.Queue[_AcceptedTransfer] = asyncio.Queue()
 
-    async def enqueue(self, alpn: bytes, conn: object) -> None:
-        await self._queue.put((alpn, conn))
+    async def enqueue(self, transfer: "_AcceptedTransfer") -> None:
+        await self._queue.put(transfer)
 
-    async def get_for_alpn(self, alpn: bytes, timeout: float) -> object:
-        """Return the next Connection whose ALPN matches *alpn*.
+    async def get_for_alpn(self, alpn: bytes, timeout: float) -> "_AcceptedTransfer":
+        """Return the next transfer whose ALPN matches *alpn*.
 
-        Connections with a different ALPN are put back into the queue so
-        they can be consumed by a later call.
+        Transfers with a different ALPN are put back so they can be consumed
+        by another caller waiting for that ALPN.
         """
         loop = asyncio.get_event_loop()
         deadline = loop.time() + timeout
-        deferred: list = []
+        deferred: list[_AcceptedTransfer] = []
         try:
             while True:
                 remaining = deadline - loop.time()
                 if remaining <= 0:
                     raise asyncio.TimeoutError()
-                got_alpn, conn = await asyncio.wait_for(
+                transfer = await asyncio.wait_for(
                     self._queue.get(), timeout=remaining
                 )
-                if got_alpn == alpn:
-                    return conn
+                if transfer.alpn == alpn:
+                    return transfer
                 log.warning(
                     "Queued ALPN %r while waiting for %r — re-queuing",
-                    got_alpn, alpn,
+                    transfer.alpn, alpn,
                 )
-                deferred.append((got_alpn, conn))
+                deferred.append(transfer)
         finally:
             for item in deferred:
                 self._queue.put_nowait(item)
@@ -199,9 +214,12 @@ def _make_iroh_adapters(
 ) -> dict:  # type: ignore[return]
     """Create per-ALPN ProtocolCreator instances at runtime.
 
-    In iroh 0.35 the ProtocolHandler.accept() callback receives an already-
-    established Connection object directly (no .connect() call needed).
-    Each ALPN gets its own creator so the handler knows which ALPN to enqueue.
+    The handler reads the full stream payload *inside* accept() so that no
+    Connection object is passed across thread boundaries.  This fixes the
+    cross-thread accept_uni() failure seen with iroh 0.35 Python bindings.
+
+    Compatible with both iroh 0.35 (accept receives Connection directly) and
+    iroh 1.0+ (accept receives Accepting which must be awaited to get Connection).
     """
     iroh = iroh_module  # type: ignore[assignment]
 
@@ -210,12 +228,54 @@ def _make_iroh_adapters(
             self._q    = q
             self._alpn = alpn
 
-        async def accept(self, conn: object) -> None:
-            # conn is an iroh.Connection — already established, no .connect() needed
+        async def accept(self, conn_or_accepting: object) -> None:
+            t_start = time.monotonic() * 1000
+            # iroh 1.0+ passes an Accepting object; 0.35 passes a Connection directly.
+            conn = conn_or_accepting
+            if hasattr(conn_or_accepting, "accept") and not hasattr(conn_or_accepting, "accept_uni"):
+                try:
+                    conn = await conn_or_accepting.accept()  # type: ignore[attr-defined]
+                except Exception as exc:
+                    log.warning("iroh handshake failed [%r]: %s: %s",
+                                self._alpn, type(exc).__name__, exc)
+                    return
+
+            # Read the full stream inside this handler to avoid cross-thread
+            # Connection references on the main asyncio event loop.
             try:
-                await self._q.enqueue(self._alpn, conn)
+                conn_type = _detect_conn_type(conn)
+                recv_stream = await conn.accept_uni()  # type: ignore[attr-defined]
+
+                raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
+                payload_len = struct.unpack(">I", raw_len)[0]
+                if payload_len > MAX_PAYLOAD_BYTES:
+                    raise ValueError(f"Payload too large: {payload_len}")
+
+                payload = await recv_stream.read_exact(payload_len)
+
+                received_hash = await recv_stream.read_exact(_HASH_SUFFIX_BYTES)
+                if hashlib.sha256(payload).digest() != received_hash:
+                    raise ValueError("SHA-256 integrity check failed")
+
+                t_done = time.monotonic() * 1000
+                transfer = _AcceptedTransfer(
+                    alpn          = self._alpn,
+                    payload       = payload,
+                    conn_type     = conn_type,
+                    recv_start_ms = t_start,
+                    recv_done_ms  = t_done,
+                )
+                await self._q.enqueue(transfer)
+                log.debug(
+                    "iroh accept [%r]: %dB conn_type=%s in %.0fms",
+                    self._alpn, payload_len, conn_type.value,
+                    t_done - t_start,
+                )
             except Exception as exc:
-                log.warning("iroh accept error [%r]: %s", self._alpn, exc)
+                log.warning(
+                    "iroh accept/read error [%r]: %s: %s",
+                    self._alpn, type(exc).__name__, exc,
+                )
 
         async def shutdown(self) -> None:
             pass
@@ -456,51 +516,34 @@ class IrohTransportNode:
         except ImportError:
             raise RuntimeError("iroh not available")
 
-        t_start = time.monotonic()
-
-        # Accept next incoming connection matching *alpn* from the queue
-        # that is populated by the ProtocolHandler registered at start().
         if self._accept_queue is None:
             raise RuntimeError("IrohTransportNode not started (accept_queue is None)")
-        connection = await self._accept_queue.get_for_alpn(alpn, timeout)
-        conn_type  = _detect_conn_type(connection)
-        conn_time_ms = (time.monotonic() - t_start) * 1000
 
-        # Accept unidirectional stream
-        recv_stream = await connection.accept_uni()
+        t_wait_start = time.monotonic()
+        # All iroh stream I/O was done inside the ProtocolHandler.accept() callback.
+        # We just unpack the pre-read transfer from the queue.
+        transfer = await self._accept_queue.get_for_alpn(alpn, timeout)
+        wait_ms = (time.monotonic() - t_wait_start) * 1000
 
-        # Read length prefix
-        raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
-        payload_len = struct.unpack(">I", raw_len)[0]
-        if payload_len > MAX_PAYLOAD_BYTES:
-            raise ValueError(f"Payload too large: {payload_len} > {MAX_PAYLOAD_BYTES}")
+        conn_type = transfer.conn_type
+        transfer_ms = transfer.recv_done_ms - transfer.recv_start_ms
 
-        payload = await recv_stream.read_exact(payload_len)
-
-        # Verify SHA-256
-        received_hash = await recv_stream.read_exact(_HASH_SUFFIX_BYTES)
-        expected_hash = hashlib.sha256(payload).digest()
-        if received_hash != expected_hash:
-            raise ValueError("SHA-256 integrity check failed — payload corrupted")
-
-        transfer_ms = (time.monotonic() - t_start) * 1000
-
-        # If conn_type API unavailable, infer from transfer latency
+        # conn_type inference: if still UNKNOWN, use transfer duration as heuristic
         if conn_type == ConnType.UNKNOWN:
             conn_type = infer_conn_type_from_latency(transfer_ms)
 
         stats = TransferStats(
-            bytes_payload        = payload_len,
-            bytes_on_wire        = payload_len + _OVERHEAD_BYTES,
+            bytes_payload        = len(transfer.payload),
+            bytes_on_wire        = len(transfer.payload) + _OVERHEAD_BYTES,
             conn_type            = conn_type,
-            conn_time_ms         = conn_time_ms,
+            conn_time_ms         = wait_ms,
             transfer_duration_ms = transfer_ms,
         )
         log.info(
             "recv %dB via %s in %.0fms",
-            payload_len, conn_type.value, stats.transfer_duration_ms,
+            len(transfer.payload), conn_type.value, transfer_ms,
         )
-        return payload, stats
+        return transfer.payload, stats
 
     # ------------------------------------------------------------------
     # Metrics
@@ -540,7 +583,29 @@ class IrohTransportNode:
 # ---------------------------------------------------------------------------
 
 def _detect_conn_type(connection: object) -> ConnType:
-    """Extract ConnType from an iroh Connection object."""
+    """Extract ConnType from an iroh Connection object.
+
+    Tries multiple APIs in order of preference:
+    1. iroh 1.0+ ``paths()`` → PathWatcher → selected PathInfo addr
+    2. iroh 0.35 ``conn_type()`` → ConnType enum string
+    Falls back to UNKNOWN if neither API is available.
+    """
+    # --- iroh 1.0+ paths() API ---
+    try:
+        watcher = connection.paths()  # type: ignore[attr-defined]
+        # PathWatcher.get() or direct iteration depending on binding version
+        path_list = watcher.get() if hasattr(watcher, "get") else list(watcher)
+        for path_info in path_list:
+            if getattr(path_info, "is_selected", False) and not getattr(path_info, "is_closed", False):
+                addr = str(getattr(path_info, "addr", "")).lower()
+                if "relay" in addr:
+                    return ConnType.RELAY
+                if "direct" in addr or "socket" in addr or ":" in addr:
+                    return ConnType.DIRECT
+    except Exception:
+        pass
+
+    # --- iroh 0.35 conn_type() API ---
     try:
         info = connection.conn_type()  # type: ignore[attr-defined]
         s = str(info).lower()
@@ -551,6 +616,7 @@ def _detect_conn_type(connection: object) -> ConnType:
             return ConnType.RELAY
     except Exception:
         pass
+
     return ConnType.UNKNOWN
 
 
