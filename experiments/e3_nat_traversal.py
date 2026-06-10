@@ -122,13 +122,15 @@ async def measure_connections(
 
 def _summarize(rows: list[dict]) -> list[dict]:
     from collections import defaultdict
-    buckets: dict[str, dict[str, int]] = defaultdict(lambda: {"direct": 0, "relay": 0, "failed": 0, "total": 0})
+    buckets: dict[str, dict[str, int]] = defaultdict(lambda: {"direct": 0, "relay": 0, "unknown": 0, "failed": 0, "total": 0})
     for r in rows:
         s = r["scenario"]
         ct = r.get("conn_type", "failed")
         buckets[s]["total"] += 1
-        if ct in buckets[s]:
+        if ct in ("direct", "relay", "unknown", "failed"):
             buckets[s][ct] += 1
+        else:
+            buckets[s]["unknown"] += 1
 
     summary = []
     for scen, b in buckets.items():
@@ -138,6 +140,7 @@ def _summarize(rows: list[dict]) -> list[dict]:
             "total"      : b["total"],
             "pct_direct" : round(100 * b["direct"] / n, 1),
             "pct_relay"  : round(100 * b["relay"]  / n, 1),
+            "pct_unknown": round(100 * b["unknown"] / n, 1),
             "pct_failed" : round(100 * b["failed"] / n, 1),
         })
     return summary
@@ -194,8 +197,9 @@ async def run_server(n_iter: int, scenario: str, results_dir: Path) -> None:
     summary = _summarize(rows)
     _write_csv(results_dir / f"e3_summary_{scenario}.csv", summary)
     for row in summary:
-        log.info("  %s: direct=%.0f%% relay=%.0f%% failed=%.0f%%",
-                 row["scenario"], row["pct_direct"], row["pct_relay"], row["pct_failed"])
+        log.info("  %s: direct=%.0f%% relay=%.0f%% unknown=%.0f%% failed=%.0f%%",
+                 row["scenario"], row["pct_direct"], row["pct_relay"],
+                 row["pct_unknown"], row["pct_failed"])
 
 
 async def run_client(
@@ -256,8 +260,9 @@ async def run_client(
     _write_csv(results_dir / f"e3_nat_{scenario}_client.csv", rows)
     summary = _summarize(rows)
     for row in summary:
-        log.info("  %s: direct=%.0f%% relay=%.0f%% failed=%.0f%%",
-                 row["scenario"], row["pct_direct"], row["pct_relay"], row["pct_failed"])
+        log.info("  %s: direct=%.0f%% relay=%.0f%% unknown=%.0f%% failed=%.0f%%",
+                 row["scenario"], row["pct_direct"], row["pct_relay"],
+                 row["pct_unknown"], row["pct_failed"])
 
 
 async def main_async(args: argparse.Namespace) -> None:
@@ -310,8 +315,9 @@ async def main_async(args: argparse.Namespace) -> None:
     _write_csv(sum_out, summary)
     for row in summary:
         log.info(
-            "  %s: direct=%.0f%% relay=%.0f%% failed=%.0f%%",
-            row["scenario"], row["pct_direct"], row["pct_relay"], row["pct_failed"],
+            "  %s: direct=%.0f%% relay=%.0f%% unknown=%.0f%% failed=%.0f%%",
+            row["scenario"], row["pct_direct"], row["pct_relay"],
+            row["pct_unknown"], row["pct_failed"],
         )
 
 

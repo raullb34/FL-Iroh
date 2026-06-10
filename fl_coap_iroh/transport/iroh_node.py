@@ -536,12 +536,24 @@ class IrohTransportNode:
 def _detect_conn_type(connection: object) -> ConnType:
     """Extract ConnType from an iroh Connection object."""
     try:
+        # Try conn_type() method (iroh 0.35+)
         info = connection.conn_type()  # type: ignore[attr-defined]
         s = str(info).lower()
         if "direct" in s:
             return ConnType.DIRECT
         if "relay" in s:
             return ConnType.RELAY
+    except AttributeError:
+        # Fallback: try remote_address() for relay detection
+        try:
+            addr = str(connection.remote_address())  # type: ignore[attr-defined]
+            if "relay" in addr.lower():
+                return ConnType.RELAY
+            # If remote_address is an IP:port, assume direct
+            if ":" in addr and "." in addr:
+                return ConnType.DIRECT
+        except Exception:
+            pass
     except Exception:
         pass
     return ConnType.UNKNOWN
