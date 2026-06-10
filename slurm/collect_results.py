@@ -288,7 +288,7 @@ def _print_e2(e2: dict) -> None:
 
 
 def _print_e3(e3: dict) -> None:
-    _header("E3 · NAT Traversal (mock mode)")
+    _header("E3 · NAT Traversal (real: PC↔RPi across NAT)")
     if e3.get("status") != "ok":
         print(f"  [no data — {e3.get('status')}]")
         return
@@ -299,10 +299,6 @@ def _print_e3(e3: dict) -> None:
             f"  {scen:<22} {v['pct_direct'] or 0:>9.1f} {v['pct_relay'] or 0:>8.1f}"
             f" {v['pct_failed'] or 0:>9.1f}  {v['total'] or 0}"
         )
-    print(
-        "  NOTE: real NAT results (with netem) come from Docker runs,"
-        " not SLURM tasks."
-    )
 
 
 def _print_e5(e5: dict) -> None:
