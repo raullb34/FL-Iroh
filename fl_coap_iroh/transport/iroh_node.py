@@ -539,21 +539,21 @@ def _detect_conn_type(connection: object) -> ConnType:
         # Try conn_type() method (iroh 0.35+)
         info = connection.conn_type()  # type: ignore[attr-defined]
         s = str(info).lower()
-        if "direct" in s:
+        r = repr(info).lower()
+        log.warning("DEBUG conn_type() str=%r repr=%r type=%s", s, r, type(info).__name__)
+        if "direct" in s or "direct" in r:
             return ConnType.DIRECT
-        if "relay" in s:
+        if "relay" in s or "relay" in r or "mixed" in r:
             return ConnType.RELAY
     except AttributeError:
-        # Fallback: try remote_address() for relay detection
         try:
             addr = str(connection.remote_address())  # type: ignore[attr-defined]
             if "relay" in addr.lower():
                 return ConnType.RELAY
-            # If remote_address is an IP:port, assume direct
             if ":" in addr and "." in addr:
                 return ConnType.DIRECT
         except Exception:
             pass
-    except Exception:
-        pass
+    except Exception as e:
+        log.warning("DEBUG conn_type() exception: %s: %s", type(e).__name__, e)
     return ConnType.UNKNOWN
