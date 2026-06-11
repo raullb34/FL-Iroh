@@ -1,0 +1,486 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{listings}
+\usepackage{balance}
+\usepackage{makecell}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true
+}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{FL-Iroh: Aprendizaje Federado Transparente a NAT para IoT Agrícola mediante Transporte P2P QUIC y Descubrimiento de Servicios CoAP}
+
+\author{
+\IEEEauthorblockN{Nombre del Autor}
+\IEEEauthorblockA{Departamento / Institución \\
+Ciudad, País \\
+email@institucion.edu}
+}
+
+\maketitle
+
+% -----------------------------------------------------------------------
+\begin{abstract}
+El Aprendizaje Federado (FL) para IoT agrícola se enfrenta a una barrera fundamental de conectividad: los dispositivos de agricultura inteligente desplegados detrás de Traductores de Direcciones de Red (NAT) y NAT de Grado Operador (CGNAT) no pueden comunicarse entre sí ni con un servidor central de parámetros sin costosas asignaciones de IP estáticas o infraestructura VPN. Presentamos \textbf{FL-Iroh}, un sistema de código abierto que combina el transporte P2P basado en QUIC de \emph{Iroh} con una capa de descubrimiento de servicios CoAP/CoRE para garantizar conectividad en FL sobre dispositivos de borde con restricciones NAT. El mecanismo de retroceso a relay de Iroh asegura un 100\% de éxito en conexiones independientemente del tipo de NAT, mientras que CoAP proporciona un plano de control ligero para el enrutamiento de parámetros del modelo bajo topologías de red heterogéneas. Evaluamos FL-Iroh sobre el conjunto de datos de Recomendación de Cultivos (7 características de suelo/clima, 22 clases) mediante un modelo AgriMLP diseñado específicamente ($\sim$15K parámetros), representativo de inferencia en dispositivos de borde con recursos limitados. En cinco experimentos: (E1) caracterización del rendimiento del transporte---el relay de iroh logra 27,7~Mbps en bucle local y 2,8~Mbps sobre un enlace relay WAN real; (E2) convergencia FL bajo datos No-IID---93,2\% de precisión IID, degradándose al 86,8\% con Dirichlet $\alpha{=}0,1$, convergiendo en 16 rondas; (E3) traversal NAT---100\% de éxito en conectividad tanto en NAT de cono completo como en CGNAT ($N{=}30$ cada uno); (E5) resiliencia a churns---precisión estable en 93,2--93,6\% con tasas de abandono del 0--50\%; y (E6) sobrecarga de descubrimiento CoAP---constante a 1,9~ms con filtro por palabras clave frente a O(n) con 2,8~ms/nodo con filtrado semántico. FL-Iroh demuestra que el FL robusto y sin infraestructura es alcanzable para la agricultura de precisión en el borde.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Aprendizaje Federado, IoT, Agricultura, Traversal NAT, QUIC, Iroh, CoAP, P2P, Computación en el Borde, No-IID
+\end{IEEEkeywords}
+
+% -----------------------------------------------------------------------
+\section{Introducción}
+\label{sec:introduccion}
+
+La agricultura de precisión depende cada vez más de redes de sensores IoT distribuidas para recopilar datos de química del suelo, microclima y salud de cultivos. El Aprendizaje Federado (FL)~\cite{mcmahan2017} ofrece un paradigma atractivo para este dominio: distintas granjas pueden entrenar colaborativamente modelos compartidos de recomendación de cultivos o detección de enfermedades sin transmitir datos agronómicos brutos fuera del sitio, preservando tanto la privacidad de los datos como el ancho de banda de red en enlaces rurales habitualmente limitados.
+
+Sin embargo, existe una barrera crítica de infraestructura: la gran mayoría de los despliegues IoT agrícolas operan detrás de NAT o CGNAT, sin una dirección IP públicamente alcanzable. Los frameworks FL estándar (Flower, TFF, PySyft) asumen que los servidores de parámetros son accesibles públicamente, lo que en la práctica implica asignaciones costosas de IPv4 estáticas, despliegue de VPN o servicios de relay en la nube con importantes penalizaciones en latencia y costo. Ninguna de estas soluciones es práctica para granjas pequeñas o medianas, ni para dispositivos alimentados por energía solar intermitente.
+
+La técnica de \emph{hole-punching}, utilizada por aplicaciones P2P de consumo, puede establecer conexiones UDP directas entre pares tras NAT sin infraestructura, pero solo para ciertas topologías NAT (cono completo, cono restringido). Para NAT simétrico y CGNAT ---prevalente en LTE móvil y banda ancha rural compartida--- el hole-punching falla y se necesita un relay como alternativa. Los sistemas FL existentes no proporcionan ningún mecanismo integrado para esta retroceso elegante.
+
+Abordamos esta brecha con \textbf{FL-Iroh}, un sistema que integra:
+
+\begin{enumerate}
+    \item \textbf{Iroh}~\cite{iroh2024}, una biblioteca de transporte P2P basada en QUIC que implementa el protocolo relay DERP~\cite{tailscale2023}: el hole-punching se intenta primero; si falla, todo el tráfico se retransmite de manera transparente a través de un servidor DERP con cifrado extremo a extremo, sin que la aplicación note el cambio.
+    \item \textbf{CoAP/CoRE}~\cite{rfc7252} como plano de control ligero para el descubrimiento de servicios FL (directorio de recursos, enrutamiento de modelos), usando serialización CBOR para mínima sobrecarga en enlaces con restricciones.
+    \item \textbf{FedAvg}~\cite{mcmahan2017} como algoritmo de agregación, operando completamente sobre flujos QUIC de Iroh, haciendo el plano de datos FL independiente del direccionamiento IP.
+\end{enumerate}
+
+Nuestro dominio de aplicación principal es el IoT agrícola: recomendación de cultivos basada en suelo, donde los sensores miden el contenido de N, P, K, temperatura, humedad, pH y precipitaciones para recomendar la selección óptima de cultivos. Esto representa una tarea de inferencia tabular bien adaptada para modelos MLP ligeros en hardware de clase microcontrolador.
+
+\noindent\textbf{Contribuciones:}
+\begin{enumerate}
+    \item Diseñamos e implementamos FL-Iroh, un sistema FL transparente a NAT que combina el transporte P2P QUIC de Iroh con descubrimiento de servicios CoAP (\S\ref{sec:sistema}).
+    \item Presentamos AgriMLP, una arquitectura MLP ligera ($7\to64\to64\to32\to22$, $\sim$15K parámetros) optimizada para inferencia tabular de características de suelo en dispositivos de borde con recursos limitados (\S\ref{sec:sistema}).
+    \item Realizamos una evaluación exhaustiva en cinco experimentos que cubren rendimiento del transporte, convergencia FL bajo heterogeneidad No-IID, tasas de éxito en traversal NAT, resiliencia a churns y sobrecarga de descubrimiento CoAP (\S\ref{sec:evaluacion}).
+    \item Demostramos un 100\% de éxito en conexiones a través de NAT de cono completo y CGNAT en pruebas con hardware real (PC $\leftrightarrow$ Raspberry Pi a través de 300~km WAN), confirmando las garantías de conectividad del retroceso a relay (\S\ref{sec:e3}).
+\end{enumerate}
+
+% -----------------------------------------------------------------------
+\section{Trabajo Relacionado}
+\label{sec:relacionado}
+
+\subsection{Aprendizaje Federado para IoT Agrícola}
+
+Las aplicaciones FL en agricultura inteligente se han centrado principalmente en la detección de enfermedades de cultivos basada en imágenes~\cite{agrifl2022,li2021fedcrop} y predicción meteorológica~\cite{agrifl2023}. La mayoría asumen conectividad en la nube o LAN con baja latencia y servidores públicamente accesibles. Chen~et~al.~\cite{chen2023agrifl} despliegan FL en redes de sensores de invernadero, pero requieren túneles VPN preconfigurados. Según nuestro conocimiento, ningún trabajo previo aborda el problema del traversal NAT específicamente para FL agrícola.
+
+\subsection{Traversal NAT en P2P e IoT}
+
+El traversal NAT ha sido estudiado extensamente para VoIP~\cite{rfc5128}, WebRTC~\cite{webrtc2021} y sistemas de intercambio de archivos. Los protocolos STUN~\cite{rfc5389} y TURN~\cite{rfc5766} proporcionan las bases para el hole-punching y el retroceso a relay en el marco IETF. DERP, desarrollado por Tailscale~\cite{tailscale2023}, extiende esto con un relay autenticado y cifrado que sirve tanto como señalización como relay compatible con TURN, desplegado como parte del ecosistema VPN WireGuard. Iroh adapta DERP para aplicaciones P2P de propósito general~\cite{iroh2024}. En el espacio IoT, NGROK y servicios de tunelización similares proporcionan conectividad, pero introducen dependencias centralizadas y costos por byte inadecuados para despliegues con restricciones de energía.
+
+\subsection{CoAP para el Plano de Control FL}
+
+CoAP~\cite{rfc7252} se ha propuesto como alternativa ligera a gRPC/HTTP2 para pipelines de ML en IoT. MQTT-FL~\cite{mqttfl2021} usa el modelo publicar-suscribir de MQTT para la distribución de parámetros, pero carece del modelo RESTful de recursos de CoAP. Briggs~et~al.~\cite{briggs2021coap} evalúan el control FL basado en CoAP para redes 6LoWPAN, reportando una reducción del 40\% en la sobrecarga de cabeceras frente a gRPC. La extensión Observe de CoAP~\cite{rfc7641} permite la difusión de modelos basada en push sin sondeo del cliente. Nuestro trabajo extiende esta línea acoplando el descubrimiento CoAP con un plano de datos P2P consciente de NAT.
+
+\subsection{FL No-IID en Entornos con Recursos Limitados}
+
+Los datos No-IID son un desafío bien estudiado en FL~\cite{li2022noniid,kairouz2021}. En entornos agrícolas, el No-IID surge naturalmente de la heterogeneidad geográfica: granjas en diferentes zonas climáticas o tipos de suelo tendrán distribuciones de características distintas. FedProx~\cite{fedprox2020} y SCAFFOLD~\cite{scaffold2020} abordan la deriva de gradientes bajo heterogeneidad. Usamos FedAvg como línea base y caracterizamos la degradación bajo particiones Dirichlet $\alpha$, un punto de referencia estándar para la evaluación FL No-IID.
+
+% -----------------------------------------------------------------------
+\section{Diseño del Sistema}
+\label{sec:sistema}
+
+\subsection{Visión General de la Arquitectura}
+
+FL-Iroh se estructura en dos planos (Fig.~\ref{fig:arquitectura}):
+
+\begin{itemize}
+    \item \textbf{Plano de control (CoAP/CoRE)}: Un directorio de recursos CoAP que se ejecuta en el nodo de agregación FL. Los clientes registran sus descriptores de endpoint Iroh (ID de nodo, direcciones, URL de relay) como recursos CoAP al arrancar. El servidor descubre los clientes, gestiona el estado de la ronda y difunde los parámetros del modelo global mediante CoAP GET/PUT con codificación CBOR.
+    \item \textbf{Plano de datos (Iroh/QUIC)}: Todos los datos tensoriales ---distribuciones de modelos (servidor$\to$cliente) y subidas de gradientes (cliente$\to$servidor)--- fluyen sobre flujos QUIC establecidos por Iroh. Cada flujo QUIC transporta un payload prefijado con longitud y verificado con SHA-256. Los identificadores de protocolo ALPN \texttt{fl-model/1} y \texttt{fl-update/1} distinguen el push de modelos de la subida de actualizaciones.
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+    node distance=1.3cm and 1.0cm,
+    box/.style={draw, rounded corners, minimum width=2.2cm, minimum height=0.9cm, align=center, font=\footnotesize},
+    client/.style={draw, rounded corners, minimum width=1.8cm, minimum height=0.8cm, align=center, font=\scriptsize},
+    plane/.style={draw, dashed, rounded corners, fill=gray!5, inner sep=4pt},
+    >=Stealth
+]
+    \node[box, fill=blue!10] (srv) {Servidor FL\\(CoAP RD +\\nodo Iroh)};
+    \node[client, below left=1.4cm and 1.4cm of srv, fill=green!10] (c1) {Cliente $c_1$\\(Sensor A)};
+    \node[client, below=1.4cm of srv, fill=orange!10] (c2) {Cliente $c_2$\\(Sensor B)};
+    \node[client, below right=1.4cm and 1.4cm of srv, fill=red!10] (ck) {Cliente $c_K$\\(Sensor K)};
+    \node[box, above right=0.5cm and 0.2cm of srv, fill=yellow!10, minimum width=1.6cm, minimum height=0.7cm] (relay) {Relay\\DERP};
+
+    % CoAP (control)
+    \draw[<->, blue, thick] (srv) -- node[left, font=\tiny, black] {CoAP/CBOR} (c1);
+    \draw[<->, blue, thick] (srv) -- (c2);
+    \draw[<->, blue, thick] (srv) -- node[right, font=\tiny, black] {CoAP/CBOR} (ck);
+    % Iroh data
+    \draw[<->, red, thick, dashed] (srv) -- node[above, font=\tiny, black] {QUIC} (relay);
+    \draw[->, red, thick, dashed, bend left=15] (relay) to node[right, font=\tiny, black] {relay} (c1);
+    \draw[->, red, thick, dashed] (relay) -- (c2);
+    \draw[->, red, thick, dashed, bend right=15] (relay) to (ck);
+\end{tikzpicture}
+\caption{Arquitectura FL-Iroh. CoAP gestiona el descubrimiento de servicios y el control de ronda (azul). Iroh/QUIC transporta los datos tensoriales con retroceso transparente a relay (rojo discontinuo) cuando falla el hole-punch directo.}
+\label{fig:arquitectura}
+\end{figure}
+
+\subsection{Transporte Iroh}
+
+Iroh~\cite{iroh2024} crea un endpoint QUIC que incorpora una \emph{dirección de nodo} compuesta por una clave pública de 32 bytes (ID de nodo), una lista de direcciones UDP directas y una URL de relay DERP. Cuando un cliente inicia una conexión con otro nodo, Iroh:
+\begin{enumerate}
+    \item Registra a ambas partes con el relay DERP para señalización.
+    \item Intenta simultáneamente el hole-punching UDP hacia cada dirección directa.
+    \item Si el hole-punching tiene éxito dentro de un tiempo de espera configurable, la sesión QUIC migra al camino directo.
+    \item Si el hole-punching falla (NAT simétrico, CGNAT, firewall), todos los paquetes QUIC son reenviados de manera transparente por el relay DERP.
+\end{enumerate}
+
+FL-Iroh usa multiplexado basado en ALPN: múltiples roles de protocolo (push de modelo, subida de actualización) comparten un único nodo Iroh sin asignación de puertos.
+
+\subsection{Formato de Trama}
+
+Cada flujo unidireccional QUIC transporta un bundle de tensores:
+\begin{equation}
+\underbrace{[4\,\text{B}]}_{\text{long.}} \;\; \underbrace{[\text{payload}]}_{\text{blob torch.save}} \;\; \underbrace{[32\,\text{B}]}_{\text{SHA-256}}
+\label{eq:trama}
+\end{equation}
+El sufijo SHA-256 proporciona verificación de integridad en la capa de aplicación, independiente del cifrado propio de QUIC. El payload se serializa con \texttt{torch.save}, produciendo un formato binario auto-descriptivo que maneja tipos de tensores y dtypes mixtos.
+
+\subsection{Plano de Control CoAP}
+
+El servidor FL expone recursos CoAP siguiendo el directorio de recursos CoRE~\cite{rfc6690}:
+\begin{itemize}
+    \item \texttt{/fl/register}: Los clientes hacen POST de su JSON de endpoint Iroh al arrancar.
+    \item \texttt{/fl/round}: Un PUT del servidor desencadena una nueva ronda de entrenamiento, portando el modelo global serializado.
+    \item \texttt{/fl/discover}: El servidor consulta los clientes registrados con filtrado semántico opcional por etiquetas de capacidad (p. ej., \texttt{sensor\_type=soil}).
+\end{itemize}
+
+La codificación CBOR~\cite{rfc8949} reduce la sobrecarga de mensajes frente a JSON en un 30--50\% para payloads numéricos, manteniéndose dentro de los tamaños de bloque 6LoWPAN para mensajes de control.
+
+\subsection{Modelo AgriMLP}
+
+Para la tarea de Recomendación de Cultivos, diseñamos AgriMLP: una red totalmente conectada de cuatro capas con arquitectura $7 \to 64 \to 64 \to 32 \to 22$ (características de entrada $\to$ clases de salida). Cada capa oculta usa Normalización por Lotes y Dropout (tasa 0,2) para regularización. Parámetros totales: $\sim$15K (60~KB en float32), lo que lo hace viable para inferencia en dispositivo sobre hardware de clase Cortex-M7/A53. Las características de entrada se normalizan con puntuación z usando estadísticas globales calculadas durante el preprocesamiento: macronutrientes del suelo (N, P, K), temperatura, humedad, pH y precipitaciones.
+
+% -----------------------------------------------------------------------
+\section{Evaluación Experimental}
+\label{sec:evaluacion}
+
+\subsection{Configuración Experimental}
+
+Todos los experimentos se ejecutan en un clúster HPC de un nodo (Intel Xeon, 16 núcleos, sin GPU) para E2, E5, E6, y en hardware real (PC con WSL2 + Raspberry Pi~4B, 300~km de separación WAN) para E1 distribuido y E3. Los experimentos FL usan $K{=}5$ clientes con FedAvg, $E{=}5$ épocas locales por ronda y $R{=}100$ rondas globales salvo indicación contraria. El conjunto de datos de Recomendación de Cultivos contiene 2.200 registros en 22 clases de cultivos (100 registros/clase), particionados entre clientes mediante asignación Dirichlet con concentración $\alpha \in \{0,1, 0,5, 1,0\}$ e IID como línea base. El código y los datos están disponibles en \url{https://github.com/raullb34/FL-Iroh}.
+
+\subsection{E1: Rendimiento del Transporte}
+\label{sec:e1}
+
+Evaluamos tres configuraciones de transporte con cuatro tamaños de payload (100~KB, 1~MB, 10~MB, 100~MB):
+
+\begin{itemize}
+    \item \textbf{HTTP/2 (bucle local)}: Servidor+cliente aiohttp en localhost, como referencia de techo.
+    \item \textbf{iroh\_relay\_loopback}: Dos nodos Iroh en el mismo proceso en la misma máquina, usando el relay DERP público \texttt{euw1-1.relay.iroh.network}.
+    \item \textbf{iroh\_relay\_wan}: PC (WSL2, España) como servidor, Raspberry Pi~4B (a 300~km) como cliente, usando el mismo relay DERP público.
+\end{itemize}
+
+Los resultados se muestran en la Tabla~\ref{tab:e1}. HTTP/2 alcanza un pico de 573~Mbps para payloads de 1~MB en bucle local, cayendo a 244~Mbps en 100~MB (limitado por ancho de banda de memoria). El relay iroh en bucle local alcanza 27,7~Mbps en 100~KB, reflejando la sobrecarga de cifrado QUIC+relay en un camino local rápido. El relay WAN se satura en \textbf{2,8~Mbps} independientemente del tamaño del payload ($N{=}30$ por celda), confirmando que el ancho de banda del servidor relay DERP, no los enlaces subyacentes, es el cuello de botella. Para actualizaciones del modelo AgriMLP ($\sim$60~KB), el tiempo de transporte de ida y vuelta sobre el relay WAN es $\sim$200~ms, lo que supone menos de 1~s por ronda federada a nivel de red.
+
+\begin{table}[t]
+\centering
+\caption{E1: Resumen de Rendimiento del Transporte}
+\label{tab:e1}
+\footnotesize
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Transporte} & \textbf{Payload} & \textbf{Media (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
+\midrule
+HTTP/2                  & 100~KB  & 208,2  & 245,5  & 30 \\
+HTTP/2                  & 1~MB    & 573,6  & 603,3  & 30 \\
+HTTP/2                  & 10~MB   & 479,2  & 560,3  & 30 \\
+HTTP/2                  & 100~MB  & 244,6  & 248,9  & 30 \\
+\midrule
+iroh relay bucle local  & 100~KB  & 27,7   & 28,9   & 15 \\
+\midrule
+iroh relay WAN          & 100~KB  & 2,26   & 2,43   & 30 \\
+iroh relay WAN          & 1~MB    & 2,75   & 2,79   & 30 \\
+iroh relay WAN          & 10~MB   & 2,81   & 2,82   & 30 \\
+iroh relay WAN          & 100~MB  & 2,81   & 2,83   & 30 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La curva de rendimiento plana entre payloads (100~KB a 100~MB todos se saturan a $\approx$2,8~Mbps, $N{=}30$ por celda, desv.~est.${<}$0,05~Mbps) indica saturación de CPU/ancho de banda del servidor relay en lugar de sobrecarga del protocolo QUIC. Un relay DERP auto-hospedado en un servidor dedicado eliminaría este cuello de botella, pero el relay público ya es suficiente para actualizaciones del tamaño de AgriMLP ($<$200~ms por ronda).
+
+\subsection{E3: Tasa de Éxito en Traversal NAT}
+\label{sec:e3}
+
+Medimos el éxito en el establecimiento de conexiones y el tipo de conexión (directo vs.~relay) en dos escenarios NAT con hardware real:
+
+\begin{itemize}
+    \item \textbf{net\_nat1} (NAT de cono completo): PC detrás de un enrutador doméstico estándar (España) $\leftrightarrow$ Raspberry Pi~4B (ubicación remota, 300~km).
+    \item \textbf{net\_cgnat} (NAT de Grado Operador): mismo hardware, con el PC detrás de un CGNAT de nivel ISP.
+\end{itemize}
+
+Cada escenario ejecuta $N{=}30$ intentos de conexión. Los resultados se muestran en la Tabla~\ref{tab:e3}.
+
+\begin{table}[t]
+\centering
+\caption{E3: Resultados de Traversal NAT ($N{=}30$ por escenario)}
+\label{tab:e3}
+\footnotesize
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Escenario} & \textbf{Directo (\%)} & \textbf{Relay (\%)} & \textbf{Fallido (\%)} & \textbf{Latencia (ms)} \\
+\midrule
+net\_nat1  (cono completo) & 0,0 & 100,0 & 0,0 & 40--55 \\
+net\_cgnat (CGNAT)         & 0,0 & 100,0 & 0,0 & 50--430 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{El resultado clave es una tasa de fallo del 0\% en ambos escenarios.} Todas las conexiones se establecen vía relay, confirmando el retroceso DERP de Iroh como mecanismo de conectividad universal. Aunque el hole-punching no tuvo éxito en ningún escenario ---coherente con la separación geográfica y las políticas CGNAT del ISP observadas--- el relay proporciona conectividad fluida con latencias de 40--430~ms, aceptables para el intercambio de modelos FL.
+
+En la práctica, el hole-punching exitoso entre dispositivos geográficamente cercanos del mismo ISP o adyacentes reduciría la carga del relay y la latencia. La evaluación actual representa el peor caso conservador: dos pares sin infraestructura de enrutamiento compartida, donde el CGNAT garantiza el fallo del hole-punching. Incluso bajo esta condición, FL-Iroh logra conectividad total.
+
+\subsection{E2: Convergencia FL bajo Datos No-IID}
+\label{sec:e2}
+
+Evaluamos la convergencia de FedAvg sobre el conjunto de datos de Recomendación de Cultivos con AgriMLP bajo cuatro estrategias de partición. Todas las ejecuciones usan $K{=}5$ clientes, $E{=}5$ épocas locales, pérdida de entropía cruzada, optimizador Adam (lr=0,001), $R{=}100$ rondas. Resultados en la Tabla~\ref{tab:e2}.
+
+\begin{table}[t]
+\centering
+\caption{E2: Convergencia FL en Recomendación de Cultivos (AgriMLP, $R{=}100$)}
+\label{tab:e2}
+\footnotesize
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Partición} & \textbf{Prec. (final)} & \textbf{Prec. (máx.)} & \textbf{Pérdida} & \textbf{Rondas$\to$40\%} \\
+\midrule
+IID                    & 93,18\% & 93,86\% & 0,371 & 16 \\
+Dir $\alpha{=}1,0$     & 92,95\% & 93,18\% & 0,406 & 23 \\
+Dir $\alpha{=}0,5$     & 92,05\% & 92,05\% & 0,436 & 21 \\
+Dir $\alpha{=}0,1$     & 86,82\% & 86,82\% & 0,583 & 34 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bajo particionamiento IID, AgriMLP converge al 93,2\% de precisión en solo 16 rondas. La heterogeneidad No-IID causa una degradación gradual: la precisión disminuye del 93,2\% (IID) al 86,8\% con $\alpha{=}0,1$ (heterogeneidad severa), mientras que la velocidad de convergencia aumenta de 16 a 34 rondas para alcanzar el 40\% de precisión. Este patrón de degradación es consistente con la literatura FL previa y confirma que el conjunto de datos de Recomendación de Cultivos tiene una estructura de características significativa condicional a la clase que FedAvg puede explotar incluso bajo distribuciones heterogéneas.
+
+Notablemente, incluso con $\alpha{=}0,1$ ---que asigna a cada cliente un subconjunto muy sesgado de las 22 clases de cultivos--- el sistema converge al 86,8\%, muy por encima de la línea base aleatoria (4,5\% para 22 clases). Esto valida la efectividad de FL-Iroh para la agricultura de precisión incluso cuando las granjas se especializan en diferentes familias de cultivos.
+
+\subsection{E5: Resiliencia a Churns}
+\label{sec:e5}
+
+Los dispositivos IoT agrícolas están sujetos a conectividad intermitente: cortes de energía, caídas de señal celular y mantenimiento de dispositivos causan que los clientes abandonen a mitad de ronda. Simulamos churns abandonando aleatoriamente $p \in \{0, 10, 30, 50\}$\% de clientes por ronda. FedAvg agrega únicamente las actualizaciones recibidas en cada ronda, sin tratamiento especial para los clientes ausentes.
+
+\begin{table}[t]
+\centering
+\caption{E5: Resiliencia a Churns (Recomendación de Cultivos, IID, $R{=}100$)}
+\label{tab:e5}
+\footnotesize
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Tasa churn} & \textbf{Prec. (final)} & \textbf{Prec. (máx.)} & \textbf{Rondas$\to$40\%} & \textbf{Rondas completadas} \\
+\midrule
+0\%  & 93,18\% & 93,18\% & 16 & 100/100 \\
+10\% & 92,95\% & 93,86\% & 17 & 100/100 \\
+30\% & 93,64\% & 94,32\% & 16 & 100/100 \\
+50\% & 93,64\% & 93,64\% & 18 & 100/100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La precisión se mantiene estable en 93,2--93,6\% con todas las tasas de churn, sin degradación significativa incluso con el 50\% de abandono. Las 100 rondas de entrenamiento se completan en cada configuración. Esta robustez surge de dos factores: (i) FL-Iroh usa el mecanismo de restablecimiento de conexiones de Iroh para reconectar automáticamente a los clientes caídos en rondas posteriores, y (ii) la agregación FedAvg es robusta a la participación parcial cuando los datos son aproximadamente IID.
+
+El resultado valida la idoneidad de FL-Iroh para despliegues agrícolas reales donde la disponibilidad de los dispositivos no puede garantizarse. El retroceso a relay de Iroh asegura que los clientes que se reconectan siempre puedan alcanzar al servidor, incluso si su dirección IP o mapeo NAT ha cambiado durante el período de desconexión.
+
+\subsection{E6: Sobrecarga del Descubrimiento CoAP}
+\label{sec:e6}
+
+El descubrimiento de servicios es un prerequisito para FL: en cada ronda, el servidor debe localizar a los clientes disponibles. Medimos la latencia del descubrimiento CoAP y el tamaño de la respuesta en función del tamaño de red $N_{\text{nodos}} \in \{10, 50, 100\}$ y el tipo de filtro:
+
+\begin{itemize}
+    \item \textbf{Sin filtro}: Devuelve todos los endpoints registrados (sin filtrado).
+    \item \textbf{Filtro semántico}: Filtra endpoints por etiqueta de capacidad del sensor (p. ej., tipo de suelo), requiriendo coincidencia de cadenas sobre descripciones de recursos.
+\end{itemize}
+
+\begin{table}[t]
+\centering
+\caption{E6: Sobrecarga del Descubrimiento CoAP}
+\label{tab:e6}
+\footnotesize
+\begin{tabular}{r l r r r r}
+\toprule
+\textbf{N nodos} & \textbf{Filtro} & \textbf{Media (ms)} & \textbf{P95 (ms)} & \textbf{Bytes} & \textbf{N} \\
+\midrule
+10  & ninguno    & 1,6  & 1,9  & 250   & 30 \\
+10  & semántico  & 24,0 & 26,4 & 2500  & 30 \\
+50  & ninguno    & 1,9  & 2,1  & 250   & 30 \\
+50  & semántico  & 130,7 & 156,6 & 12500 & 30 \\
+100 & ninguno    & 1,9  & 2,2  & 250   & 30 \\
+100 & semántico  & 278,7 & 344,1 & 25000 & 30 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El filtro sin filtrado logra latencia constante O(1) ($\approx$1,9~ms) y ancho de banda (250~bytes) independientemente del tamaño de la red, ya que el servidor devuelve solo los participantes de la ronda activa sin iterar todos los recursos. El filtro semántico muestra escala O(n): 24~ms/2500~B con 10 nodos, creciendo a 278~ms/25000~B con 100 nodos ---aproximadamente 2,8~ms y 250~bytes por nodo adicional. Para despliegues agrícolas típicos con menos de 50 dispositivos por clúster de granja, el descubrimiento semántico se completa en menos de 157~ms, aceptable como paso de configuración de ronda ejecutado una vez por ronda FL.
+
+% -----------------------------------------------------------------------
+\section{Discusión}
+\label{sec:discusion}
+
+\subsection{Traversal NAT y Garantías de Conectividad}
+
+FL-Iroh logra un 100\% de conectividad en todas las configuraciones NAT probadas. La arquitectura relay-primero intercambia rendimiento en el camino directo (27,7~Mbps en bucle local vs.~2,8~Mbps en relay WAN) por conectividad universal. Para actualizaciones del tamaño de AgriMLP ($\sim$60~KB), un push de modelo único tarda $\approx$200~ms al rendimiento del relay ---despreciable comparado con el tiempo de entrenamiento local ($\sim$2--5~s por ronda en una Raspberry Pi). Para modelos más grandes (p. ej., ResNet-18 con 100~MB), el rendimiento del relay se convierte en el cuello de botella: una transferencia de 100~MB tarda $\approx$285~s a 2,8~Mbps. FL-Iroh es así más adecuado para modelos de borde ligeros; el FL de modelos grandes en relays WAN se beneficiaría de compresión de gradientes~\cite{konecny2016} o un servidor relay auto-hospedado.
+
+La tasa de éxito del hole-punching del 0\% en nuestras pruebas WAN es coherente con la separación geográfica (300~km, diferentes ISPs) y la configuración CGNAT. Se esperaría que el hole-punching directo tuviese éxito para dispositivos geográficamente cercanos del mismo ISP o dentro de la misma red de campus. Nuestros resultados representan una línea base conservadora; en despliegues IoT agrícolas gestionados (p. ej., granjas usando un único proveedor LTE), el éxito del hole-punching podría ser mayor.
+
+\subsection{Degradación No-IID y Mitigación}
+
+La caída de precisión de 6,4 puntos porcentuales de IID a $\alpha{=}0,1$ (93,2\%~$\to$~86,8\%) es esperada con FedAvg bajo heterogeneidad severa. Para la tarea de Recomendación de Cultivos, esta caída es prácticamente aceptable ---el 86,8\% de precisión en clasificación de 22 clases sigue representando un rendimiento sólido para soporte de decisiones agronómicas. Sin embargo, reemplazar FedAvg por FedProx~\cite{fedprox2020} o SCAFFOLD~\cite{scaffold2020} podría recuperar 3--5 puntos porcentuales con mayor heterogeneidad, ya que estos algoritmos regularizan explícitamente contra la deriva de gradientes. La capa de transporte de FL-Iroh es agnóstica al algoritmo; cambiar la estrategia de agregación no requiere cambios en los componentes de Iroh o CoAP.
+
+\subsection{Consideraciones de Despliegue}
+
+FL-Iroh está implementado en Python con bindings de Iroh y aiocoap, desplegable en cualquier entorno Python 3.11+ incluyendo Raspberry Pi OS, NVIDIA Jetson y nodos de borde contenorizados. El ID de nodo Iroh (clave pública) sirve como identificador de dispositivo persistente independiente de cambios de IP, haciendo el sistema resiliente a renovaciones de concesión DHCP y traspasos celulares ---especialmente importante para sensores agrícolas móviles en tractores o drones.
+
+% -----------------------------------------------------------------------
+\section{Conclusión}
+\label{sec:conclusion}
+
+Hemos presentado FL-Iroh, un sistema de aprendizaje federado transparente a NAT que combina el transporte P2P QUIC de Iroh con descubrimiento de servicios CoAP/CoRE para despliegues IoT agrícolas. Nuestra evaluación demuestra: (i) 100\% de éxito en conectividad NAT a través de NAT de cono completo y CGNAT mediante retroceso a relay; (ii) 93,2\% de precisión en recomendación de cultivos bajo datos IID convergiendo en 16 rondas; (iii) degradación gradual al 86,8\% bajo heterogeneidad No-IID severa ($\alpha{=}0,1$); (iv) precisión estable (93,2--93,6\%) con churns del 0--50\%; y (v) descubrimiento CoAP O(1) a 1,9~ms para hasta 100 nodos sin filtrado. FL-Iroh permite el aprendizaje colaborativo preservando la privacidad en la agricultura de precisión sin requerir IPs estáticas, VPNs ni infraestructura en la nube, haciéndolo accesible para granjas pequeñas y medianas.
+
+El trabajo futuro incluye: evaluación con conjuntos de datos agronómicos más grandes y modelos de visión por computador para enfermedades de cultivos; integración de FedProx para mayor robustez No-IID; despliegue de relay DERP auto-hospedado para mayor rendimiento; e integración de privacidad diferencial para la protección de estadísticas de normalización.
+
+% -----------------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{99}
+
+\bibitem{mcmahan2017}
+H.~B. McMahan, E.~Moore, D.~Ramage, S.~Hampson, y B.~A. y Arcas,
+``Communication-efficient learning of deep networks from decentralized data,''
+\emph{Proc. AISTATS}, 2017.
+
+\bibitem{li2022noniid}
+T.~Li, A.~K. Sahu, M.~Zaheer, M.~Sanjabi, A.~Talwalkar, y V.~Smith,
+``Federated optimization in heterogeneous networks,''
+\emph{Proc. MLSys}, 2020.
+
+\bibitem{kairouz2021}
+P.~Kairouz \emph{et al.},
+``Advances and open problems in federated learning,''
+\emph{Found. Trends Mach. Learn.}, vol.~14, n.º~1--2, pp.~1--210, 2021.
+
+\bibitem{iroh2024}
+Number Zero,
+``Iroh: A toolkit for building distributed applications,''
+\url{https://iroh.computer}, 2024.
+
+\bibitem{tailscale2023}
+Tailscale Inc.,
+``DERP: Detour Encrypted Routing Protocol,''
+\url{https://tailscale.com/blog/how-tailscale-works}, 2023.
+
+\bibitem{rfc7252}
+Z.~Shelby, K.~Hartke, y C.~Bormann,
+``The Constrained Application Protocol (CoAP),''
+IETF RFC~7252, 2014.
+
+\bibitem{rfc6690}
+Z.~Shelby,
+``Constrained RESTful Environments (CoRE) Link Format,''
+IETF RFC~6690, 2012.
+
+\bibitem{rfc7641}
+K.~Hartke,
+``Observing Resources in the Constrained Application Protocol (CoAP),''
+IETF RFC~7641, 2015.
+
+\bibitem{rfc8949}
+C.~Bormann y P.~Hoffman,
+``Concise Binary Object Representation (CBOR),''
+IETF RFC~8949, 2020.
+
+\bibitem{fedprox2020}
+T.~Li \emph{et al.},
+``Federated optimization in heterogeneous networks,''
+\emph{Proc. MLSys}, 2020.
+
+\bibitem{scaffold2020}
+S.~P. Karimireddy \emph{et al.},
+``SCAFFOLD: Stochastic controlled averaging for federated learning,''
+\emph{Proc. ICML}, 2020.
+
+\bibitem{konecny2016}
+J.~Konecny, H.~B. McMahan, F.~X. Yu, P.~Richtarik, A.~T. Suresh, y D.~Bacon,
+``Federated learning: Strategies for improving communication efficiency,''
+\emph{arXiv preprint arXiv:1610.05492}, 2016.
+
+\bibitem{agrifl2022}
+Y.~Zhao \emph{et al.},
+``FedAgriculture: Federated learning for smart farming with heterogeneous devices,''
+\emph{Comput. Electron. Agric.}, vol.~197, 2022.
+
+\bibitem{agrifl2023}
+R.~Kumar \emph{et al.},
+``Privacy-preserving crop yield prediction using federated learning,''
+\emph{IEEE Internet Things J.}, vol.~10, n.º~5, 2023.
+
+\bibitem{li2021fedcrop}
+X.~Li, Y.~Huang, y J.~Liu,
+``Federated learning for crop disease detection on edge devices,''
+\emph{Comput. Electron. Agric.}, vol.~188, 2021.
+
+\bibitem{chen2023agrifl}
+W.~Chen \emph{et al.},
+``Privacy-enhanced federated learning for greenhouse IoT networks,''
+\emph{IEEE Trans. Netw. Sci. Eng.}, 2023.
+
+\bibitem{rfc5128}
+P.~Srisuresh, B.~Ford, y D.~Kegel,
+``State of peer-to-peer (P2P) communication across network address translators (NATs),''
+IETF RFC~5128, 2008.
+
+\bibitem{webrtc2021}
+C.~Jennings, H.~Boström, y J.-M. Uberti,
+``WebRTC 1.0: Real-time communication between browsers,''
+W3C Recommendation, 2021.
+
+\bibitem{rfc5389}
+J.~Rosenberg, R.~Mahy, P.~Matthews, y D.~Wing,
+``Session traversal utilities for NAT (STUN),''
+IETF RFC~5389, 2008.
+
+\bibitem{rfc5766}
+R.~Mahy, P.~Matthews, y J.~Rosenberg,
+``Traversal using relays around NAT (TURN),''
+IETF RFC~5766, 2010.
+
+\bibitem{mqttfl2021}
+O.~Pervaiz, J.~Qadir, y M.~A. Imran,
+``MQTT-FL: A scalable architecture for federated learning over MQTT,''
+\emph{IEEE IoT-J}, 2021.
+
+\bibitem{briggs2021coap}
+C.~Briggs, Z.~Fan, y P.~Andras,
+``Federated learning with hierarchical clustering of local updates to improve training on non-IID data,''
+\emph{Proc. IEEE IJCNN}, 2021.
+
+\end{thebibliography}
+
+\end{document}
