@@ -211,71 +211,67 @@ def _make_iroh_adapters(
     iroh_module: object,
     queue: "_IrohAcceptQueue",
     alpns: list,
+    main_loop: asyncio.AbstractEventLoop,
 ) -> dict:  # type: ignore[return]
     """Create per-ALPN ProtocolCreator instances at runtime.
 
-    The handler reads the full stream payload *inside* accept() so that no
-    Connection object is passed across thread boundaries.  This fixes the
-    cross-thread accept_uni() failure seen with iroh 0.35 Python bindings.
-
-    Compatible with both iroh 0.35 (accept receives Connection directly) and
-    iroh 1.0+ (accept receives Accepting which must be awaited to get Connection).
+    Key design: ProtocolHandler.accept() runs in a Rust/Tokio thread (uniffi).
+    We must NOT await iroh stream methods there — they require the main asyncio
+    event loop.  Instead we schedule the actual stream reading via
+    run_coroutine_threadsafe and return from accept() immediately.
+    The closure reference to `conn` keeps the Connection alive in Python's
+    reference count while the scheduled coroutine is pending.
     """
     iroh = iroh_module  # type: ignore[assignment]
+
+    async def _read_and_enqueue(conn: object, alpn: bytes) -> None:
+        """Run on main asyncio event loop: read stream and put transfer in queue."""
+        t_start = time.monotonic() * 1000
+        try:
+            conn_type = _detect_conn_type(conn)
+            recv_stream = await conn.accept_uni()  # type: ignore[attr-defined]
+
+            raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
+            payload_len = struct.unpack(">I", raw_len)[0]
+            if payload_len > MAX_PAYLOAD_BYTES:
+                raise ValueError(f"Payload too large: {payload_len}")
+
+            payload = await recv_stream.read_exact(payload_len)
+
+            received_hash = await recv_stream.read_exact(_HASH_SUFFIX_BYTES)
+            if hashlib.sha256(payload).digest() != received_hash:
+                raise ValueError("SHA-256 integrity check failed")
+
+            t_done = time.monotonic() * 1000
+            await queue.enqueue(_AcceptedTransfer(
+                alpn          = alpn,
+                payload       = payload,
+                conn_type     = conn_type,
+                recv_start_ms = t_start,
+                recv_done_ms  = t_done,
+            ))
+            log.debug(
+                "iroh recv [%r]: %dB conn_type=%s in %.0fms",
+                alpn, payload_len, conn_type.value, t_done - t_start,
+            )
+        except Exception as exc:
+            log.warning(
+                "iroh accept/read error [%r]: %s: %s",
+                alpn, type(exc).__name__, exc,
+            )
 
     class _Handler(iroh.ProtocolHandler):  # type: ignore[name-defined]
         def __init__(self, q: "_IrohAcceptQueue", alpn: bytes) -> None:
             self._q    = q
             self._alpn = alpn
 
-        async def accept(self, conn_or_accepting: object) -> None:
-            t_start = time.monotonic() * 1000
-            # iroh 1.0+ passes an Accepting object; 0.35 passes a Connection directly.
-            conn = conn_or_accepting
-            if hasattr(conn_or_accepting, "accept") and not hasattr(conn_or_accepting, "accept_uni"):
-                try:
-                    conn = await conn_or_accepting.accept()  # type: ignore[attr-defined]
-                except Exception as exc:
-                    log.warning("iroh handshake failed [%r]: %s: %s",
-                                self._alpn, type(exc).__name__, exc)
-                    return
-
-            # Read the full stream inside this handler to avoid cross-thread
-            # Connection references on the main asyncio event loop.
-            try:
-                conn_type = _detect_conn_type(conn)
-                recv_stream = await conn.accept_uni()  # type: ignore[attr-defined]
-
-                raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
-                payload_len = struct.unpack(">I", raw_len)[0]
-                if payload_len > MAX_PAYLOAD_BYTES:
-                    raise ValueError(f"Payload too large: {payload_len}")
-
-                payload = await recv_stream.read_exact(payload_len)
-
-                received_hash = await recv_stream.read_exact(_HASH_SUFFIX_BYTES)
-                if hashlib.sha256(payload).digest() != received_hash:
-                    raise ValueError("SHA-256 integrity check failed")
-
-                t_done = time.monotonic() * 1000
-                transfer = _AcceptedTransfer(
-                    alpn          = self._alpn,
-                    payload       = payload,
-                    conn_type     = conn_type,
-                    recv_start_ms = t_start,
-                    recv_done_ms  = t_done,
-                )
-                await self._q.enqueue(transfer)
-                log.debug(
-                    "iroh accept [%r]: %dB conn_type=%s in %.0fms",
-                    self._alpn, payload_len, conn_type.value,
-                    t_done - t_start,
-                )
-            except Exception as exc:
-                log.warning(
-                    "iroh accept/read error [%r]: %s: %s",
-                    self._alpn, type(exc).__name__, exc,
-                )
+        async def accept(self, conn: object) -> None:
+            # Schedule stream reading on main asyncio event loop and return
+            # immediately.  conn is kept alive by the coroutine closure.
+            asyncio.run_coroutine_threadsafe(
+                _read_and_enqueue(conn, self._alpn),
+                main_loop,
+            )
 
         async def shutdown(self) -> None:
             pass
@@ -362,7 +358,7 @@ class IrohTransportNode:
             # Build shared accept queue and register per-ALPN handlers.
             # Adapter classes must be defined after iroh is imported (uniffi requirement).
             self._accept_queue = _IrohAcceptQueue()
-            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC])
+            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC], _main_loop)
 
             options = iroh.NodeOptions(protocols=creators)
 
