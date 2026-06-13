@@ -48,9 +48,9 @@ else
     PYVER="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
     PYMAJ="${PYVER%%.*}"
     PYMIN="${PYVER##*.}"
-    if [[ "${PYMAJ}" -lt 3 ]] || { [[ "${PYMAJ}" -eq 3 ]] && [[ "${PYMIN}" -lt 11 ]]; }; then
-        echo "[error] Python 3.11+ required (found ${PYVER})"
-        echo "        Try: module load python/3.11  (or use --conda)"
+    if [[ "${PYMAJ}" -lt 3 ]] || { [[ "${PYMAJ}" -eq 3 ]] && [[ "${PYMIN}" -lt 9 ]]; }; then
+        echo "[error] Python 3.9+ required (found ${PYVER})"
+        echo "        Try: module load python/3.9  (or use --conda)"
         exit 1
     fi
     if [[ -d "${VENV}" ]]; then

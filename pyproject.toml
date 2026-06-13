@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "fl-coap-iroh"
 version = "0.1.0"
 description = "Federated Learning with CoAP/CoRE control plane and Iroh/QUIC P2P data plane for edge/NAT-constrained environments"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "PhD Candidate" }]
 keywords = ["federated-learning", "coap", "iroh", "quic", "edge-computing", "p2p", "nat-traversal"]
