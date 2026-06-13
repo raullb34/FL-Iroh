@@ -104,8 +104,32 @@ mkdir -p \
     results/e2 \
     results/e3 \
     results/e5 \
-    results/e6
+    results/e6 \
+    results/e7
 echo "[setup] Created results/ subdirectories."
+
+# ── CmdStan (required for Prophet / E7 FedGAM) ───────────────────────────────
+echo "[setup] Checking cmdstan for Prophet ..."
+"${PYTHON}" - <<'PYEOF'
+import sys
+from pathlib import Path
+
+cmdstan_home = Path.home() / ".cmdstan"
+if cmdstan_home.exists() and any(cmdstan_home.iterdir()):
+    print(f"[setup] cmdstan already installed at {cmdstan_home}")
+    sys.exit(0)
+
+print("[setup] Installing cmdstan (required for Prophet FedGAM) ...")
+print("[setup] This may take 5-10 minutes on first run ...")
+try:
+    import cmdstanpy
+    cmdstanpy.install_cmdstan()
+    print("[setup] cmdstan installed OK")
+except Exception as exc:
+    print(f"[warn]  cmdstan install failed: {exc}")
+    print("[warn]  Prophet will fall back to majority-class predictor in E7.")
+    sys.exit(0)   # non-fatal — AirMLP experiments still work without cmdstan
+PYEOF
 
 # ── Smoke test ────────────────────────────────────────────────────────────────
 echo ""
@@ -118,6 +142,7 @@ echo ""
 echo "  Environment:   ${VENV:-conda:fl_iroh}"
 echo "  Submit jobs:   bash slurm/submit.sh"
 echo "  Single task:   bash slurm/submit.sh --array=0"
+echo "  Submit E7:     bash slurm/submit.sh --array=8"
 echo "  Collect data:  python slurm/collect_results.py"
 echo ""
 echo "  FL_MOCK_IROH=1 sbatch slurm/run_experiments.sh"

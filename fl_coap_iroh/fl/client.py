@@ -201,7 +201,7 @@ class FLClient:
             self.train_dataset,
             batch_size=self._policy.batch_size,
             shuffle=True,
-            drop_last=False,
+            drop_last=True,   # avoids single-sample batches that break BatchNorm1d
             num_workers=0,
         )
         optimizer = optim.SGD(
