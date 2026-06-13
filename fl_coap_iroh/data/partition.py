@@ -2,16 +2,20 @@
 Dataset loading and FL partitioning (IID and Dirichlet non-IID).
 
 Supported datasets:
-  cifar10  — 50K train / 10K test, 10 classes, 32×32 RGB
-  mnist    — 60K train / 10K test, 10 classes, 28×28 greyscale
-  fmnist   — same shape as MNIST (Fashion-MNIST)
-  crop     — Crop Recommendation (2200 samples, 7 features, 22 classes)
-             Place CSV at data/Crop_recommendation.csv
-             Download: kaggle datasets download -d atharvaingle/crop-recommendation-dataset
+  cifar10     — 50K train / 10K test, 10 classes, 32×32 RGB
+  mnist       — 60K train / 10K test, 10 classes, 28×28 greyscale
+  fmnist      — same shape as MNIST (Fashion-MNIST)
+  crop        — Crop Recommendation (2200 samples, 7 features, 22 classes)
+               Place CSV at data/Crop_recommendation.csv
+               Download: kaggle datasets download -d atharvaingle/crop-recommendation-dataset
+  air_quality — CyL daily air-quality (2011-2019, 10 provinces, 3 ICA classes)
+               Requires: data/air-quailty/datasets/air_quality_fl_classification.csv
+               Generate: python data/air-quailty/notebooks/preprocess_e7.py
 
 Partitioning strategies:
   iid        — random shuffle, equal split
   dirichlet  — Dirichlet(α) label distribution; smaller α = more non-IID
+  geographic — one Subset per province (natural non-IID; air_quality only)
 
 Typical FL benchmark settings:
   α = 0.5  — moderate heterogeneity (default)
@@ -182,12 +186,84 @@ def load_crop(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     return train_ds, test_ds
 
 
+def load_air_quality(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
+    """
+    CyL Air Quality Dataset — tabular, 6 features, 3 ICA classes.
+
+    Expected file: <data_dir>/air-quailty/datasets/air_quality_fl_classification.csv
+    Generate with: python data/air-quailty/notebooks/preprocess_e7.py
+
+    Features (z-score normalised): NO2, O3, PM_particle, CO, velmedia, prec
+    Labels:  0=Bueno, 1=Regular, 2=Malo  (ICA thresholds on NO2)
+    Clients: 10 provinces of Castilla y León  (natural geographic non-IID)
+    Train:   2011–2018  |  Test: 2019
+    """
+    import csv
+
+    csv_path = Path(data_dir) / "air-quailty" / "datasets" / "air_quality_fl_classification.csv"
+    if not csv_path.exists():
+        raise FileNotFoundError(
+            f"Air quality classification CSV not found at {csv_path}.\n"
+            "Generate it with:\n"
+            "  python data/air-quailty/notebooks/preprocess_e7.py"
+        )
+
+    feature_cols = ["NO2", "O3", "PM_particle", "CO", "velmedia", "prec"]
+    label_col    = "label_ica"
+    split_col    = "split"
+    prov_col     = "provincia"
+
+    train_feats: list[list[float]] = []
+    train_labels: list[int] = []
+    train_provs: list[str]  = []
+    test_feats: list[list[float]] = []
+    test_labels: list[int] = []
+    test_provs: list[str]  = []
+
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                feats = [float(row[c]) for c in feature_cols]
+            except (ValueError, KeyError):
+                continue
+            label = int(row[label_col])
+            prov  = row[prov_col].strip()
+            if row[split_col] == "train":
+                train_feats.append(feats)
+                train_labels.append(label)
+                train_provs.append(prov)
+            else:
+                test_feats.append(feats)
+                test_labels.append(label)
+                test_provs.append(prov)
+
+    X_train = torch.tensor(train_feats, dtype=torch.float32)
+    y_train = torch.tensor(train_labels, dtype=torch.int64)
+    X_test  = torch.tensor(test_feats,  dtype=torch.float32)
+    y_test  = torch.tensor(test_labels, dtype=torch.int64)
+
+    train_ds = TensorDataset(X_train, y_train)
+    test_ds  = TensorDataset(X_test,  y_test)
+
+    # Attach province metadata for geographic partition
+    train_ds.provinces = train_provs  # type: ignore[attr-defined]
+    test_ds.provinces  = test_provs   # type: ignore[attr-defined]
+
+    log.info(
+        "Air quality dataset loaded: %d train / %d test | 6 features | 3 classes",
+        len(train_ds), len(test_ds),
+    )
+    return train_ds, test_ds
+
+
 def load_dataset(name: str, data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     loaders = {
-        "cifar10": load_cifar10,
-        "mnist":   load_mnist,
-        "fmnist":  load_fmnist,
-        "crop":    load_crop,
+        "cifar10"    : load_cifar10,
+        "mnist"      : load_mnist,
+        "fmnist"     : load_fmnist,
+        "crop"       : load_crop,
+        "air_quality": load_air_quality,
     }
     if name not in loaders:
         raise ValueError(f"Unknown dataset '{name}'. Choose from {list(loaders)}")
@@ -289,6 +365,43 @@ def partition_dirichlet(
     return subsets
 
 
+def partition_geographic(dataset: Dataset) -> list[Subset]:
+    """
+    Geographic partition for the air_quality dataset.
+
+    Returns one Subset per province (10 clients for Castilla y León).
+    Province membership is read from the `provinces` attribute attached by
+    load_air_quality().  Provinces are sorted alphabetically so client index
+    is deterministic without requiring a seed.
+
+    Args:
+        dataset: TensorDataset produced by load_air_quality(), with
+                 a .provinces list attribute.
+
+    Returns:
+        List of Subset objects, one per province, sorted alphabetically.
+    """
+    if not hasattr(dataset, "provinces"):
+        raise ValueError(
+            "partition_geographic requires a dataset with a .provinces attribute. "
+            "Use load_air_quality() to obtain one."
+        )
+    provinces: list[str] = dataset.provinces  # type: ignore[attr-defined]
+    unique_provs = sorted(set(provinces))
+
+    prov_to_idx: dict[str, list[int]] = {p: [] for p in unique_provs}
+    for i, p in enumerate(provinces):
+        prov_to_idx[p].append(i)
+
+    subsets = [Subset(dataset, prov_to_idx[p]) for p in unique_provs]
+    sizes   = [len(s) for s in subsets]
+    log.info(
+        "Geographic partition: %d provinces  min=%d  max=%d  mean=%.0f",
+        len(unique_provs), min(sizes), max(sizes), float(sum(sizes) / len(sizes)),
+    )
+    return subsets
+
+
 def partition_dataset(
     dataset   : Dataset,
     n_clients : int,
@@ -301,7 +414,11 @@ def partition_dataset(
         return partition_iid(dataset, n_clients, seed=seed)
     if strategy == "dirichlet":
         return partition_dirichlet(dataset, n_clients, alpha=alpha, seed=seed)
-    raise ValueError(f"Unknown partition strategy '{strategy}'. Use 'iid' or 'dirichlet'.")
+    if strategy == "geographic":
+        return partition_geographic(dataset)
+    raise ValueError(
+        f"Unknown partition strategy '{strategy}'. Use 'iid', 'dirichlet', or 'geographic'."
+    )
 
 
 # ---------------------------------------------------------------------------

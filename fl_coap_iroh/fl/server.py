@@ -17,7 +17,7 @@ import asyncio
 import logging
 import random
 import time
-from typing import Optional
+from typing import Callable, Optional
 
 import torch
 import torch.nn as nn
@@ -77,11 +77,13 @@ class FLServer:
         relay_url    : Optional[str] = None,
         scenario     : str           = "net_lan",
         architecture : str           = "B",
+        aggregator_fn: Optional[Callable] = None,
     ) -> None:
-        self.node_id  = node_id
-        self.model    = model
-        self.test_ds  = test_dataset
-        self.policy   = policy
+        self.node_id      = node_id
+        self.model        = model
+        self.test_ds      = test_dataset
+        self.policy       = policy
+        self._aggregator_fn = aggregator_fn if aggregator_fn is not None else fedavg_aggregate
 
         # CoAP server (control plane)
         ds_desc = DatasetDescriptor(
@@ -233,7 +235,7 @@ class FLServer:
             raise RuntimeError("No updates received this round")
 
         # --- Aggregate ---
-        aggregated = fedavg_aggregate(updates)
+        aggregated = self._aggregator_fn(updates)
         self.model.load_state_dict(aggregated)
 
         # Update CoAP model descriptor

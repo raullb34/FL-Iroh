@@ -14,6 +14,7 @@
 #   5 — E3  NAT traversal mock + E6 CoAP overhead (~1-2 h)
 #   6 — E2  crop IID + Dirichlet α=0.1/0.5/1.0  (~12-18 h)
 #   7 — E5  churn resilience, crop dataset       (~20-28 h)
+#   8 — E7  air quality FL: AirMLP+FedAvg + ProphetWrapper+FedGAM (~1-2 h)
 # =============================================================================
 #SBATCH --job-name=fl_iroh_exp
 #SBATCH --partition=all
@@ -22,7 +23,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32G
 #SBATCH --time=36:00:00
-#SBATCH --array=0-5
+#SBATCH --array=0-8
 #SBATCH --output=results/logs/slurm_%A_%a.out
 #SBATCH --error=results/logs/slurm_%A_%a.err
 
@@ -241,6 +242,21 @@ case "${TASK_ID}" in
             "experiments.e5_churn" \
             --rounds 100 --n-clients 10 --dataset crop \
             --churn-rates "0.0,0.1,0.3,0.5"
+        ;;
+
+    8)  # E7 — Air quality FL: 7-day-ahead ICA forecasting (outdoor, CyL stations)
+        export FL_MOCK_IROH=1
+        # AirMLP + FedAvg (geographic partition + IID)
+        run_exp "e7_airmlp" "e7" \
+            "experiments.e7_air_quality_fl" \
+            --configs airmlp_geographic airmlp_iid \
+            --rounds 50
+
+        # ProphetWrapper + FedGAM (geographic partition + IID)
+        run_exp "e7_prophet" "e7" \
+            "experiments.e7_air_quality_fl" \
+            --configs prophet_geographic prophet_iid \
+            --rounds 10
         ;;
 
     *)  echo "ERROR: unexpected SLURM_ARRAY_TASK_ID=${TASK_ID}"
