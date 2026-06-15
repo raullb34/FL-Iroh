@@ -3,11 +3,13 @@
 # FL-Iroh — Submit the SLURM experiment array job
 #
 # Usage:
-#   bash slurm/submit.sh                   # submit all tasks (0-8)
+#   bash slurm/submit.sh                   # submit all tasks (0-10)
 #   bash slurm/submit.sh --array=0         # re-run only task 0 (E1)
 #   bash slurm/submit.sh --array=1-3       # re-run E2 variants only
 #   bash slurm/submit.sh --array=4         # re-run E5 only
-#   bash slurm/submit.sh --array=8         # re-run only E7 (air quality FL)
+#   bash slurm/submit.sh --array=8         # re-run only E7 (air quality FL, 12 configs)
+#   bash slurm/submit.sh --array=9         # re-run E8 baseline + energy estimation
+#   bash slurm/submit.sh --array=10        # re-run multi-seed replication (CIs)
 #
 # Any extra flags are forwarded verbatim to sbatch, e.g.:
 #   bash slurm/submit.sh --mail-type=END --mail-user=you@example.com
@@ -40,7 +42,8 @@ mkdir -p \
     "${REPO_ROOT}/results/e3" \
     "${REPO_ROOT}/results/e5" \
     "${REPO_ROOT}/results/e6" \
-    "${REPO_ROOT}/results/e7"
+    "${REPO_ROOT}/results/e7" \
+    "${REPO_ROOT}/results/e8"
 
 # ── Submit ────────────────────────────────────────────────────────────────────
 cd "${REPO_ROOT}"

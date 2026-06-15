@@ -77,6 +77,17 @@ def _no2_to_ica(no2: float) -> int:
     return 2
 
 
+# state_dict keys that encode the SHARED periodic structure (federated by FedGAM).
+# Everything else in the state_dict (k_trend, m_trend, delta_trend) is LOCAL trend.
+SEASONALITY_KEYS = (
+    "sin_year",
+    "cos_year",
+    "sin_week",
+    "cos_week",
+    "beta_velmedia",
+)
+
+
 class ProphetWrapper(nn.Module):
     """
     Prophet GAM wrapped as an nn.Module for FL compatibility.
@@ -93,10 +104,12 @@ class ProphetWrapper(nn.Module):
         self,
         n_annual: int = N_FOURIER_ANNUAL,
         n_weekly: int = N_FOURIER_WEEKLY,
+        n_changepoints: int = 15,
     ) -> None:
         super().__init__()
         self.n_annual = n_annual
         self.n_weekly = n_weekly
+        self.n_changepoints = n_changepoints
 
         # Federatable parameters — initialised to zero (Prophet reinitialises
         # them during fit; they are overwritten by load_state_dict before each
@@ -106,6 +119,19 @@ class ProphetWrapper(nn.Module):
         self.sin_week = nn.Parameter(torch.zeros(n_weekly), requires_grad=False)
         self.cos_week = nn.Parameter(torch.zeros(n_weekly), requires_grad=False)
         self.beta_velmedia = nn.Parameter(torch.zeros(1), requires_grad=False)
+
+        # --- Trend parameters (Prophet linear-growth model, scaled space) ---
+        # Registered as BUFFERS so they appear in state_dict() (and are therefore
+        # transported and aggregatable) WITHOUT inflating param_count(), which
+        # reports the federatable seasonality parameter budget only.
+        # FedGAM keeps these LOCAL per client; FedAvg averages them globally.
+        # This is the variable that isolates "aggregation algorithm" from "model".
+        self.register_buffer("k_trend", torch.zeros(1))           # base growth rate
+        self.register_buffer("m_trend", torch.zeros(1))           # trend offset
+        self.register_buffer("delta_trend", torch.zeros(n_changepoints))  # rate deltas
+        # Whether trend warm-start values are populated (skip injection until first fit)
+        self.register_buffer("_has_trend", torch.zeros(1))
+
 
         # Internal Prophet model — recreated each round after warm-start injection
         self._prophet: Optional[object] = None
@@ -140,15 +166,21 @@ class ProphetWrapper(nn.Module):
         velmedia: list[float],
         changepoint_prior_scale: float = 0.05,
         n_changepoints: int = 15,
+        use_warmstart: bool = True,
     ) -> None:
         """
         Fit Prophet on local province data, using current state_dict parameters
-        as warm-start initial values for the seasonality coefficients.
+        as warm-start initial values for both seasonality AND trend.
 
         Args:
             dates:       List of date strings "YYYY-MM-DD".
             no2_values:  Corresponding NO2 measurements (μg/m³, NOT normalised).
             velmedia:    Corresponding wind speed values.
+            use_warmstart: If True, inject current seasonality + trend tensors as
+                           Stan ``init`` so the global aggregate actually influences
+                           the local fit. If False, Prophet fits from its own
+                           default init (original behaviour, federation has no
+                           effect — kept only for ablation).
         """
         # Check cmdstan is available before attempting Prophet fit
         # Uses file system check to avoid hanging on cmdstanpy.cmdstan_path()
@@ -205,8 +237,10 @@ class ProphetWrapper(nn.Module):
         beta_v = float(self.beta_velmedia.detach().cpu().item())
 
         # Prophet expects beta as a flat array [annual_sin, annual_cos, weekly_sin,
-        # weekly_cos, regressor_coefs] interleaved in Fourier order
-        beta_season = np.zeros(2 * self.n_annual + 2 * self.n_weekly)
+        # weekly_cos, regressor_coefs] interleaved in Fourier order. The regressor
+        # coefficient (velmedia) is appended after the seasonality terms.
+        n_season = 2 * self.n_annual + 2 * self.n_weekly
+        beta_season = np.zeros(n_season + 1)  # +1 for velmedia regressor
         for i in range(self.n_annual):
             beta_season[2 * i]     = sin_y[i]
             beta_season[2 * i + 1] = cos_y[i]
@@ -214,9 +248,26 @@ class ProphetWrapper(nn.Module):
         for i in range(self.n_weekly):
             beta_season[off + 2 * i]     = sin_w[i]
             beta_season[off + 2 * i + 1] = cos_w[i]
+        beta_season[n_season] = beta_v
 
-        if not np.all(beta_season == 0):
+        # Only warm-start when requested AND we actually have non-zero global
+        # parameters to inject (skips the very first round before any aggregate).
+        if use_warmstart and not np.all(beta_season == 0):
             init["beta"] = beta_season
+            # Inject trend warm-start if populated from a previous fit/aggregate.
+            if float(self._has_trend.item()) > 0.0:
+                k_val     = float(self.k_trend.item())
+                m_val     = float(self.m_trend.item())
+                delta_arr = self.delta_trend.detach().cpu().numpy().astype(float)
+                if delta_arr.shape[0] != n_changepoints:
+                    # Resize defensively if n_changepoints differs from buffer size
+                    resized = np.zeros(n_changepoints)
+                    take = min(n_changepoints, delta_arr.shape[0])
+                    resized[:take] = delta_arr[:take]
+                    delta_arr = resized
+                init["k"]     = k_val
+                init["m"]     = m_val
+                init["delta"] = delta_arr
 
         m = Prophet(
             yearly_seasonality     = self.n_annual,
@@ -228,13 +279,24 @@ class ProphetWrapper(nn.Module):
         m.add_regressor("velmedia")
 
         try:
-            m.fit(df)
+            # Pass the warm-start init dict so the global aggregate genuinely
+            # influences the local MAP fit. With abundant local data the local
+            # likelihood dominates and the init has limited effect; with scarce
+            # local data (limited-history scenario) the shared init matters more.
+            if init:
+                m.fit(df, init=init)
+            else:
+                m.fit(df)
         except Exception as exc:
-            log.warning("Prophet fit failed: %s — using majority class", exc)
-            from collections import Counter
-            self._majority_class = Counter(_no2_to_ica(v) for v in no2_values).most_common(1)[0][0]
-            self._fitted = False
-            return
+            log.warning("Prophet fit failed: %s — retrying without warm-start", exc)
+            try:
+                m.fit(df)
+            except Exception as exc2:
+                log.warning("Prophet fit failed again: %s — using majority class", exc2)
+                from collections import Counter
+                self._majority_class = Counter(_no2_to_ica(v) for v in no2_values).most_common(1)[0][0]
+                self._fitted = False
+                return
 
         self._prophet = m
         self._fitted  = True
@@ -264,6 +326,23 @@ class ProphetWrapper(nn.Module):
             elif len(beta_fit) > 2 * self.n_annual + 2 * self.n_weekly:
                 bv = float(beta_fit[2 * self.n_annual + 2 * self.n_weekly])
                 self.beta_velmedia.data.fill_(bv)
+
+            # --- Extract trend parameters (k, m, delta) into buffers ---
+            # These are in Prophet's internal scaled space. FedGAM keeps them
+            # local (never re-injected from the global aggregate); FedAvg averages
+            # them across provinces, which mixes incompatible local trends.
+            if "k" in fitted_params:
+                self.k_trend.data.fill_(float(np.median(fitted_params["k"])))
+            if "m" in fitted_params:
+                self.m_trend.data.fill_(float(np.median(fitted_params["m"])))
+            if "delta" in fitted_params:
+                delta_fit = np.median(np.asarray(fitted_params["delta"]), axis=0).ravel()
+                buf = self.delta_trend.detach().cpu().numpy().copy()
+                take = min(buf.shape[0], delta_fit.shape[0])
+                buf[:] = 0.0
+                buf[:take] = delta_fit[:take]
+                self.delta_trend.data.copy_(torch.tensor(buf, dtype=torch.float32))
+            self._has_trend.data.fill_(1.0)
 
         except Exception as exc:
             log.debug("Could not extract Prophet params: %s", exc)
@@ -304,6 +383,21 @@ class ProphetWrapper(nn.Module):
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
+
+    def inject_seasonality(self, sd: dict) -> None:
+        """
+        Load ONLY the shared Fourier seasonality coefficients (and the velmedia
+        regressor) from a global aggregate, leaving the local trend buffers
+        (k_trend, m_trend, delta_trend) untouched.
+
+        This implements the FedGAM semantics: the seasonality is federated while
+        each province keeps its own locally-fitted trend. Contrast with
+        ``load_state_dict`` (full FedAvg semantics), which overwrites trend too.
+        """
+        with torch.no_grad():
+            for key in SEASONALITY_KEYS:
+                if key in sd:
+                    getattr(self, key).data.copy_(sd[key].to(torch.float32))
 
     def param_count(self) -> int:
         """Number of federatable parameters."""

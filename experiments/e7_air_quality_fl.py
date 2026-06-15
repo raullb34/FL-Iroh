@@ -37,8 +37,6 @@ import argparse
 import asyncio
 import logging
 from pathlib import Path
-from typing import Literal
-
 import torch
 import yaml
 
@@ -52,20 +50,37 @@ logging.basicConfig(
 N_CLIENTS  = 10
 N_ROUNDS   = 50   # AirMLP; Prophet uses fewer internal rounds but same outer loop
 N_CLASSES  = 3
+LSTM_WINDOW = 7   # AirLSTM sequence length (days of history per sample)
 DATA_DIR   = "./data"
 RESULTS_DIR_DEFAULT = "results/e7"
 
-ConfigName = Literal[
-    "airmlp_geographic",
-    "airmlp_iid",
-    "prophet_geographic",
-    "prophet_iid",
-]
+ConfigName = str
+
+# Config registry. Each entry maps a config name to its runner spec.
+# Prophet configs encode (aggregator, max_train_years) so the clean
+# FedGAM-vs-FedAvg comparison (same model, same data, only aggregation differs)
+# can be run both on full history and on the limited-history regime where
+# federated seasonality is expected to help sparse provinces.
+#   kind: "airmlp" | "prophet" | "airlstm"
+PROPHET_SPECS: dict[str, dict] = {
+    # Full-history clean comparison
+    "prophet_fedgam_geographic": {"agg": "fedgam", "yrs": None, "part": "geographic"},
+    "prophet_fedgam_iid":        {"agg": "fedgam", "yrs": None, "part": "iid"},
+    "prophet_fedavg_geographic": {"agg": "fedavg", "yrs": None, "part": "geographic"},
+    "prophet_fedavg_iid":        {"agg": "fedavg", "yrs": None, "part": "iid"},
+    # Limited-history (1 year) clean comparison — the FL value-proposition regime
+    "prophet_fedgam_1yr_geographic": {"agg": "fedgam", "yrs": 1, "part": "geographic"},
+    "prophet_fedgam_1yr_iid":        {"agg": "fedgam", "yrs": 1, "part": "iid"},
+    "prophet_fedavg_1yr_geographic": {"agg": "fedavg", "yrs": 1, "part": "geographic"},
+    "prophet_fedavg_1yr_iid":        {"agg": "fedavg", "yrs": 1, "part": "iid"},
+}
+
 ALL_CONFIGS: list[ConfigName] = [
     "airmlp_geographic",
     "airmlp_iid",
-    "prophet_geographic",
-    "prophet_iid",
+    "airlstm_geographic",
+    "airlstm_iid",
+    *PROPHET_SPECS.keys(),
 ]
 
 
@@ -78,7 +93,7 @@ def _seed(seeds_file: str = "seeds.yaml") -> dict:
 
 
 # ---------------------------------------------------------------------------
-# AirMLP + FedAvg runner
+# Neural runner: AirMLP (tabular) or AirLSTM (sequential) + FedAvg
 # ---------------------------------------------------------------------------
 
 async def run_airmlp(
@@ -86,40 +101,61 @@ async def run_airmlp(
     results_dir : Path,
     rounds      : int,
     seeds       : dict,
+    model_kind  : str = "airmlp",
 ) -> dict:
-    """Run E7 with AirMLP + FedAvg on the air-quality dataset."""
+    """Run E7 with a neural model + FedAvg on the air-quality dataset.
+
+    model_kind:
+      "airmlp"  — memoryless MLP over a single day's 6 features (cheap baseline).
+      "airlstm" — LSTM over a ``LSTM_WINDOW``-day window of the same features
+                  (sequence-aware accuracy ceiling). The recurrent tensors are
+                  carried over the identical Iroh/QUIC transport, demonstrating
+                  algorithm-agnosticism.
+    """
     import random
 
-    from fl_coap_iroh.data.partition import load_dataset, partition_dataset
+    from fl_coap_iroh.data.partition import (
+        load_air_quality_sequences, load_dataset, partition_dataset,
+    )
     from fl_coap_iroh.fl.client import FLClient
     from fl_coap_iroh.fl.server import FLServer
     from fl_coap_iroh.metrics.collector import MetricsCollector
+    from fl_coap_iroh.models.air_lstm import AirLSTM
     from fl_coap_iroh.models.air_mlp import AirMLP
     from fl_coap_iroh.types import (
         AvailabilityInfo, ComputeCapabilities, DatasetDescriptor,
         NodeCapabilities, NodeRole, NodeStatus, TrainingPolicy,
     )
 
-    label   = f"airmlp_{partition}"
+    is_lstm  = (model_kind == "airlstm")
+    model_name = "AirLSTM" if is_lstm else "AirMLP"
+    label    = f"{model_kind}_{partition}"
     scenario = f"e7_{label}"
-    log.info("=== E7 AirMLP + FedAvg — %s ===", partition)
+    log.info("=== E7 %s + FedAvg — %s ===", model_name, partition)
 
     torch.manual_seed(seeds.get("model_init", 123))
 
-    train_ds, test_ds = load_dataset("air_quality", DATA_DIR)
+    if is_lstm:
+        train_ds, test_ds = load_air_quality_sequences(DATA_DIR, window=LSTM_WINDOW)
+        feature_dim: list[int] = [LSTM_WINDOW, 6]
+    else:
+        train_ds, test_ds = load_dataset("air_quality", DATA_DIR)
+        feature_dim = [6]
     partitions = partition_dataset(
         train_ds, N_CLIENTS, partition,
         seed=seeds.get("data_partition", 42),
     )
 
-    def _make_model() -> AirMLP:
+    def _make_model() -> torch.nn.Module:
+        if is_lstm:
+            return AirLSTM(input_dim=6, hidden_dim=48, head_dim=24, num_classes=N_CLASSES)
         return AirMLP(input_dim=6, hidden1=32, hidden2=32, hidden3=16, num_classes=N_CLASSES)
 
     # Class weights from training set to handle geographic imbalance
     y_train = torch.tensor([int(train_ds[i][1]) for i in range(len(train_ds))])
     class_counts = torch.bincount(y_train, minlength=N_CLASSES).float()
     class_weights = (class_counts.sum() / (N_CLASSES * class_counts + 1e-8))
-    log.info("AirMLP class weights: %s", class_weights.tolist())
+    log.info("%s class weights: %s", model_name, class_weights.tolist())
 
     server_caps = NodeCapabilities(
         node_id      = "server",
@@ -163,7 +199,7 @@ async def run_airmlp(
             classes      = list(range(N_CLASSES)),
             iid          = (partition == "iid"),
             distribution = partition,
-            feature_dim  = [6],
+            feature_dim  = feature_dim,
         )
         client = FLClient(
             node_id            = f"client-{i}",
@@ -200,8 +236,8 @@ async def run_airmlp(
 
     server.metrics.export_csv(tag=f"e7_{label}")
     summary = server.metrics.summary()
-    log.info("AirMLP %s done: %s", label, summary)
-    return {"config": label, "model": "AirMLP", "partition": partition, **summary}
+    log.info("%s %s done: %s", model_name, label, summary)
+    return {"config": label, "model": model_name, "partition": partition, **summary}
 
 
 # ---------------------------------------------------------------------------
@@ -209,22 +245,38 @@ async def run_airmlp(
 # ---------------------------------------------------------------------------
 
 async def run_prophet(
-    partition   : str,
-    results_dir : Path,
-    rounds      : int,
-    seeds       : dict,
+    partition       : str,
+    results_dir     : Path,
+    rounds          : int,
+    seeds           : dict,
+    aggregator      : str = "fedgam",
+    max_train_years : int | None = None,
 ) -> dict:
     """
-    Run E7 with ProphetWrapper + FedGAM.
+    Run E7 with ProphetWrapper, comparing FedGAM vs FedAvg aggregation.
+
+    This is the clean apples-to-apples comparison requested to isolate the
+    *aggregation algorithm* from the *model family*: the model (Prophet), the
+    data, and the transport are identical; only the server-side aggregation
+    differs.
+
+      aggregator="fedgam":  federate ONLY shared Fourier seasonality; each
+                            province keeps its own locally-fitted trend
+                            (k, m, delta). Semantically correct for GAMs.
+      aggregator="fedavg":  naively average ALL parameters including the trend,
+                            mixing incompatible local trends (e.g. industrial
+                            Ponferrada with rural Soria).
+
+    max_train_years:  if set, truncate each client's training history to the
+                      most recent N years. The limited-data regime is where
+                      federated seasonality is expected to help sparse-history
+                      provinces — i.e. the actual FL value proposition.
 
     Each 'round' consists of:
-      1. Server sends Fourier seasonality parameters (from FedGAM aggregate).
-      2. Each client:
-         a. Calls load_state_dict() to inject warm-start parameters.
-         b. Calls train_prophet() to fit Prophet on its local time-series.
-         c. Sends updated state_dict() (new seasonality coefficients) back.
-      3. Server calls fedgam_aggregate() — averages only seasonality, keeps
-         trend local to the highest-weight client.
+      1. Server distributes the global aggregate.
+      2. Each client injects it as warm-start (seasonality only for FedGAM;
+         seasonality + trend for FedAvg), then fits Prophet locally.
+      3. Server aggregates the returned state dicts.
       4. Server evaluates on 2019 test dates.
 
     Because Prophet does not use mini-batch SGD, FLClient._train() is not
@@ -234,12 +286,24 @@ async def run_prophet(
     """
     import csv
 
+    from fl_coap_iroh.fl.fedavg import fedavg_aggregate
     from fl_coap_iroh.fl.fedgam import fedgam_aggregate
     from fl_coap_iroh.models.prophet_wrapper import ProphetWrapper, load_ica_thresholds
 
-    label   = f"prophet_{partition}"
+    if aggregator == "fedavg":
+        aggregate_fn   = fedavg_aggregate
+        federate_trend = True
+    else:
+        aggregate_fn   = fedgam_aggregate
+        federate_trend = False
+
+    suffix = aggregator
+    if max_train_years is not None:
+        suffix = f"{aggregator}_{max_train_years}yr"
+    label   = f"prophet_{suffix}_{partition}"
     scenario = f"e7_{label}"
-    log.info("=== E7 ProphetWrapper + FedGAM — %s ===", partition)
+    log.info("=== E7 ProphetWrapper + %s — %s (max_train_years=%s) ===",
+             aggregator.upper(), partition, max_train_years)
 
     torch.manual_seed(seeds.get("experiment_e7", 505))
     load_ica_thresholds(DATA_DIR)
@@ -318,6 +382,28 @@ async def run_prophet(
 
     # Initialise one ProphetWrapper per client
     n_clients_actual = min(N_CLIENTS, len(client_data))
+
+    # --- Limited-history scenario: keep only the most recent N training years ---
+    # This is the regime where federated seasonality is expected to help sparse
+    # provinces. Truncation is applied per client on the (date, no2, vel) triples.
+    if max_train_years is not None:
+        def _truncate(cd: dict) -> dict:
+            dates = cd["train_dates"]
+            if not dates:
+                return cd
+            years = [int(str(d)[:4]) for d in dates]
+            cutoff = max(years) - max_train_years + 1
+            keep = [j for j, y in enumerate(years) if y >= cutoff]
+            return {
+                **cd,
+                "train_dates": [cd["train_dates"][j] for j in keep],
+                "train_no2"  : [cd["train_no2"][j]   for j in keep],
+                "train_vel"  : [cd["train_vel"][j]    for j in keep],
+            }
+        client_data = [_truncate(cd) for cd in client_data]
+        log.info("Limited-history: kept last %d year(s) per client → sizes=%s",
+                 max_train_years, [len(cd["train_dates"]) for cd in client_data])
+
     global_model = ProphetWrapper()
     clients_pw: list[ProphetWrapper] = [ProphetWrapper() for _ in range(n_clients_actual)]
 
@@ -327,28 +413,37 @@ async def run_prophet(
     metrics_rows: list[dict] = []
 
     for r in range(1, rounds + 1):
-        log.info("ProphetWrapper FedGAM round %d/%d", r, rounds)
+        log.info("ProphetWrapper %s round %d/%d", aggregator.upper(), r, rounds)
 
         # Distribute global model state to all clients
         global_sd = global_model.state_dict()
 
         updates: list[tuple[dict, float]] = []
         for i, (pw, cd) in enumerate(zip(clients_pw, client_data)):
-            pw.load_state_dict(global_sd)
-            # Each client fits Prophet on its local data
+            # Warm-start injection semantics differ by aggregator:
+            #   FedAvg  → inject full global state (seasonality + averaged trend)
+            #   FedGAM  → inject only seasonality; client keeps its own local trend
+            # Round 1 has no global aggregate yet, so clients fit from scratch.
+            warmstart = r > 1
+            if warmstart:
+                if federate_trend:
+                    pw.load_state_dict(global_sd)
+                else:
+                    pw.inject_seasonality(global_sd)
             pw.train_prophet(
-                dates     = cd["train_dates"],
-                no2_values= cd["train_no2"],
-                velmedia  = cd["train_vel"],
+                dates        = cd["train_dates"],
+                no2_values   = cd["train_no2"],
+                velmedia     = cd["train_vel"],
+                use_warmstart= warmstart,
             )
             n_samples = len(cd["train_dates"])
             updates.append((pw.state_dict(), float(n_samples)))
 
-        # FedGAM aggregation — averages only Fourier seasonality coefficients
-        aggregated_sd = fedgam_aggregate(updates)
+        # Aggregate: FedGAM averages only seasonality; FedAvg averages everything.
+        aggregated_sd = aggregate_fn(updates)
         global_model.load_state_dict(aggregated_sd)
 
-        # Evaluate on test set (province 0 or pooled across all provinces)
+        # Evaluate on test set (each client predicts on its own province test split)
         total_correct = 0
         total_samples = 0
         for i, (pw, cd) in enumerate(zip(clients_pw, client_data)):
@@ -373,14 +468,16 @@ async def run_prophet(
         writer = csv.DictWriter(f, fieldnames=["round", "accuracy", "samples"])
         writer.writeheader()
         writer.writerows(metrics_rows)
-    log.info("ProphetWrapper FedGAM %s done. Final acc=%.3f  Saved: %s",
-             label, round_accuracies[-1] if round_accuracies else 0.0, metrics_path)
+    log.info("ProphetWrapper %s %s done. Final acc=%.3f  Saved: %s",
+             aggregator.upper(), label, round_accuracies[-1] if round_accuracies else 0.0, metrics_path)
 
     final_acc = round_accuracies[-1] if round_accuracies else 0.0
     return {
         "config"     : label,
         "model"      : "ProphetWrapper",
         "partition"  : partition,
+        "aggregator" : aggregator,
+        "max_train_years": max_train_years if max_train_years is not None else "all",
         "accuracy"   : final_acc,
         "rounds"     : rounds,
     }
@@ -390,58 +487,111 @@ async def run_prophet(
 # Main
 # ---------------------------------------------------------------------------
 
-async def main_async(args: argparse.Namespace) -> None:
-    seeds = _seed()
-    torch.manual_seed(seeds.get("experiment_e7", 505))
+async def _run_configs(
+    configs_to_run : list[ConfigName],
+    results_dir    : Path,
+    rounds         : int,
+    seeds          : dict,
+) -> list[dict]:
+    """Run the requested configs once with the given seed dict; return summary rows."""
+    summary_rows: list[dict] = []
+    for config in configs_to_run:
+        if config == "airmlp_geographic":
+            row = await run_airmlp("geographic", results_dir, rounds, seeds)
+        elif config == "airmlp_iid":
+            row = await run_airmlp("iid",         results_dir, rounds, seeds)
+        elif config == "airlstm_geographic":
+            row = await run_airmlp("geographic", results_dir, rounds, seeds, model_kind="airlstm")
+        elif config == "airlstm_iid":
+            row = await run_airmlp("iid",         results_dir, rounds, seeds, model_kind="airlstm")
+        elif config in PROPHET_SPECS:
+            spec = PROPHET_SPECS[config]
+            row = await run_prophet(
+                spec["part"], results_dir, rounds, seeds,
+                aggregator=spec["agg"], max_train_years=spec["yrs"],
+            )
+        else:
+            log.warning("Unknown config '%s' — skipping", config)
+            continue
+        summary_rows.append(row)
+    return summary_rows
 
-    results_dir = Path(args.results_dir)
-    results_dir.mkdir(parents=True, exist_ok=True)
+
+def _write_summary(summary_rows: list[dict], summary_path: Path) -> None:
+    if not summary_rows:
+        return
+    import csv
+    fieldnames = list(summary_rows[0].keys())
+    with open(summary_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(summary_rows)
+    log.info("E7 summary saved: %s", summary_path)
+
+    print(f"\n=== E7 Results Summary ({summary_path.name}) ===")
+    hdr = f"{'Config':<28}  {'Model':<18}  {'Partition':<12}  {'Accuracy':>8}"
+    print(hdr)
+    print("-" * len(hdr))
+    for row in summary_rows:
+        print(
+            f"{row.get('config',''):<28}  "
+            f"{row.get('model',''):<18}  "
+            f"{row.get('partition',''):<12}  "
+            f"{float(row.get('test_acc_final', row.get('accuracy', row.get('best_accuracy', 0.0)))):>8.3f}"
+        )
+
+
+async def main_async(args: argparse.Namespace) -> None:
+    from experiments._replication import derive_seeds, load_replicate_seeds
+
+    base_seeds = _seed()
 
     configs_to_run: list[ConfigName] = (
         args.configs if args.configs else ALL_CONFIGS
     )
     log.info("E7 configs to run: %s", configs_to_run)
 
-    summary_rows: list[dict] = []
+    # Resolve replication master seeds (F2). --seeds overrides the yaml list;
+    # --all-seeds uses the full replicate_seeds list; default = single canonical run.
+    if args.seeds:
+        masters = list(args.seeds)
+    elif args.all_seeds:
+        masters = load_replicate_seeds()
+        if not masters:
+            log.warning("No replicate_seeds in seeds.yaml — falling back to single run")
+    else:
+        masters = []
 
-    for config in configs_to_run:
-        if config == "airmlp_geographic":
-            row = await run_airmlp("geographic", results_dir, args.rounds, seeds)
-        elif config == "airmlp_iid":
-            row = await run_airmlp("iid",         results_dir, args.rounds, seeds)
-        elif config == "prophet_geographic":
-            row = await run_prophet("geographic",  results_dir, args.rounds, seeds)
-        elif config == "prophet_iid":
-            row = await run_prophet("iid",         results_dir, args.rounds, seeds)
-        else:
-            log.warning("Unknown config '%s' — skipping", config)
-            continue
-        summary_rows.append(row)
+    if not masters:
+        # Single canonical run (backward compatible)
+        results_dir = Path(args.results_dir)
+        results_dir.mkdir(parents=True, exist_ok=True)
+        torch.manual_seed(base_seeds.get("experiment_e7", 505))
+        rows = await _run_configs(configs_to_run, results_dir, args.rounds, base_seeds)
+        _write_summary(rows, results_dir / "e7_summary.csv")
+        log.info("E7 complete. Results in: %s", results_dir)
+        return
 
-    if summary_rows:
-        import csv
-        summary_path = results_dir / "e7_summary.csv"
-        fieldnames   = list(summary_rows[0].keys())
-        with open(summary_path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-            writer.writeheader()
-            writer.writerows(summary_rows)
-        log.info("E7 summary saved: %s", summary_path)
-
-        print("\n=== E7 Results Summary ===")
-        hdr = f"{'Config':<28}  {'Model':<18}  {'Partition':<12}  {'Accuracy':>8}"
-        print(hdr)
-        print("-" * len(hdr))
-        for row in summary_rows:
-            acc = row.get("accuracy", row.get("best_accuracy", 0.0))
-            print(
-                f"{row.get('config',''):<28}  "
-                f"{row.get('model',''):<18}  "
-                f"{row.get('partition',''):<12}  "
-                f"{float(row.get('test_acc_final', row.get('accuracy', row.get('best_accuracy', 0.0)))):>8.3f}"
-            )
-
-    log.info("E7 complete. Results in: %s", results_dir)
+    # Multi-seed replication: one full config sweep per master seed
+    log.info("E7 replication over %d master seeds: %s", len(masters), masters)
+    seeds_root = Path(args.results_dir) / "seeds"
+    seeds_root.mkdir(parents=True, exist_ok=True)
+    for master in masters:
+        derived = derive_seeds(base_seeds, master)
+        seed_dir = seeds_root / f"seed{master}"
+        seed_dir.mkdir(parents=True, exist_ok=True)
+        torch.manual_seed(derived.get("experiment_e7", 505))
+        log.info("=== E7 replicate master=%d (dir=%s) ===", master, seed_dir)
+        rows = await _run_configs(configs_to_run, seed_dir, args.rounds, derived)
+        for r in rows:
+            r["seed"] = master
+        _write_summary(rows, seeds_root / f"e7_summary_seed{master}.csv")
+    log.info(
+        "E7 replication complete (%d seeds). Aggregate with:\n"
+        "  python scripts/aggregate_ci.py --glob '%s/e7_summary_seed*.csv' "
+        "--group config --metric test_acc_final",
+        len(masters), seeds_root,
+    )
 
 
 def main() -> None:
@@ -456,6 +606,16 @@ def main() -> None:
     parser.add_argument(
         "--configs", nargs="+", choices=ALL_CONFIGS, default=None,
         help="Which configs to run (default: all four)",
+    )
+    parser.add_argument(
+        "--seeds", nargs="+", type=int, default=None,
+        help="Master seeds for multi-seed replication (F2). Each runs a full "
+             "config sweep into results/e7/seeds/seed<S>/ and writes a tagged "
+             "summary. Overrides --all-seeds.",
+    )
+    parser.add_argument(
+        "--all-seeds", action="store_true",
+        help="Replicate over every seed in seeds.yaml 'replicate_seeds'.",
     )
     args = parser.parse_args()
     asyncio.run(main_async(args))

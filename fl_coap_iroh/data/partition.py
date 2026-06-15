@@ -257,6 +257,96 @@ def load_air_quality(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     return train_ds, test_ds
 
 
+def load_air_quality_sequences(
+    data_dir: str = "./data",
+    window  : int = 7,
+) -> tuple[Dataset, Dataset]:
+    """
+    CyL Air Quality Dataset as sliding sequences for the AirLSTM model.
+
+    Same source CSV as :func:`load_air_quality`, but instead of one tabular row
+    per day it emits windows of ``window`` consecutive (per-province) days::
+
+        X[i] = features of days [t-window+1 .. t]   shape (window, 6)
+        y[i] = label_ica at the window's last row   (already the ICA class of
+               NO2 at t+7 thanks to the preprocessing shift — no leakage)
+
+    Windows are built per province after sorting by date, so they never cross
+    province boundaries. Consecutive *rows* are used (calendar gaps from missing
+    days are tolerated), which is standard for this kind of LSTM baseline.
+
+    Returns:
+        (train_ds, test_ds) where X has shape (N, window, 6) and each dataset
+        carries a ``.provinces`` list aligned with the window's last day, so the
+        existing geographic partitioner works unchanged.
+    """
+    import csv
+    from collections import defaultdict
+
+    csv_path = Path(data_dir) / "air-quailty" / "datasets" / "air_quality_fl_classification.csv"
+    if not csv_path.exists():
+        raise FileNotFoundError(
+            f"Air quality classification CSV not found at {csv_path}.\n"
+            "Generate it with:\n"
+            "  python data/air-quailty/notebooks/preprocess_e7.py"
+        )
+
+    feature_cols = ["NO2", "O3", "PM_particle", "CO", "velmedia", "prec"]
+    label_col    = "label_ica"
+    split_col    = "split"
+    prov_col     = "provincia"
+    date_col     = "fecha"
+
+    # Group rows by (province, split), preserving (date, feats, label) tuples
+    grouped: dict[tuple[str, str], list[tuple[str, list[float], int]]] = defaultdict(list)
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                feats = [float(row[c]) for c in feature_cols]
+                label = int(row[label_col])
+            except (ValueError, KeyError):
+                continue
+            prov  = row[prov_col].strip()
+            split = row[split_col]
+            date  = row.get(date_col, "")
+            grouped[(prov, split)].append((date, feats, label))
+
+    def _build(split: str) -> tuple[list, list, list]:
+        X: list[list[list[float]]] = []
+        y: list[int] = []
+        provs: list[str] = []
+        prov_names = sorted({p for (p, s) in grouped if s == split})
+        for prov in prov_names:
+            rows = grouped[(prov, split)]
+            rows.sort(key=lambda r: r[0])  # sort by date string YYYY-MM-DD
+            for t in range(window - 1, len(rows)):
+                win = rows[t - window + 1 : t + 1]
+                X.append([r[1] for r in win])
+                y.append(rows[t][2])
+                provs.append(prov)
+        return X, y, provs
+
+    Xtr, ytr, ptr = _build("train")
+    Xte, yte, pte = _build("test")
+
+    X_train = torch.tensor(Xtr, dtype=torch.float32)
+    y_train = torch.tensor(ytr, dtype=torch.int64)
+    X_test  = torch.tensor(Xte, dtype=torch.float32)
+    y_test  = torch.tensor(yte, dtype=torch.int64)
+
+    train_ds = TensorDataset(X_train, y_train)
+    test_ds  = TensorDataset(X_test,  y_test)
+    train_ds.provinces = ptr  # type: ignore[attr-defined]
+    test_ds.provinces  = pte  # type: ignore[attr-defined]
+
+    log.info(
+        "Air quality SEQUENCES loaded: %d train / %d test | window=%d | 6 features | 3 classes",
+        len(train_ds), len(test_ds), window,
+    )
+    return train_ds, test_ds
+
+
 def load_dataset(name: str, data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     loaders = {
         "cifar10"    : load_cifar10,

@@ -62,7 +62,7 @@ async def run_arch_b(
     dataset     : str,
     results_dir : Path,
     seeds       : dict,
-) -> None:
+) -> dict:
     """Run Architecture B (our system) in a single process."""
     import random
     import torch
@@ -179,14 +179,18 @@ async def run_arch_b(
     await server.stop()
 
     server.metrics.export_csv(tag=f"e2_{label}")
-    log.info("Architecture B %s done. Summary: %s", label, server.metrics.summary())
+    summary = server.metrics.summary()
+    log.info("Architecture B %s done. Summary: %s", label, summary)
+    return {
+        "config": label, "partition": partition, "alpha": alpha,
+        "dataset": dataset, **(summary if isinstance(summary, dict) else {}),
+    }
 
 
 async def main_async(args: argparse.Namespace) -> None:
-    seeds = _seed()
-    torch.manual_seed(seeds.get("experiment_e2", 101))
-    results_dir = Path(args.results_dir)
-    results_dir.mkdir(parents=True, exist_ok=True)
+    from experiments._replication import derive_seeds, load_replicate_seeds
+
+    base_seeds = _seed()
 
     if args.noniid:
         # Legacy flag: run IID + all non-IID variants in sequence
@@ -194,18 +198,62 @@ async def main_async(args: argparse.Namespace) -> None:
     else:
         configs = [(args.partition, args.alpha)]
 
-    for partition, alpha in configs:
-        await run_arch_b(
-            partition   = partition,
-            alpha       = alpha,
-            n_clients   = args.n_clients,
-            rounds      = args.rounds,
-            dataset     = args.dataset,
-            results_dir = results_dir,
-            seeds       = seeds,
-        )
+    async def _sweep(results_dir: Path, seeds: dict) -> list[dict]:
+        results_dir.mkdir(parents=True, exist_ok=True)
+        torch.manual_seed(seeds.get("experiment_e2", 101))
+        rows: list[dict] = []
+        for partition, alpha in configs:
+            row = await run_arch_b(
+                partition=partition, alpha=alpha, n_clients=args.n_clients,
+                rounds=args.rounds, dataset=args.dataset,
+                results_dir=results_dir, seeds=seeds,
+            )
+            if isinstance(row, dict):
+                rows.append(row)
+        return rows
 
-    log.info("E2 complete. Results in: %s", results_dir)
+    def _write_summary(rows: list[dict], path: Path) -> None:
+        if not rows:
+            return
+        import csv
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), extrasaction="ignore")
+            w.writeheader()
+            w.writerows(rows)
+        log.info("E2 summary saved: %s", path)
+
+    # Resolve replication master seeds (F2)
+    if args.seeds:
+        masters = list(args.seeds)
+    elif args.all_seeds:
+        masters = load_replicate_seeds()
+        if not masters:
+            log.warning("No replicate_seeds in seeds.yaml — falling back to single run")
+    else:
+        masters = []
+
+    if not masters:
+        rows = await _sweep(Path(args.results_dir), base_seeds)
+        _write_summary(rows, Path(args.results_dir) / "e2_summary.csv")
+        log.info("E2 complete. Results in: %s", args.results_dir)
+        return
+
+    log.info("E2 replication over %d master seeds: %s", len(masters), masters)
+    seeds_root = Path(args.results_dir) / "seeds"
+    for master in masters:
+        derived = derive_seeds(base_seeds, master)
+        seed_dir = seeds_root / f"seed{master}"
+        log.info("=== E2 replicate master=%d (dir=%s) ===", master, seed_dir)
+        rows = await _sweep(seed_dir, derived)
+        for r in rows:
+            r["seed"] = master
+        _write_summary(rows, seeds_root / f"e2_summary_seed{master}.csv")
+    log.info(
+        "E2 replication complete (%d seeds). Aggregate with:\n"
+        "  python scripts/aggregate_ci.py --glob '%s/e2_summary_seed*.csv' "
+        "--group config --metric test_acc_final",
+        len(masters), seeds_root,
+    )
 
 
 def main() -> None:
@@ -221,6 +269,14 @@ def main() -> None:
     parser.add_argument("--noniid",      action="store_true",
                         help="Legacy: run IID + all non-IID variants sequentially")
     parser.add_argument("--results-dir", default="results/e2")
+    parser.add_argument(
+        "--seeds", nargs="+", type=int, default=None,
+        help="Master seeds for multi-seed replication (F2). Overrides --all-seeds.",
+    )
+    parser.add_argument(
+        "--all-seeds", action="store_true",
+        help="Replicate over every seed in seeds.yaml 'replicate_seeds'.",
+    )
     args = parser.parse_args()
     asyncio.run(main_async(args))
 

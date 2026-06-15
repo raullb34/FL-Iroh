@@ -2,7 +2,7 @@
 # =============================================================================
 # FL-Iroh — SLURM array job
 #
-# Runs experiments E1-E6 as a SLURM array of 6 tasks (0-5).
+# Runs experiments E1-E6 as a SLURM array of tasks.
 # Submit with:  bash slurm/submit.sh
 #
 # Task mapping:
@@ -14,7 +14,14 @@
 #   5 — E3  NAT traversal mock + E6 CoAP overhead (~1-2 h)
 #   6 — E2  crop IID + Dirichlet α=0.1/0.5/1.0  (~12-18 h)
 #   7 — E5  churn resilience, crop dataset       (~20-28 h)
-#   8 — E7  air quality FL: AirMLP+FedAvg + ProphetWrapper+FedGAM (~1-2 h)
+#   8 — E7  air quality FL: 12 configs (AirMLP/AirLSTM+FedAvg, Prophet+FedGAM/FedAvg) (~2-4 h)
+#   9 — E8  Flower+Tailscale baseline (sim) + software energy estimation (~1-2 h)
+#  10 — Multi-seed replication: E2 (IID+α=0.1) and E7 over all seeds (F2/CIs) (~24-36 h)
+#
+# NOTE — paper ↔ code mapping (the paper renumbers experiments; code is stable):
+#   paper E4 (churn)        ↔ experiments.e5_churn        ↔ results/e5/
+#   paper E5 (CoAP)         ↔ experiments.e6_coap_overhead ↔ results/e6/
+#   paper E6 (air quality)  ↔ experiments.e7_air_quality_fl ↔ results/e7/
 # =============================================================================
 #SBATCH --job-name=fl_iroh_exp
 #SBATCH --partition=all
@@ -23,7 +30,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=32G
 #SBATCH --time=36:00:00
-#SBATCH --array=0-8
+#SBATCH --array=0-10
 #SBATCH --output=results/logs/slurm_%A_%a.out
 #SBATCH --error=results/logs/slurm_%A_%a.err
 
@@ -246,17 +253,79 @@ case "${TASK_ID}" in
 
     8)  # E7 — Air quality FL: 7-day-ahead ICA forecasting (outdoor, CyL stations)
         export FL_MOCK_IROH=1
-        # AirMLP + FedAvg (geographic partition + IID)
-        run_exp "e7_airmlp" "e7" \
+        # Neural models (AirMLP tabular + AirLSTM sequential) + FedAvg
+        run_exp "e7_neural" "e7" \
             "experiments.e7_air_quality_fl" \
-            --configs airmlp_geographic airmlp_iid \
+            --configs airmlp_geographic airmlp_iid airlstm_geographic airlstm_iid \
             --rounds 50
 
-        # ProphetWrapper + FedGAM (geographic partition + IID)
+        # Prophet GAM: FedGAM vs FedAvg ablation (same model, both partitions,
+        # full-history and 1-year variants) — 8 configs.  Real Stan MAP requires
+        # cmdstan on this node; otherwise ProphetWrapper falls back to majority-class.
         run_exp "e7_prophet" "e7" \
             "experiments.e7_air_quality_fl" \
-            --configs prophet_geographic prophet_iid \
+            --configs prophet_fedgam_geographic prophet_fedgam_iid \
+                      prophet_fedavg_geographic prophet_fedavg_iid \
+                      prophet_fedgam_1yr_geographic prophet_fedgam_1yr_iid \
+                      prophet_fedavg_1yr_geographic prophet_fedavg_1yr_iid \
             --rounds 10
+        ;;
+
+    9)  # E8 — Flower (flwr) over Tailscale baseline + software energy estimation
+        # F3: transport-isolated comparison against FL-Iroh using the SAME model
+        # and training loop.  --mode sim runs the in-process Flower simulation
+        # (rounds, final acc, payload bytes/round, wall time/round).  The 8-axis
+        # operational comparison table is always written to results/e8/.
+        export FL_MOCK_IROH=1
+        run_exp "e8_flower_iid" "e8" \
+            "experiments.e8_flower_tailscale" \
+            --mode sim --dataset crop --partition iid \
+            --n-clients 10 --rounds 50
+
+        run_exp "e8_flower_noniid" "e8" \
+            "experiments.e8_flower_tailscale" \
+            --mode sim --dataset crop --partition noniid --alpha 0.1 \
+            --n-clients 10 --rounds 50
+
+        # F6: software energy estimation. Post-process per-round CPU times into
+        # energy (mWh) under the RPi4B edge model (TDP=7W, 4 cores). Override
+        # --tdp/--cores for x86 framing if desired. Skips silently if the source
+        # CSV or its cpu-time column is absent.
+        for SPEC in "e2/e2_iid_fl_metrics.csv:e2/e2_iid_energy.csv" \
+                    "e7/e7_airmlp_iid_fl_metrics.csv:e7/e7_airmlp_iid_energy.csv"; do
+            SRC="${RESULTS_ROOT}/${SPEC%%:*}"
+            DST="${RESULTS_ROOT}/${SPEC##*:}"
+            if [[ -f "${SRC}" ]] && head -1 "${SRC}" | grep -q "cpu"; then
+                python -m scripts.energy_estimate \
+                    --csv "${SRC}" --cpu-col cpu_time_s --rounds-col round \
+                    --tdp 7 --cores 4 --out "${DST}" \
+                    2>&1 | tee "${RESULTS_ROOT}/e8/energy_$(basename "${DST}" .csv).log" \
+                    || echo "[warn] energy estimation failed for ${SRC}"
+            else
+                echo "[skip] energy: ${SRC} missing or has no cpu-time column"
+            fi
+        done
+        ;;
+
+    10) # Multi-seed replication for confidence intervals (F2)
+        # Runs the canonical heterogeneity configs over every seed in
+        # seeds.yaml 'replicate_seeds'. aggregate_ci.py then produces ±CI tables.
+        export FL_MOCK_IROH=1
+        run_exp "e2_iid_seeds" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
+            --partition iid --all-seeds
+
+        run_exp "e2_noniid_01_seeds" "e2" \
+            "experiments.e2_centralized_fl" \
+            --rounds 100 --n-clients 10 --dataset cifar10 \
+            --partition dirichlet --alpha 0.1 --all-seeds
+
+        run_exp "e7_seeds" "e7" \
+            "experiments.e7_air_quality_fl" \
+            --configs airmlp_geographic airmlp_iid \
+                      prophet_fedgam_geographic prophet_fedavg_geographic \
+            --rounds 50 --all-seeds
         ;;
 
     *)  echo "ERROR: unexpected SLURM_ARRAY_TASK_ID=${TASK_ID}"

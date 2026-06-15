@@ -74,8 +74,8 @@ echo "[setup] Installing PyTorch (CPU-only build) ..."
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 # ── Project package + all dependencies ───────────────────────────────────────
-echo "[setup] Installing fl-coap-iroh ..."
-pip install -e ".[dev]"
+echo "[setup] Installing fl-coap-iroh (with dev + baselines extras) ..."
+pip install -e ".[dev,baselines]"
 
 # ── CIFAR-10 dataset ──────────────────────────────────────────────────────────
 echo "[setup] Downloading CIFAR-10 dataset ..."
@@ -105,7 +105,8 @@ mkdir -p \
     results/e3 \
     results/e5 \
     results/e6 \
-    results/e7
+    results/e7 \
+    results/e8
 echo "[setup] Created results/ subdirectories."
 
 # ── CmdStan (required for Prophet / E7 FedGAM) ───────────────────────────────

@@ -46,6 +46,11 @@ dev = [
     "ruff>=0.3.0",
     "mypy>=1.9.0",
 ]
+baselines = [
+    # E8 Flower-over-Tailscale baseline (F3) and software energy estimation (F6)
+    "flwr>=1.7.0",
+    "psutil>=5.9.0",
+]
 notebooks = [
     "jupyter>=1.0.0",
     "matplotlib>=3.8.0",
