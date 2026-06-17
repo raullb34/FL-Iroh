@@ -185,6 +185,7 @@ async def run_server(n_iter: int, scenario: str, results_dir: Path) -> None:
                 "conn_type"   : stats.conn_type.value if stats else "relay",
                 "conn_time_ms": round(stats.conn_time_ms, 3) if stats else None,
                 "duration_ms" : round(stats.transfer_duration_ms, 3) if stats else None,
+                "active_addr" : (stats.active_addr if stats else ""),
                 "success"     : True,
             })
             log.info("[server] iter %d/%d received — conn_type=%s", i + 1, n_iter,
@@ -192,7 +193,8 @@ async def run_server(n_iter: int, scenario: str, results_dir: Path) -> None:
         except Exception as exc:
             log.warning("[server] iter %d receive failed: %s", i, exc)
             rows.append({"scenario": scenario, "iter": i, "conn_type": "failed",
-                         "conn_time_ms": None, "duration_ms": None, "success": False})
+                         "conn_time_ms": None, "duration_ms": None,
+                         "active_addr": "", "success": False})
 
     await node.stop()
     _write_csv(results_dir / f"e3_nat_{scenario}_server.csv", rows)
@@ -249,6 +251,7 @@ async def run_client(
                 "conn_type"   : stats.conn_type.value,
                 "conn_time_ms": round(stats.conn_time_ms, 3),
                 "duration_ms" : round(stats.transfer_duration_ms, 3),
+                "active_addr" : stats.active_addr,
                 "success"     : True,
             })
             log.info("[client] iter %d/%d — conn_type=%s  conn_time=%.1fms",
@@ -256,7 +259,8 @@ async def run_client(
         except Exception as exc:
             log.warning("[client] iter %d failed: %s", i, exc)
             rows.append({"scenario": scenario, "iter": i, "conn_type": "failed",
-                         "conn_time_ms": None, "duration_ms": None, "success": False})
+                         "conn_time_ms": None, "duration_ms": None,
+                         "active_addr": "", "success": False})
 
     await node.stop()
     _write_csv(results_dir / f"e3_nat_{scenario}_client.csv", rows)

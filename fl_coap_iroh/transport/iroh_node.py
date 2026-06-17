@@ -79,6 +79,7 @@ class TransferStats:
     conn_type       : ConnType = ConnType.UNKNOWN
     conn_time_ms    : float    = 0.0
     transfer_duration_ms: float= 0.0
+    active_addr     : str      = ""       # socket addr of direct path (audit)
 
     @property
     def throughput_mbps(self) -> float:
@@ -163,6 +164,7 @@ class _AcceptedTransfer:
     conn_type        : "ConnType"
     recv_start_ms    : float      # monotonic ms when accept() was called
     recv_done_ms     : float      # monotonic ms when last byte was read
+    active_addr      : str = ""   # socket addr of direct path (audit)
 
 
 class _IrohAcceptQueue:
@@ -213,6 +215,7 @@ def _make_iroh_adapters(
     queue: "_IrohAcceptQueue",
     alpns: list,
     main_loop: asyncio.AbstractEventLoop,
+    node_ref: "IrohTransportNode",
 ) -> dict:  # type: ignore[return]
     """Create per-ALPN ProtocolCreator instances at runtime.
 
@@ -229,7 +232,6 @@ def _make_iroh_adapters(
         """Run on main asyncio event loop: read stream and put transfer in queue."""
         t_start = time.monotonic() * 1000
         try:
-            conn_type = _detect_conn_type(conn)
             recv_stream = await conn.accept_uni()  # type: ignore[attr-defined]
 
             raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
@@ -244,16 +246,19 @@ def _make_iroh_adapters(
                 raise ValueError("SHA-256 integrity check failed")
 
             t_done = time.monotonic() * 1000
+            # Authoritative path classification via iroh's own remote_info API.
+            conn_type, active_addr = await _classify_remote_conn(node_ref, conn)
             await queue.enqueue(_AcceptedTransfer(
                 alpn          = alpn,
                 payload       = payload,
                 conn_type     = conn_type,
                 recv_start_ms = t_start,
                 recv_done_ms  = t_done,
+                active_addr   = active_addr,
             ))
             log.debug(
-                "iroh recv [%r]: %dB conn_type=%s in %.0fms",
-                alpn, payload_len, conn_type.value, t_done - t_start,
+                "iroh recv [%r]: %dB conn_type=%s addr=%s in %.0fms",
+                alpn, payload_len, conn_type.value, active_addr, t_done - t_start,
             )
         except Exception as exc:
             log.warning(
@@ -359,7 +364,7 @@ class IrohTransportNode:
             # Build shared accept queue and register per-ALPN handlers.
             # Adapter classes must be defined after iroh is imported (uniffi requirement).
             self._accept_queue = _IrohAcceptQueue()
-            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC], _main_loop)
+            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC], _main_loop, self)
 
             options = iroh.NodeOptions(protocols=creators)
 
@@ -481,9 +486,6 @@ class IrohTransportNode:
                 await asyncio.sleep(wait)
         conn_time_ms = (time.monotonic() - t_conn0) * 1000
 
-        # Detect connection type
-        conn_type = _detect_conn_type(connection)
-
         # Frame: [len(4)] + [payload] + [sha256(32)]
         sha = hashlib.sha256(payload).digest()
         frame = struct.pack(">I", len(payload)) + payload + sha
@@ -492,12 +494,20 @@ class IrohTransportNode:
         await send_stream.write(frame)
         await send_stream.finish()
 
+        # Classify the path actually used, via the real iroh remote_info API
+        # (authoritative: direct hole-punch vs DERP relay).  pk is the remote
+        # PublicKey we connected to.
+        conn_type, active_addr = await _classify_remote_conn(self, connection, pk)
+        if active_addr:
+            log.debug("path addr=%s", active_addr)
+
         stats = TransferStats(
             bytes_payload        = len(payload),
             bytes_on_wire        = len(frame),
             conn_type            = conn_type,
             conn_time_ms         = conn_time_ms,
             transfer_duration_ms = (time.monotonic() - t_start) * 1000,
+            active_addr          = active_addr,
         )
         log.info(
             "send %dB via %s in %.0fms (%.2f Mbit/s) to %s",
@@ -527,9 +537,10 @@ class IrohTransportNode:
         conn_type = transfer.conn_type
         transfer_ms = transfer.recv_done_ms - transfer.recv_start_ms
 
-        # conn_type inference: if still UNKNOWN, use transfer duration as heuristic
-        if conn_type == ConnType.UNKNOWN:
-            conn_type = infer_conn_type_from_latency(transfer_ms)
+        # conn_type is the authoritative value from iroh's remote_info API
+        # (set in the accept handler). We intentionally do NOT fall back to a
+        # latency heuristic here: an unknown path stays 'unknown' rather than
+        # being fabricated from transfer duration.
 
         stats = TransferStats(
             bytes_payload        = len(transfer.payload),
@@ -537,6 +548,7 @@ class IrohTransportNode:
             conn_type            = conn_type,
             conn_time_ms         = wait_ms,
             transfer_duration_ms = transfer_ms,
+            active_addr          = transfer.active_addr,
         )
         log.info(
             "recv %dB via %s in %.0fms",
@@ -580,6 +592,64 @@ class IrohTransportNode:
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
+
+async def _classify_remote_conn(
+    node_ref: "IrohTransportNode",
+    conn: object,
+    remote_pubkey: object = None,
+) -> tuple[ConnType, str]:
+    """Classify a live connection's path using the real iroh ``remote_info`` API.
+
+    Returns ``(ConnType, active_addr)`` where *active_addr* is the socket
+    address of the direct path when one is in use (empty string for relay).
+    This is the authoritative classification: it reflects iroh's own view of
+    whether QUIC traffic flows over a hole-punched direct path or the DERP
+    relay.  The active address is returned so overlay paths (e.g. Tailscale
+    100.64.0.0/10) can be audited out of "direct" counts.
+    """
+    try:
+        node = node_ref._iroh_node
+        if node is None:
+            return ConnType.UNKNOWN, ""
+        net = node.net()
+        if remote_pubkey is None:
+            remote_pubkey = conn.remote_node_id()  # type: ignore[attr-defined]
+            if asyncio.iscoroutine(remote_pubkey):
+                remote_pubkey = await remote_pubkey
+        info = await net.remote_info(remote_pubkey)
+    except Exception as exc:  # noqa: BLE001
+        log.debug("remote_info classification failed: %s", exc)
+        return ConnType.UNKNOWN, ""
+
+    if info is None:
+        return ConnType.UNKNOWN, ""
+    try:
+        ct_obj = info.conn_type
+        kind = str(ct_obj.type()).rsplit(".", 1)[-1].upper()  # DIRECT/RELAY/MIXED/NONE
+    except Exception as exc:  # noqa: BLE001
+        log.debug("conn_type read failed: %s", exc)
+        return ConnType.UNKNOWN, ""
+
+    if kind == "DIRECT":
+        addr = ""
+        try:
+            addr = str(ct_obj.as_direct())
+        except Exception:
+            pass
+        return ConnType.DIRECT, addr
+    if kind == "MIXED":
+        # A direct path exists alongside relay; count as direct but keep the
+        # address so overlay (Tailscale) paths can be audited out.
+        addr = ""
+        try:
+            addr = str(ct_obj.as_mixed())
+        except Exception:
+            pass
+        return ConnType.DIRECT, addr
+    if kind == "RELAY":
+        return ConnType.RELAY, ""
+    return ConnType.UNKNOWN, ""
+
 
 def _detect_conn_type(connection: object) -> ConnType:
     """Extract ConnType from an iroh Connection object.
