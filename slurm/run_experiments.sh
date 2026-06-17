@@ -308,24 +308,33 @@ case "${TASK_ID}" in
         ;;
 
     10) # Multi-seed replication for confidence intervals (F2)
-        # Runs the canonical heterogeneity configs over every seed in
-        # seeds.yaml 'replicate_seeds'. aggregate_ci.py then produces ±CI tables.
+        # Each multi-seed sweep writes to its OWN results dir so the per-seed
+        # summary files (e{2,7}_summary_seed<S>.csv) never collide.
         export FL_MOCK_IROH=1
-        run_exp "e2_iid_seeds" "e2" \
+        # E2 IID, 5 seeds → results/e2_iid/seeds/
+        run_exp "e2_iid_seeds" "e2_iid" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition iid --all-seeds
 
-        run_exp "e2_noniid_01_seeds" "e2" \
+        # E2 non-IID Dirichlet α=0.1, 5 seeds → results/e2_noniid01/seeds/
+        run_exp "e2_noniid01_seeds" "e2_noniid01" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
             --partition dirichlet --alpha 0.1 --all-seeds
 
-        run_exp "e7_seeds" "e7" \
+        # E7 neural (AirMLP + FedAvg), 50 rounds → results/e7/seeds/
+        run_exp "e7_neural_seeds" "e7" \
             "experiments.e7_air_quality_fl" \
             --configs airmlp_geographic airmlp_iid \
-                      prophet_fedgam_geographic prophet_fedavg_geographic \
             --rounds 50 --all-seeds
+
+        # E7 Prophet FedGAM vs FedAvg ablation, 10 rounds → results/e7_prophet/seeds/
+        run_exp "e7_prophet_seeds" "e7_prophet" \
+            "experiments.e7_air_quality_fl" \
+            --configs prophet_fedgam_geographic prophet_fedavg_geographic \
+                      prophet_fedgam_iid prophet_fedavg_iid \
+            --rounds 10 --all-seeds
         ;;
 
     *)  echo "ERROR: unexpected SLURM_ARRAY_TASK_ID=${TASK_ID}"

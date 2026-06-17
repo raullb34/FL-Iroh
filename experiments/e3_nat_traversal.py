@@ -176,7 +176,9 @@ async def run_server(n_iter: int, scenario: str, results_dir: Path) -> None:
     rows: list[dict] = []
     for i in range(n_iter):
         try:
-            _, stats = await node.receive_tensors(ALPN_FL_MODEL, timeout=120.0)
+            # Use the raw-byte receive path so the server never imports torch
+            # (lets this role run on hosts where torch is unavailable/broken).
+            _, stats = await node._receive_bytes(ALPN_FL_MODEL, 120.0)
             rows.append({
                 "scenario"    : scenario,
                 "iter"        : i,

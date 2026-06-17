@@ -44,8 +44,9 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
-import torch
-
+# NOTE: torch is imported lazily inside send_tensors / receive_tensors so that
+# nodes which only need the raw-byte transport (e.g. the E3 NAT-traversal
+# server) can run on hosts where torch is unavailable or broken.
 from fl_coap_iroh.types import ConnType, IrohEndpoint, TransferEvent
 
 log = logging.getLogger(__name__)
@@ -408,6 +409,7 @@ class IrohTransportNode:
         alpn     : bytes = ALPN_FL_MODEL,
     ) -> TransferStats:
         """Serialise *tensors* and send to *peer_ep*."""
+        import torch
         buf = io.BytesIO()
         torch.save({k: v.cpu() for k, v in tensors.items()}, buf)
         payload = buf.getvalue()
@@ -422,6 +424,7 @@ class IrohTransportNode:
         timeout  : float = 120.0,
     ) -> tuple[dict[str, torch.Tensor], TransferStats]:
         """Accept one incoming tensor transfer matching *alpn*."""
+        import torch
         payload, stats = await self._receive_bytes(alpn, timeout)
         buf     = io.BytesIO(payload)
         tensors = torch.load(buf, weights_only=True)
