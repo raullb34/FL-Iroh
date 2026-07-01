@@ -295,6 +295,7 @@ def run_sim(args, seeds: dict, results_dir: Path) -> Optional[dict]:
     model = _make_model(args.dataset)
     row = {
         "framework": "flower",
+        "config": args.partition,
         "transport": "tailscale_or_grpc",
         "dataset": args.dataset,
         "partition": args.partition,
@@ -361,6 +362,7 @@ def _run_sim_inprocess(args, seeds: dict, results_dir: Path, framework: str) -> 
 
     row = {
         "framework": framework,
+        "config": args.partition,
         "transport": "in-process (aggregation-identical to Flower FedAvg)",
         "dataset": args.dataset,
         "partition": args.partition,
@@ -536,6 +538,11 @@ def main() -> None:
                    help="server: bind addr; client: server's Tailscale IP:port")
     p.add_argument("--results-dir", default="results/e8")
     p.add_argument("--seeds-file", default="seeds.yaml")
+    p.add_argument("--seeds", type=int, nargs="*", default=None,
+                   help="master seeds for multi-seed replication (sim mode); "
+                        "omit for a single canonical run")
+    p.add_argument("--all-seeds", action="store_true",
+                   help="replicate over replicate_seeds from seeds.yaml (sim mode)")
     args = p.parse_args()
 
     results_dir = Path(args.results_dir)
@@ -546,11 +553,55 @@ def main() -> None:
     _write_comparison(results_dir)
 
     if args.mode == "sim":
-        run_sim(args, seeds, results_dir)
+        _run_sim_maybe_replicated(args, seeds, results_dir)
     elif args.mode == "server":
         run_server(args, seeds, results_dir)
     else:
         run_client(args, seeds)
+
+
+def _run_sim_maybe_replicated(args, seeds: dict, results_dir: Path) -> None:
+    """Run the E8 sim once (canonical) or over replication master seeds.
+
+    Mirrors E2's protocol (experiments._replication.derive_seeds): each master
+    re-derives (data_partition, model_init, ...) so per-seed runs are
+    independent and comparable.  Per-seed summaries are written so the same
+    scripts/aggregate_ci.py can report mean ± CI95 as for E2/E7.
+    """
+    from experiments._replication import derive_seeds, load_replicate_seeds
+
+    if args.seeds:
+        masters = list(args.seeds)
+    elif args.all_seeds:
+        masters = load_replicate_seeds(args.seeds_file)
+        if not masters:
+            log.warning("No replicate_seeds in seeds.yaml — running a single "
+                        "canonical seed instead")
+    else:
+        masters = []
+
+    if not masters:
+        run_sim(args, seeds, results_dir)
+        return
+
+    log.info("E8 replication over %d master seeds: %s", len(masters), masters)
+    seeds_root = results_dir / "seeds"
+    seeds_root.mkdir(parents=True, exist_ok=True)
+    for master in masters:
+        derived = derive_seeds(seeds, master)
+        seed_dir = seeds_root / f"seed{master}"
+        seed_dir.mkdir(parents=True, exist_ok=True)
+        log.info("=== E8 replicate master=%d (dir=%s) ===", master, seed_dir)
+        row = run_sim(args, derived, seed_dir)
+        if isinstance(row, dict):
+            row["seed"] = master
+            _write_metrics([row], seeds_root / f"e8_flower_summary_seed{master}.csv")
+    log.info(
+        "E8 replication complete (%d seeds). Aggregate with:\n"
+        "  python scripts/aggregate_ci.py --glob '%s/e8_flower_summary_seed*.csv' "
+        "--group config --metric test_acc_final",
+        len(masters), seeds_root,
+    )
 
 
 if __name__ == "__main__":
