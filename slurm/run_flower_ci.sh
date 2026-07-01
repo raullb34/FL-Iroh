@@ -12,7 +12,7 @@
 #   sbatch slurm/run_flower_ci.sh
 #
 # Override defaults via --export, e.g.:
-#   sbatch --export=ALL,DATASET=cifar10,ROUNDS=50,NCLIENTS=10 slurm/run_flower_ci.sh
+#   sbatch --export=ALL,DATASET=cifar10,ROUNDS=100,NCLIENTS=10 slurm/run_flower_ci.sh
 #
 # Monitor:
 #   squeue --me
@@ -24,7 +24,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=16G
-#SBATCH --time=10:00:00
+#SBATCH --time=16:00:00
 #SBATCH --output=results/logs/flower_ci_%j.out
 #SBATCH --error=results/logs/flower_ci_%j.err
 
@@ -64,7 +64,7 @@ export NUMEXPR_NUM_THREADS="${NCPU}"
 # ── Config (override with --export) ──────────────────────────────────────────
 DATASET="${DATASET:-cifar10}"
 NCLIENTS="${NCLIENTS:-10}"
-ROUNDS="${ROUNDS:-50}"
+ROUNDS="${ROUNDS:-100}"   # match E2 (R=100) for a like-for-like accuracy comparison
 
 GIT_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 echo "[flower-ci] git=${GIT_COMMIT} host=$(hostname) cpus=${NCPU} $(date '+%F %T')"
