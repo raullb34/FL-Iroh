@@ -599,6 +599,67 @@ class IrohTransportNode:
 # Helper
 # ---------------------------------------------------------------------------
 
+def _secs(v: object) -> Optional[float]:
+    """Coerce an iroh duration-ish value to seconds (or None)."""
+    if v is None:
+        return None
+    try:
+        # datetime.timedelta
+        return float(v.total_seconds())  # type: ignore[attr-defined]
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        return float(v)  # int/float seconds
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _active_wire_addr(info: object) -> str:
+    """Return the real active UDP path address from ``RemoteInfo.addrs``.
+
+    ``ConnType.as_direct()`` only reports the peer's *self-advertised* primary
+    local address (e.g. its LAN IP), which is misleading behind NAT/CGNAT.
+    The authoritative wire path is the ``DirectAddrInfo`` that most recently
+    carried QUIC *payload* (smallest ``last_payload`` age); we fall back to the
+    lowest-latency probed address, then to any address as a last resort.
+    """
+    try:
+        addrs = list(info.addrs)  # type: ignore[attr-defined]
+    except Exception:  # noqa: BLE001
+        return ""
+    if not addrs:
+        return ""
+
+    best_payload: tuple[float, str] | None = None  # (age_secs, addr)
+    best_latency: tuple[float, str] | None = None
+    any_addr = ""
+    for d in addrs:
+        try:
+            a = str(d.addr())
+        except Exception:  # noqa: BLE001
+            continue
+        if a and not any_addr:
+            any_addr = a
+        try:
+            lp = _secs(d.last_payload())
+        except Exception:  # noqa: BLE001
+            lp = None
+        try:
+            lat = _secs(d.latency())
+        except Exception:  # noqa: BLE001
+            lat = None
+        if lp is not None and (best_payload is None or lp < best_payload[0]):
+            best_payload = (lp, a)
+        if lat is not None and (best_latency is None or lat < best_latency[0]):
+            best_latency = (lat, a)
+
+    if best_payload is not None:
+        return best_payload[1]
+    if best_latency is not None:
+        return best_latency[1]
+    return any_addr
+
+
 async def _classify_remote_conn(
     node_ref: "IrohTransportNode",
     conn: object,
@@ -683,20 +744,24 @@ async def _classify_remote_conn(
                 last_err = f"conn_type read: {exc}"
 
         if kind == "DIRECT":
-            addr = ""
-            try:
-                addr = str(ct_obj.as_direct())
-            except Exception:  # noqa: BLE001
-                pass
+            # Prefer the real active wire path from addrs(); fall back to the
+            # peer's self-advertised primary address only if addrs() is empty.
+            addr = _active_wire_addr(info)
+            if not addr:
+                try:
+                    addr = str(ct_obj.as_direct())
+                except Exception:  # noqa: BLE001
+                    pass
             return ConnType.DIRECT, addr
         if kind == "MIXED":
             # A direct path exists alongside relay; count as direct but keep the
             # address so overlay (Tailscale) paths can be audited out.
-            addr = ""
-            try:
-                addr = str(ct_obj.as_mixed())
-            except Exception:  # noqa: BLE001
-                pass
+            addr = _active_wire_addr(info)
+            if not addr:
+                try:
+                    addr = str(ct_obj.as_mixed())
+                except Exception:  # noqa: BLE001
+                    pass
             return ConnType.DIRECT, addr
         if kind == "RELAY":
             last = (ConnType.RELAY, "")
