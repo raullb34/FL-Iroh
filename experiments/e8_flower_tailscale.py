@@ -241,9 +241,13 @@ def _build_strategy(dataset: str, test_ds, n_clients: int, round_times: list[flo
 def run_sim(args, seeds: dict, results_dir: Path) -> Optional[dict]:
     try:
         import flwr as fl
-    except ImportError:
-        log.warning("flwr not installed — using in-process FedAvg fallback "
-                    "(pip install 'flwr[simulation]' for the real Flower engine)")
+    except Exception as exc:  # noqa: BLE001
+        # Any import failure (ImportError, or e.g. a pyenv Python built without
+        # _sqlite3 that flwr transitively imports) must fall back gracefully so
+        # the job still produces the quantitative CSV.
+        log.warning("flwr unavailable (%s: %s) — using in-process FedAvg "
+                    "fallback (aggregation-identical to Flower FedAvg)",
+                    type(exc).__name__, exc)
         return _run_sim_inprocess(args, seeds, results_dir, framework="fedavg-inprocess")
 
     import torch
@@ -374,8 +378,12 @@ def _run_sim_inprocess(args, seeds: dict, results_dir: Path, framework: str) -> 
 def run_server(args, seeds: dict, results_dir: Path) -> None:
     try:
         import flwr as fl
-    except ImportError:
-        log.error("flwr not installed — cannot start server (pip install flwr)")
+    except Exception as exc:  # noqa: BLE001
+        log.error("flwr unavailable (%s: %s) — cannot start real Flower server. "
+                  "For a working flwr, ensure Python was built with _sqlite3 "
+                  "(pyenv: install sqlite-devel/libsqlite3-dev then reinstall). "
+                  "The quantitative baseline is still available via --mode sim.",
+                  type(exc).__name__, exc)
         return
 
     import torch
@@ -421,8 +429,11 @@ def run_server(args, seeds: dict, results_dir: Path) -> None:
 def run_client(args, seeds: dict) -> None:
     try:
         import flwr as fl
-    except ImportError:
-        log.error("flwr not installed — cannot start client (pip install flwr)")
+    except Exception as exc:  # noqa: BLE001
+        log.error("flwr unavailable (%s: %s) — cannot start real Flower client. "
+                  "For a working flwr, ensure Python was built with _sqlite3 "
+                  "(pyenv: install sqlite-devel/libsqlite3-dev then reinstall).",
+                  type(exc).__name__, exc)
         return
 
     import torch
