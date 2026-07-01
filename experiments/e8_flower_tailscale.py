@@ -96,8 +96,11 @@ def _make_model(dataset: str):
 def _load_partitions(dataset: str, n_clients: int, partition: str, alpha: float, seeds: dict):
     from fl_coap_iroh.data.partition import load_dataset, partition_dataset
     train_ds, test_ds = load_dataset(dataset, "./data")
+    # E8 CLI uses "noniid" for the heterogeneous partition; partition_dataset
+    # implements it as Dirichlet(alpha) allocation (same as E2).
+    strategy = "dirichlet" if partition == "noniid" else partition
     parts = partition_dataset(
-        train_ds, n_clients, partition, alpha,
+        train_ds, n_clients, strategy, alpha,
         seed=seeds.get("data_partition", 42),
     )
     return parts, test_ds
