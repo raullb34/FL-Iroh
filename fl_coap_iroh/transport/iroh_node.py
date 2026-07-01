@@ -743,6 +743,17 @@ async def _classify_remote_conn(
             except Exception as exc:  # noqa: BLE001
                 last_err = f"conn_type read: {exc}"
 
+        if kind in ("DIRECT", "MIXED") and os.environ.get("FL_CONN_DEBUG_ADDRS"):
+            try:
+                dump = []
+                for d in info.addrs:  # type: ignore[attr-defined]
+                    dump.append(
+                        f"{d.addr()} lat={d.latency()} pay={d.last_payload()} ctrl={d.last_control()}"
+                    )
+                log.info("[conn-dbg] kind=%s addrs=[%s]", kind, " | ".join(dump))
+            except Exception as exc:  # noqa: BLE001
+                log.info("[conn-dbg] addrs dump failed: %s", exc)
+
         if kind == "DIRECT":
             # Prefer the real active wire path from addrs(); fall back to the
             # peer's self-advertised primary address only if addrs() is empty.
