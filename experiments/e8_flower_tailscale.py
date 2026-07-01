@@ -242,8 +242,9 @@ def run_sim(args, seeds: dict, results_dir: Path) -> Optional[dict]:
     try:
         import flwr as fl
     except ImportError:
-        log.warning("flwr not installed — skipping quantitative baseline (pip install flwr)")
-        return None
+        log.warning("flwr not installed — using in-process FedAvg fallback "
+                    "(pip install 'flwr[simulation]' for the real Flower engine)")
+        return _run_sim_inprocess(args, seeds, results_dir, framework="fedavg-inprocess")
 
     import torch
     torch.manual_seed(seeds.get("model_init", 123))
@@ -259,14 +260,26 @@ def run_sim(args, seeds: dict, results_dir: Path) -> Optional[dict]:
     round_times: list[float] = []
     strategy = _build_strategy(args.dataset, test_ds, args.n_clients, round_times)
 
+    start_simulation = getattr(getattr(fl, "simulation", None), "start_simulation", None)
+    if start_simulation is None:
+        log.warning("flwr %s has no start_simulation (removed in >=1.15) — "
+                    "using in-process FedAvg fallback with identical aggregation",
+                    getattr(fl, "__version__", "?"))
+        return _run_sim_inprocess(args, seeds, results_dir, framework="fedavg-inprocess")
+
     log.info("=== E8 Flower simulation — %s / %s / %d clients / %d rounds ===",
              args.dataset, args.partition, args.n_clients, args.rounds)
-    history = fl.simulation.start_simulation(
-        client_fn=client_fn,
-        num_clients=args.n_clients,
-        config=fl.server.ServerConfig(num_rounds=args.rounds),
-        strategy=strategy,
-    )
+    try:
+        history = start_simulation(
+            client_fn=client_fn,
+            num_clients=args.n_clients,
+            config=fl.server.ServerConfig(num_rounds=args.rounds),
+            strategy=strategy,
+        )
+    except Exception as exc:  # noqa: BLE001  (ray/engine issues → fall back)
+        log.warning("flwr start_simulation failed (%s: %s) — using in-process "
+                    "FedAvg fallback", type(exc).__name__, exc)
+        return _run_sim_inprocess(args, seeds, results_dir, framework="fedavg-inprocess")
 
     final_acc = None
     if history.metrics_centralized.get("test_acc"):
@@ -289,6 +302,73 @@ def run_sim(args, seeds: dict, results_dir: Path) -> Optional[dict]:
     log.info("E8 sim done: test_acc_final=%s  bytes/round=%d  t/round=%.3fs",
              row["test_acc_final"], row["payload_bytes_per_round"], row["wall_time_per_round_s"])
     return row
+
+
+def _run_sim_inprocess(args, seeds: dict, results_dir: Path, framework: str) -> dict:
+    """Framework-independent FedAvg simulation.
+
+    Implements exactly what Flower's ``FedAvg`` strategy does (sample-weighted
+    parameter averaging) using FL-Iroh's own model, partitions, and local
+    training loop.  Produces the same quantitative row as the Flower engine so
+    the E7 accuracy/byte/time comparison is available even when the installed
+    ``flwr`` lacks the legacy simulation API (removed in >=1.15) or ``ray`` is
+    unavailable.  The numbers are aggregation-identical to Flower FedAvg; only
+    the orchestration engine differs (which is irrelevant to model accuracy).
+    """
+    import numpy as np
+    import torch
+
+    torch.manual_seed(seeds.get("model_init", 123))
+    parts, test_ds = _load_partitions(
+        args.dataset, args.n_clients, args.partition, args.alpha, seeds,
+    )
+
+    global_model = _make_model(args.dataset)
+    global_params = _get_ndarrays(global_model)
+
+    round_times: list[float] = []
+    final_acc = None
+    for rnd in range(1, args.rounds + 1):
+        t0 = time.perf_counter()
+        client_params: list[list] = []
+        client_sizes: list[int] = []
+        for cid in range(args.n_clients):
+            local = _make_model(args.dataset)
+            _set_ndarrays(local, global_params)
+            stats = _local_train(local, parts[cid])
+            client_params.append(_get_ndarrays(local))
+            client_sizes.append(max(stats["samples"], 1))
+
+        # Sample-weighted average == Flower FedAvg.aggregate_fit
+        total = float(sum(client_sizes))
+        global_params = [
+            sum(cp[i] * (sz / total) for cp, sz in zip(client_params, client_sizes))
+            for i in range(len(global_params))
+        ]
+        round_times.append(time.perf_counter() - t0)
+
+        _set_ndarrays(global_model, global_params)
+        _, acc = _evaluate(global_model, test_ds)
+        final_acc = acc
+        log.info("  [inprocess-fedavg] round %d/%d  test_acc=%.4f", rnd, args.rounds, acc)
+
+    row = {
+        "framework": framework,
+        "transport": "in-process (aggregation-identical to Flower FedAvg)",
+        "dataset": args.dataset,
+        "partition": args.partition,
+        "alpha": args.alpha if args.partition != "iid" else "",
+        "n_clients": args.n_clients,
+        "rounds": args.rounds,
+        "test_acc_final": round(final_acc, 4) if final_acc is not None else "",
+        "payload_bytes_per_round": _payload_bytes_per_round(global_model, args.n_clients),
+        "wall_time_per_round_s": round(sum(round_times) / max(len(round_times), 1), 4),
+    }
+    _write_metrics([row], results_dir / "e8_flower_metrics.csv")
+    log.info("E8 in-process FedAvg done: test_acc_final=%s  bytes/round=%d  t/round=%.3fs",
+             row["test_acc_final"], row["payload_bytes_per_round"], row["wall_time_per_round_s"])
+    return row
+
 
 
 def run_server(args, seeds: dict, results_dir: Path) -> None:

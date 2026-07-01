@@ -341,10 +341,18 @@ def main() -> None:
     parser.add_argument("--peer-iroh-id",    default="")
     parser.add_argument("--peer-relay",      default="")
     parser.add_argument("--n-iter",          type=int, default=30)
+    parser.add_argument("--settle",          type=float,
+                        default=float(os.environ.get("FL_CONN_CLASSIFY_SETTLE_S", "5.0")),
+                        help="Seconds to poll iroh remote_info for a definitive "
+                             "direct/relay classification per connection "
+                             "(gives WAN hole-punching time to complete)")
     parser.add_argument("--mock",            action="store_true",
                         help="Use in-process mock transport (no real network)")
     parser.add_argument("--results-dir",     default="results/e3")
     args = parser.parse_args()
+    # Propagate the settle window to the transport's classifier via env so both
+    # server and client processes pick it up.
+    os.environ["FL_CONN_CLASSIFY_SETTLE_S"] = str(args.settle)
     asyncio.run(main_async(args))
 
 

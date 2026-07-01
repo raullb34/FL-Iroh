@@ -39,6 +39,7 @@ import asyncio
 import hashlib
 import io
 import logging
+import os
 import struct
 import time
 from dataclasses import dataclass, field
@@ -494,6 +495,11 @@ class IrohTransportNode:
         await send_stream.write(frame)
         await send_stream.finish()
 
+        # Capture the transfer end time *before* path classification so the
+        # measured throughput (E1) is not polluted by the remote_info settle
+        # window (which may poll for several seconds under E3).
+        transfer_ms = (time.monotonic() - t_start) * 1000
+
         # Classify the path actually used, via the real iroh remote_info API
         # (authoritative: direct hole-punch vs DERP relay).  pk is the remote
         # PublicKey we connected to.
@@ -506,7 +512,7 @@ class IrohTransportNode:
             bytes_on_wire        = len(frame),
             conn_type            = conn_type,
             conn_time_ms         = conn_time_ms,
-            transfer_duration_ms = (time.monotonic() - t_start) * 1000,
+            transfer_duration_ms = transfer_ms,
             active_addr          = active_addr,
         )
         log.info(
@@ -597,6 +603,8 @@ async def _classify_remote_conn(
     node_ref: "IrohTransportNode",
     conn: object,
     remote_pubkey: object = None,
+    settle_timeout_s: Optional[float] = None,
+    poll_interval_s: float = 0.3,
 ) -> tuple[ConnType, str]:
     """Classify a live connection's path using the real iroh ``remote_info`` API.
 
@@ -606,49 +614,104 @@ async def _classify_remote_conn(
     whether QUIC traffic flows over a hole-punched direct path or the DERP
     relay.  The active address is returned so overlay paths (e.g. Tailscale
     100.64.0.0/10) can be audited out of "direct" counts.
+
+    iroh populates ``conn_type`` **asynchronously**: immediately after a short
+    transfer the path is frequently still reported as ``None`` (undetermined),
+    and a direct hole-punch may only appear a few hundred ms — or seconds —
+    after the connection opens.  We therefore *poll* ``remote_info`` until a
+    definitive classification stabilises or a settle window elapses:
+      * ``DIRECT`` / ``MIXED``  -> return immediately (best achievable path).
+      * ``RELAY``               -> remember, but keep polling so a later
+                                   hole-punch upgrade is not missed.
+      * ``None`` / error        -> keep polling until the deadline.
+
+    The settle window is read from ``$FL_CONN_CLASSIFY_SETTLE_S`` (seconds) when
+    *settle_timeout_s* is not given, defaulting to 1.0 s for the FL data plane.
+    E3 sets it higher (e.g. 5 s) to give WAN hole-punching time to complete.
     """
+    if settle_timeout_s is None:
+        try:
+            settle_timeout_s = float(os.environ.get("FL_CONN_CLASSIFY_SETTLE_S", "1.0"))
+        except (TypeError, ValueError):
+            settle_timeout_s = 1.0
+
+    try:
+        import iroh  # type: ignore[import]
+    except Exception:  # noqa: BLE001
+        iroh = None  # type: ignore[assignment]
+
     try:
         node = node_ref._iroh_node
         if node is None:
             return ConnType.UNKNOWN, ""
         net = node.net()
+        # remote_info() requires a PublicKey object, not a hex string.
         if remote_pubkey is None:
             remote_pubkey = conn.remote_node_id()  # type: ignore[attr-defined]
             if asyncio.iscoroutine(remote_pubkey):
                 remote_pubkey = await remote_pubkey
-        info = await net.remote_info(remote_pubkey)
+        if isinstance(remote_pubkey, str) and iroh is not None:
+            remote_pubkey = iroh.PublicKey.from_string(remote_pubkey)
     except Exception as exc:  # noqa: BLE001
-        log.debug("remote_info classification failed: %s", exc)
+        log.warning(
+            "conn classification setup failed: %s: %s",
+            type(exc).__name__, exc,
+        )
         return ConnType.UNKNOWN, ""
 
-    if info is None:
-        return ConnType.UNKNOWN, ""
-    try:
-        ct_obj = info.conn_type
-        kind = str(ct_obj.type()).rsplit(".", 1)[-1].upper()  # DIRECT/RELAY/MIXED/NONE
-    except Exception as exc:  # noqa: BLE001
-        log.debug("conn_type read failed: %s", exc)
-        return ConnType.UNKNOWN, ""
+    loop = asyncio.get_event_loop()
+    deadline = loop.time() + max(settle_timeout_s, 0.0)
+    last: tuple[ConnType, str] = (ConnType.UNKNOWN, "")
+    attempts = 0
+    last_err: Optional[str] = None
 
-    if kind == "DIRECT":
-        addr = ""
+    while True:
+        attempts += 1
+        info = None
         try:
-            addr = str(ct_obj.as_direct())
-        except Exception:
-            pass
-        return ConnType.DIRECT, addr
-    if kind == "MIXED":
-        # A direct path exists alongside relay; count as direct but keep the
-        # address so overlay (Tailscale) paths can be audited out.
-        addr = ""
-        try:
-            addr = str(ct_obj.as_mixed())
-        except Exception:
-            pass
-        return ConnType.DIRECT, addr
-    if kind == "RELAY":
-        return ConnType.RELAY, ""
-    return ConnType.UNKNOWN, ""
+            info = await net.remote_info(remote_pubkey)
+        except Exception as exc:  # noqa: BLE001
+            last_err = f"{type(exc).__name__}: {exc}"
+
+        kind = "NONE"
+        ct_obj = None
+        if info is not None:
+            try:
+                ct_obj = info.conn_type
+                kind = str(ct_obj.type()).rsplit(".", 1)[-1].upper()  # DIRECT/RELAY/MIXED/NONE
+            except Exception as exc:  # noqa: BLE001
+                last_err = f"conn_type read: {exc}"
+
+        if kind == "DIRECT":
+            addr = ""
+            try:
+                addr = str(ct_obj.as_direct())
+            except Exception:  # noqa: BLE001
+                pass
+            return ConnType.DIRECT, addr
+        if kind == "MIXED":
+            # A direct path exists alongside relay; count as direct but keep the
+            # address so overlay (Tailscale) paths can be audited out.
+            addr = ""
+            try:
+                addr = str(ct_obj.as_mixed())
+            except Exception:  # noqa: BLE001
+                pass
+            return ConnType.DIRECT, addr
+        if kind == "RELAY":
+            last = (ConnType.RELAY, "")
+
+        if loop.time() >= deadline:
+            break
+        await asyncio.sleep(poll_interval_s)
+
+    if last[0] == ConnType.UNKNOWN:
+        log.warning(
+            "conn_type undetermined after %d attempt(s) in %.1fs%s",
+            attempts, settle_timeout_s,
+            f" (last error: {last_err})" if last_err else "",
+        )
+    return last
 
 
 def _detect_conn_type(connection: object) -> ConnType:
