@@ -33,7 +33,7 @@
 
 \begin{document}
 
-\title{FL-Iroh: NAT-Transparent Federated Learning for Agricultural IoT via QUIC P2P Transport and CoAP Service Discovery}
+\title{FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT via QUIC P2P Transport and CoAP Service Discovery}
 
 \author{
 \IEEEauthorblockN{Ra\'{u}l L\'{o}pez-Blanco\IEEEauthorrefmark{1},
@@ -49,11 +49,11 @@ ralonso@air-institute.com}
 
 % -----------------------------------------------------------------------
 \begin{abstract}
-Federated Learning (FL) for agricultural IoT faces a fundamental connectivity barrier: smart farming devices deployed behind Network Address Translators (NATs) and Carrier-Grade NAT (CGNAT) cannot reach each other or a central parameter server without costly static IP allocations or VPN infrastructure. We present \textbf{FL-Iroh}, an open-source system that couples the \emph{Iroh} QUIC-based P2P transport with a CoAP/CoRE service discovery layer to enable connectivity-guaranteed FL across NAT-constrained edge devices. Iroh's relay fallback provides a connectivity guarantee via transparent, end-to-end-encrypted relaying when direct hole-punching is infeasible (e.g., under CGNAT), while CoAP provides a lightweight control plane for model-parameter routing under heterogeneous network topologies. We evaluate FL-Iroh on two agricultural IoT domains: (1)~the Crop Recommendation dataset (7 soil/climate features, 22 classes) using AgriMLP ($\sim$15K parameters); and (2)~the Castilla y Le\'on daily air-quality dataset (10 provinces, 2011--2019) using both AirMLP ($\sim$3.7K parameters, FedAvg) and a federated Prophet GAM (FedGAM), demonstrating algorithm-agnostic transport. Across six experiments: (E1) transport throughput---relay achieves 27.2~Mbps loopback and 2.8~Mbps WAN; (E2) FL convergence---65.9\% accuracy under IID partition on CIFAR-10, degrading to 44.2\% under severe Non-IID heterogeneity (Dirichlet $\alpha{=}0.1$, $n{=}5$ seeds, 95\% CI); (E3) NAT traversal---direct QUIC hole-punching succeeded on 98\% of WAN connections across five NAT/CGNAT/firewall scenarios (0\% relay usage, confirmed via public active-path inspection), with the encrypted relay retained as a guaranteed fallback; (E4) churn resilience---accuracy stable at 93.2--93.6\% across 0--50\% dropout on Crop Recommendation; (E5) CoAP discovery overhead---O(1) 1.9~ms; and (E6) outdoor air-quality FL (7-day-ahead ICA forecasting)---a federated Prophet GAM reaches 57.9\% accuracy versus 49.6\% for the neural AirMLP baseline, with the gain attributable to model class rather than aggregation rule (Prophet+FedGAM vs. Prophet+FedAvg ablation: $\Delta{<}0.3$pp, $p{=}0.35$, $n{=}5$ seeds). FL-Iroh demonstrates that robust, infrastructure-free FL is achievable for precision agriculture at the edge, with a single transport layer supporting both neural network and statistical time-series model federation.
+Federated Learning (FL) for agricultural IoT faces a fundamental connectivity barrier: smart farming devices deployed behind Network Address Translators (NATs) and Carrier-Grade NAT (CGNAT) cannot reach each other or a central parameter server without costly static IP allocations or VPN infrastructure. We present \textbf{FL-Iroh}, an open-source system that couples the \emph{Iroh} QUIC-based P2P transport with a CoAP/CoRE service discovery layer to enable relay-backed, NAT-resilient FL across NAT-constrained edge devices. Iroh's relay fallback provides a connectivity guarantee via transparent, end-to-end-encrypted relaying when direct hole-punching is infeasible (e.g., under CGNAT), while CoAP provides a lightweight control plane for round coordination and client discovery under heterogeneous network topologies. We evaluate FL-Iroh on two agricultural IoT domains: (1)~the Crop Recommendation dataset (7 soil/climate features, 22 classes) using AgriMLP ($\sim$15K parameters); and (2)~the Castilla y Le\'on daily air-quality dataset (10 provinces, 2011--2019) using both AirMLP ($\sim$3.7K parameters, FedAvg) and a federated Prophet GAM (FedGAM), demonstrating algorithm-agnostic transport. Across six experiments: (E1) transport throughput---relay achieves 27.2~Mbps loopback and 2.8~Mbps WAN; (E2) FL convergence---65.9\% accuracy under IID partition on CIFAR-10, degrading to 44.2\% under severe Non-IID heterogeneity (Dirichlet $\alpha{=}0.1$, $n{=}5$ seeds, 95\% CI); (E3) NAT traversal---direct QUIC hole-punching succeeded on 98\% of WAN connections across five NAT/CGNAT/firewall scenarios (0\% relay usage, confirmed via public active-path inspection), with the encrypted relay retained as a guaranteed fallback; (E4) churn resilience---accuracy stable at 93.2--93.6\% across 0--50\% dropout on Crop Recommendation; (E5) CoAP discovery overhead---O(1) 1.9~ms; and (E6) outdoor air-quality FL (7-day-ahead ICA forecasting)---a federated Prophet GAM reaches 57.9\% accuracy versus 49.6\% for the neural AirMLP baseline, with the gain attributable to model class rather than aggregation rule (Prophet+FedGAM vs. Prophet+FedAvg ablation: $\Delta{<}0.3$pp, $p{=}0.35$, $n{=}5$ seeds). FL-Iroh demonstrates that robust, infrastructure-free FL is achievable for precision agriculture and environmental monitoring at the edge, with a single transport layer supporting both neural network and statistical time-series model federation.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Federated Learning, IoT, Agriculture, Iroh, CoAP
+Federated Learning, IoT, Agriculture, Air Quality, Iroh, CoAP
 \end{IEEEkeywords}
 
 % -----------------------------------------------------------------------
@@ -95,7 +95,7 @@ We address this gap with \textbf{FL-Iroh}, a system that integrates:
 
 \begin{enumerate}
     \item \textbf{Iroh}~\cite{iroh2024}, a QUIC-based P2P transport library that implements the DERP relay protocol~\cite{tailscale2023}: hole-punching is attempted first; if it fails, all traffic is seamlessly relayed through a DERP server with end-to-end encryption---the application is unaware of the switchover.
-    \item \textbf{CoAP/CoRE}~\cite{rfc7252} as a lightweight control plane for FL service discovery (resource directory, model routing), using CBOR serialization for minimal overhead on constrained links.
+    \item \textbf{CoAP/CoRE}~\cite{rfc7252} as a lightweight control plane for FL service discovery (resource directory, round coordination), using CBOR serialization for minimal overhead on constrained links.
     \item \textbf{FedAvg}~\cite{mcmahan2017} and \textbf{FedGAM} (selective aggregation of shared GAM seasonality coefficients) as aggregation algorithms, operating over Iroh QUIC streams. The data plane is independent of IP addressing and, critically, \emph{algorithm-agnostic}: the same QUIC channel carries neural network weight tensors and Prophet Fourier coefficients without protocol modification.
 \end{enumerate}
 
@@ -142,7 +142,7 @@ A pragmatic way to reach NATed devices is to place them on a shared overlay netw
 FL-Iroh is structured as two planes (Fig.~\ref{fig:architecture}):
 
 \begin{itemize}
-    \item \textbf{Control plane (CoAP/CoRE)}: A CoAP resource directory running on the FL aggregation node. Clients register their Iroh endpoint descriptors (node ID, addresses, relay URL) as CoAP resources on startup. The server discovers clients, manages round state, and disseminates global model parameters via CoAP GET/PUT with CBOR encoding.
+    \item \textbf{Control plane (CoAP/CoRE)}: A CoAP resource directory running on the FL aggregation node. Clients register their Iroh endpoint descriptors (node ID, addresses, relay URL) as CoAP resources on startup. The server discovers clients, manages round state, and disseminates lightweight round metadata (\texttt{round\_id}, \texttt{model\_hash}, server node ID) via CoAP GET/PUT with CBOR encoding; clients then fetch the model tensors over Iroh/QUIC (ALPN \texttt{fl-model/1}).
     \item \textbf{Data plane (Iroh/QUIC)}: All tensor data---model distributions (server$\to$client) and gradient uploads (client$\to$server)---flow over QUIC streams established by Iroh. Each QUIC stream carries a length-prefixed, SHA-256-verified payload. The ALPN protocol identifiers \texttt{fl-model/1} and \texttt{fl-update/1} distinguish model push from update upload.
 \end{itemize}
 
@@ -231,7 +231,7 @@ The SHA-256 suffix provides integrity verification at the application layer, ind
 The FL server exposes CoAP resources following the CoRE resource directory~\cite{rfc6690}:
 \begin{itemize}
     \item \texttt{/fl/register}: Clients POST their Iroh endpoint JSON on startup.
-    \item \texttt{/fl/round}: Server PUT triggers a new training round, carrying the serialized global model.
+    \item \texttt{/fl/round}: Server PUT triggers a new training round, carrying lightweight round metadata (\texttt{round\_id}, \texttt{model\_hash}, server node ID); clients fetch the global model tensors over Iroh/QUIC (ALPN \texttt{fl-model/1}).
     \item \texttt{/fl/discover}: Server queries registered clients with optional semantic filtering by capability tags (e.g., \texttt{sensor\_type=soil}).
 \end{itemize}
 
@@ -294,6 +294,30 @@ iroh relay WAN       & 100~MB  & 2.81   & 2.83   & 30 \\
 
 The flat throughput curve across payloads (100~KB to 100~MB all saturate at $\approx$2.8~Mbps, $N{=}30$ per cell, stdev${<}$0.05~Mbps) indicates relay-server CPU/bandwidth saturation rather than QUIC protocol overhead. A self-hosted DERP relay on a dedicated server would eliminate this bottleneck, but the public relay already suffices for AgriMLP-sized model updates ($<$200~ms per round).
 
+\subsection{E2: FL Convergence Under Non-IID Data}
+\label{sec:e2}
+
+We evaluate FedAvg convergence on CIFAR-10 with SimpleCNN under IID and non-IID (Dirichlet $\alpha{=}0.1$) partitioning. All runs use $K{=}10$ clients, $E{=}1$ local epoch, cross-entropy loss, SGD optimizer (lr$=$0.01), $R{=}100$ rounds. Multi-seed replication ($n{=}5$) provides 95\% confidence intervals via Student-t distribution. Results in Table~\ref{tab:e2}.
+
+\begin{table}[t]
+\centering
+\caption{E2: FL Convergence on CIFAR-10 (SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds)}
+\label{tab:e2}
+\footnotesize
+\begin{tabular}{l r r}
+\toprule
+\textbf{Partition} & \textbf{Test Acc. (final)} & \textbf{95\% CI} \\
+\midrule
+IID                  & 65.86\% & [65.66\%, 66.06\%] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% & [39.45\%, 48.92\%] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under IID partitioning, SimpleCNN converges to 65.86\% test accuracy with a tight 95\% CI of $\pm$0.2pp ($n{=}5$ seeds), demonstrating reproducible convergence. Severe non-IID heterogeneity (Dirichlet $\alpha{=}0.1$) causes substantial degradation to 44.18\%, with a wider CI of $\pm$4.7pp reflecting increased variance across different client-data assignments. The 21.7pp accuracy gap quantifies the cost of label skew in CIFAR-10 FL, consistent with prior work~\cite{li2020federated,scaffold2020}. Despite heterogeneity, FedAvg converges without divergence, validating the robustness of the transport layer under realistic non-IID conditions.
+
+A heterogeneity sweep over the Dirichlet concentration parameter (single-seed runs) confirms the expected monotonic trend: accuracy degrades smoothly from IID (65.86\%) through $\alpha{=}1.0$ (63.95\%) and $\alpha{=}0.5$ (62.64\%) to the severe $\alpha{=}0.1$ regime, where label skew becomes the dominant error source. The transport layer imposes no additional convergence penalty at any heterogeneity level: all runs complete their full 100 rounds with 100\% round-level success and identical per-round byte cost (3.87~MB/round to the aggregator).
+
 \subsection{E3: NAT Traversal Success Rate}
 \label{sec:e3}
 
@@ -334,30 +358,6 @@ net\_fw443 (firewall :443)  & 30 & 100.0 & 0.0 & 0.0 & direct (public) \\
 Connection establishment (cold start) is variable---from 5.3~s (CGNAT) to 113~s (symmetric NAT)---while the direct path and relay candidates are negotiated and the NAT mapping is discovered; once established, steady-state transfer latency is low (62--625~ms, typically $<$300~ms), and subsequent transfers reuse the direct path. These latencies are acceptable for FL model exchange, where local training dominates round time.
 
 This result is stronger than the relay-fallback guarantee alone: Iroh's hole-punching forms direct paths even under the symmetric-NAT and CGNAT conditions that classically defeat it. The DERP relay remains a \emph{guaranteed} fallback---ensuring 0\% connectivity failure by construction---but was not exercised in any trial. The evaluation is a conservative worst-case: two peers with no shared routing infrastructure, on different ISPs 300~km apart, stressed by CGNAT and port restrictions. In more favourable managed deployments (e.g., devices behind a single LTE provider or campus network), direct-path success can only improve.
-
-\subsection{E2: FL Convergence Under Non-IID Data}
-\label{sec:e2}
-
-We evaluate FedAvg convergence on CIFAR-10 with SimpleCNN under IID and non-IID (Dirichlet $\alpha{=}0.1$) partitioning. All runs use $K{=}10$ clients, $E{=}1$ local epoch, cross-entropy loss, SGD optimizer (lr$=$0.01), $R{=}100$ rounds. Multi-seed replication ($n{=}5$) provides 95\% confidence intervals via Student-t distribution. Results in Table~\ref{tab:e2}.
-
-\begin{table}[t]
-\centering
-\caption{E2: FL Convergence on CIFAR-10 (SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds)}
-\label{tab:e2}
-\footnotesize
-\begin{tabular}{l r r}
-\toprule
-\textbf{Partition} & \textbf{Test Acc. (final)} & \textbf{95\% CI} \\
-\midrule
-IID                  & 65.86\% & [65.66\%, 66.06\%] \\
-Dirichlet $\alpha{=}0.1$ & 44.18\% & [39.45\%, 48.92\%] \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Under IID partitioning, SimpleCNN converges to 65.86\% test accuracy with a tight 95\% CI of $\pm$0.2pp ($n{=}5$ seeds), demonstrating reproducible convergence. Severe non-IID heterogeneity (Dirichlet $\alpha{=}0.1$) causes substantial degradation to 44.18\%, with a wider CI of $\pm$4.7pp reflecting increased variance across different client-data assignments. The 21.7pp accuracy gap quantifies the cost of label skew in CIFAR-10 FL, consistent with prior work~\cite{li2020federated,karimireddy2020scaffold}. Despite heterogeneity, FedAvg converges without divergence, validating the robustness of the transport layer under realistic non-IID conditions.
-
-A heterogeneity sweep over the Dirichlet concentration parameter (single-seed runs) confirms the expected monotonic trend: accuracy degrades smoothly from IID (65.86\%) through $\alpha{=}1.0$ (63.95\%) and $\alpha{=}0.5$ (62.64\%) to the severe $\alpha{=}0.1$ regime, where label skew becomes the dominant error source. The transport layer imposes no additional convergence penalty at any heterogeneity level: all runs complete their full 100 rounds with 100\% round-level success and identical per-round byte cost (3.87~MB/round to the aggregator).
 
 \subsection{E4: Churn Resilience}
 \label{sec:e4}
@@ -461,14 +461,14 @@ ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
 
 \textbf{Algorithm-Agnosticism of FL-Iroh.} Switching from FedAvg to FedGAM requires a single server-side change: \texttt{aggregator\_fn=fedgam\_aggregate}. The Iroh/QUIC data plane is oblivious to parameter semantics---it serializes any \texttt{torch.state\_dict()} as a binary blob and delivers it to each client unchanged. The same Iroh channels that carried AirMLP weight tensors (3.7K parameters, $\approx$15~KB) also carry ProphetWrapper Fourier tensors (27 parameters, $<$1~KB) without protocol modification. This is the central claim of FL-Iroh: \emph{the transport does not constrain the algorithm}. Operators can deploy domain-specific aggregation strategies---FedGAM for GAMs, FedProx for heterogeneous neural networks, partial aggregation for gradient-boosted trees---on existing IoT networks without touching the connectivity layer.
 
-\subsection{E7: Comparison with Flower over Tailscale}
+\subsection{Operational Comparison with Flower over Tailscale}
 \label{sec:e7}
 
 The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT/CGNAT through DERP-style relays. Both stacks ultimately rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes. The comparison is primarily architectural, but we also empirically verify accuracy parity (Table~\ref{tab:e7acc}): because both stacks run identical FL algorithms, the distinguishing factors are deployment surface, external dependencies, and operational cost rather than statistical performance.
 
 \begin{table*}[t]
 \centering
-\caption{E7: FL-Iroh vs.\ Flower-over-Tailscale operational comparison}
+\caption{FL-Iroh vs.\ Flower-over-Tailscale operational comparison}
 \label{tab:e7}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
@@ -493,7 +493,7 @@ To confirm that the choice of transport does not affect model quality, we ran th
 
 \begin{table}[t]
 \centering
-\caption{E7: Transport-agnostic accuracy parity (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds; final test accuracy, mean with 95\% CI)}
+\caption{Transport-agnostic accuracy parity (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds; final test accuracy, mean with 95\% CI)}
 \label{tab:e7acc}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
@@ -635,6 +635,11 @@ T.~Li \emph{et al.},
 S.~P. Karimireddy \emph{et al.},
 ``SCAFFOLD: Stochastic controlled averaging for federated learning,''
 \emph{Proc. ICML}, 2020.
+
+\bibitem{li2020federated}
+T.~Li, A.~K.~Sahu, A.~Talwalkar, and V.~Smith,
+``Federated learning: Challenges, methods, and future directions,''
+\emph{IEEE Signal Process. Mag.}, vol.~37, no.~3, pp.~50--60, 2020.
 
 \bibitem{konecny2016}
 J.~Konecny, H.~B. McMahan, F.~X. Yu, P.~Richtarik, A.~T. Suresh, and D.~Bacon,
