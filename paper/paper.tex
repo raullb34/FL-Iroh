@@ -464,7 +464,7 @@ ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
 \subsection{E7: Comparison with Flower over Tailscale}
 \label{sec:e7}
 
-The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT/CGNAT through DERP-style relays. Both stacks ultimately rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes. The comparison is qualitative/architectural: both approaches can achieve equivalent model accuracy (they run identical FL algorithms), so the distinction is one of deployment surface, external dependencies, and operational cost rather than statistical performance.
+The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT/CGNAT through DERP-style relays. Both stacks ultimately rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes. The comparison is primarily architectural, but we also empirically verify accuracy parity (Table~\ref{tab:e7acc}): because both stacks run identical FL algorithms, the distinguishing factors are deployment surface, external dependencies, and operational cost rather than statistical performance.
 
 \begin{table*}[t]
 \centering
@@ -487,6 +487,25 @@ Account / ToS dependency & None for default relays; fully self-hostable & Tailsc
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\paragraph{Accuracy parity.}
+To confirm that the choice of transport does not affect model quality, we ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$ clients, $R{=}100$ rounds, $n{=}5$ seeds using the same replication seeds as E2) through the E8 Flower-compatible harness and compared final test accuracy against FL-Iroh's E2 measurements (Table~\ref{tab:e7acc}). Under both IID and severe non-IID ($\alpha{=}0.1$) partitions the two transports are statistically indistinguishable---each mean lies within the other's 95\% CI---confirming that FL-Iroh's serverless P2P data plane incurs no accuracy penalty relative to a conventional star-topology framework. This parity is expected by construction (both run FedAvg with identical hyperparameters and seeds) and isolates FL-Iroh's contribution to the transport layer alone.
+
+\begin{table}[t]
+\centering
+\caption{E7: Transport-agnostic accuracy parity (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds; final test accuracy, mean with 95\% CI)}
+\label{tab:e7acc}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Partition} & \textbf{FL-Iroh (E2)} & \textbf{Flower harness (E8)} \\
+\midrule
+IID                      & 65.86\% [65.66, 66.06] & 65.98\% [65.79, 66.17] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 The head-to-head highlights FL-Iroh's core architectural advantage: NAT traversal is embedded in the application-level transport rather than delegated to a privileged, account-managed system VPN. FL-Iroh requires no root daemon, no persistent server IP, and no third-party coordination account, and its data plane is serverless-capable (peers named by public key). Flower+Tailscale, by contrast, layers an FL framework that still assumes a reachable star-topology server on top of a separate VPN that must be installed and authenticated on every node. For unattended agricultural dataloggers---often solar-powered, behind CGNAT, with no administrator on site---removing the per-node daemon, the account dependency, and the single-point-of-failure server is a decisive operational simplification.
 

@@ -466,7 +466,7 @@ ProphetWrapper (FedAvg)     & IID         & 57,66\% & [57,26\%, 58,06\%] \\
 \subsection{E7: Comparaci\'{o}n con Flower sobre Tailscale}
 \label{sec:e7}
 
-La alternativa desplegable m\'{a}s cercana a FL-Iroh para FL con restricci\'{o}n de NAT es ejecutar un framework convencional (Flower~\cite{flower2022}) sobre una malla VPN WireGuard como Tailscale~\cite{tailscale2023}, que asigna a cada nodo una IP virtual estable y atraviesa NAT/CGNAT mediante relays de estilo DERP. Ambas pilas dependen en \'{u}ltima instancia de traversal NAT asistido por relay y de cifrado extremo a extremo; la diferencia est\'{a} en \emph{d\'{o}nde} reside la conectividad. La Tabla~\ref{tab:e7} contrasta ambas a lo largo de ocho ejes operativos. La comparaci\'{o}n es cualitativa/arquitect\'{o}nica: ambos enfoques pueden alcanzar precisi\'{o}n de modelo equivalente (ejecutan algoritmos FL id\'{e}nticos), por lo que la distinci\'{o}n es de superficie de despliegue, dependencias externas y coste operativo, no de rendimiento estad\'{i}stico.
+La alternativa desplegable m\'{a}s cercana a FL-Iroh para FL con restricci\'{o}n de NAT es ejecutar un framework convencional (Flower~\cite{flower2022}) sobre una malla VPN WireGuard como Tailscale~\cite{tailscale2023}, que asigna a cada nodo una IP virtual estable y atraviesa NAT/CGNAT mediante relays de estilo DERP. Ambas pilas dependen en \'{u}ltima instancia de traversal NAT asistido por relay y de cifrado extremo a extremo; la diferencia est\'{a} en \emph{d\'{o}nde} reside la conectividad. La Tabla~\ref{tab:e7} contrasta ambas a lo largo de ocho ejes operativos. La comparaci\'{o}n es principalmente arquitect\'{o}nica, pero adem\'{a}s verificamos emp\'{i}ricamente la paridad de precisi\'{o}n (Tabla~\ref{tab:e7acc}): dado que ambas pilas ejecutan algoritmos FL id\'{e}nticos, los factores diferenciadores son la superficie de despliegue, las dependencias externas y el coste operativo, no el rendimiento estad\'{i}stico.
 
 \begin{table*}[t]
 \centering
@@ -489,6 +489,25 @@ Dependencia de cuenta / ToS & Ninguna para relays por defecto; totalmente auto-h
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\paragraph{Paridad de precisi\'{o}n.}
+Para confirmar que la elecci\'{o}n de transporte no afecta la calidad del modelo, ejecutamos la misma carga FedAvg (SimpleCNN sobre CIFAR-10, $K{=}10$ clientes, $R{=}100$ rondas, $n{=}5$ semillas, usando las mismas semillas de replicaci\'{o}n que E2) a trav\'{e}s del harness compatible con Flower de E8 y comparamos la precisi\'{o}n final de test frente a las mediciones E2 de FL-Iroh (Tabla~\ref{tab:e7acc}). Bajo particiones IID y no-IID severa ($\alpha{=}0,1$) ambos transportes son estad\'{i}sticamente indistinguibles ---cada media cae dentro del IC~95\% del otro--- confirmando que el plano de datos P2P sin servidor de FL-Iroh no impone penalizaci\'{o}n de precisi\'{o}n frente a un framework convencional en estrella. Esta paridad es esperable por construcci\'{o}n (ambos ejecutan FedAvg con hiperpar\'{a}metros y semillas id\'{e}nticos) y a\'{i}sla la contribuci\'{o}n de FL-Iroh a la capa de transporte.
+
+\begin{table}[t]
+\centering
+\caption{E7: Paridad de precisi\'{o}n agn\'{o}stica al transporte (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ semillas; precisi\'{o}n final de test, media con IC~95\%)}
+\label{tab:e7acc}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Partici\'{o}n} & \textbf{FL-Iroh (E2)} & \textbf{Harness Flower (E8)} \\
+\midrule
+IID                      & 65,86\% [65,66, 66,06] & 65,98\% [65,79, 66,17] \\
+Dirichlet $\alpha{=}0,1$ & 44,18\% [39,45, 48,92] & 46,10\% [41,20, 51,00] \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 El contraste directo resalta la ventaja arquitect\'{o}nica central de FL-Iroh: el traversal NAT est\'{a} integrado en el transporte de nivel de aplicaci\'{o}n en lugar de delegado a una VPN de sistema privilegiada y gestionada por cuenta. FL-Iroh no requiere demonio root, ni IP de servidor persistente, ni cuenta de coordinaci\'{o}n de terceros, y su plano de datos es capaz de operar sin servidor (pares nombrados por clave p\'{u}blica). Flower+Tailscale, en cambio, superpone un framework FL que a\'{u}n asume un servidor en estrella alcanzable sobre una VPN separada que debe instalarse y autenticarse en cada nodo. Para dataloggers agr\'{i}colas desatendidos ---a menudo alimentados por energ\'{i}a solar, tras CGNAT, sin administrador in situ--- eliminar el demonio por nodo, la dependencia de cuenta y el servidor como punto \'{u}nico de fallo es una simplificaci\'{o}n operativa decisiva.
 
