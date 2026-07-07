@@ -103,7 +103,8 @@ async def run_arch_b(
         availability = AvailabilityInfo(status=NodeStatus.READY),
     )
     policy = TrainingPolicy(
-        min_clients=max(2, n_clients // 2), local_epochs=1,
+        # never require more clients than exist (K=1 = centralized upper bound)
+        min_clients=min(n_clients, max(2, n_clients // 2)), local_epochs=1,
         learning_rate=0.01, max_rounds=rounds,
     )
 

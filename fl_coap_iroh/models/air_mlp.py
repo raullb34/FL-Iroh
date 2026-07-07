@@ -12,12 +12,13 @@ Input features (6, all z-score normalised):
   velmedia   (m/s)    — mean wind speed (AEMET)
   prec       (mm)     — daily precipitation (AEMET)
 
-Output classes (label_ica):
-  0 — Bueno    (NO2 < 40  μg/m³)
-  1 — Regular  (40 ≤ NO2 < 100)
-  2 — Malo     (NO2 ≥ 100 μg/m³)
+Output classes (label_ica) — training-set NO2 terciles (see
+data/air-quailty/datasets/air_quality_ica_thresholds.json):
+  0 — Bajo   (NO2 <  T1 = 7.5  μg/m³)
+  1 — Medio  (T1 ≤ NO2 < T2 = 13.0)
+  2 — Alto   (NO2 ≥  T2 = 13.0 μg/m³)
 
-Architecture: 6→32→32→16→3  ≈ 3.7K parameters
+Architecture: 6→32→32→16→3 = 1,987 parameters (~8 KB float32)
 Designed as the air-quality analogue of AgriMLP for E7 federated experiment.
 """
 from __future__ import annotations
@@ -36,7 +37,8 @@ class AirMLP(nn.Module):
         Linear(h2→h3)        → ReLU
         Linear(h3→num_classes)
 
-    Default: 6→32→32→16→3 ≈ 3.7K params.
+    Default: 6→32→32→16→3 = 1,987 params (BatchNorm+Dropout on the first
+    two hidden layers only).
     """
 
     def __init__(

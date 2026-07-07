@@ -2,8 +2,8 @@
 SimpleCNN — lightweight convolutional network for CIFAR-10 / FL experiments.
 
 Architecture: 3 conv blocks → global-average pooling → linear head.
-~490 K trainable parameters, runs on CPU in < 1 s/batch on a Pi 4.
-Serialised state dict: ~2 MB (float32), adequate for transfer benchmarks.
+94,762 trainable parameters, runs on CPU in < 1 s/batch on a Pi 4.
+Serialised state dict: ~0.38 MB (float32), adequate for transfer benchmarks.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import torch.nn.functional as F
 
 class SimpleCNN(nn.Module):
     """
-    Small CNN (≈490 K params) for CIFAR-10 (32×32 RGB).
+    Small CNN (~95 K params) for CIFAR-10 (32×32 RGB).
 
     Block structure::
         Conv(c_in → 32, 3×3, pad=1) → BN → ReLU

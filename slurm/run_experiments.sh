@@ -24,7 +24,7 @@
 #   paper E6 (air quality)  ↔ experiments.e7_air_quality_fl ↔ results/e7/
 # =============================================================================
 #SBATCH --job-name=fl_iroh_exp
-#SBATCH --partition=all
+#SBATCH --partition=cpu   # CPU-only FL simulations; 'all' partition removed 2026-07-15
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16

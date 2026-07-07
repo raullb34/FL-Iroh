@@ -152,6 +152,9 @@ async def run_churn_experiment(
     results_dir : Path,
     seeds       : dict,
     churn_mode  : str = "select",
+    partition   : str = "iid",
+    alpha       : float = 0.5,
+    tag_suffix  : str = "",
 ) -> None:
     import random
     from fl_coap_iroh.data.partition import load_dataset, partition_dataset
@@ -165,16 +168,16 @@ async def run_churn_experiment(
         NodeCapabilities, NodeRole, NodeStatus, TrainingPolicy,
     )
 
-    label = f"churn_{int(churn_rate * 100):02d}pct"
+    label = f"churn_{int(churn_rate * 100):02d}pct{tag_suffix}"
     scenario = f"net_churn{int(churn_rate * 100):02d}"
-    log.info("=== E5: %s ===", label)
+    log.info("=== E5: %s (partition=%s) ===", label, partition)
 
     rng = random.Random(seeds.get("churn_simulator", 456))
     torch.manual_seed(seeds.get("model_init", 123))
 
     train_ds, test_ds = load_dataset(dataset, "./data")
     partitions = partition_dataset(
-        train_ds, n_clients, "iid", 0.5,
+        train_ds, n_clients, partition, alpha,
         seed=seeds.get("data_partition", 42),
     )
 
@@ -224,8 +227,8 @@ async def run_churn_experiment(
             dataset_name = dataset,
             samples      = len(partitions[i]),
             classes      = list(range(22 if dataset == "crop" else 10)),
-            iid          = True,
-            distribution = "iid",
+            iid          = (partition == "iid"),
+            distribution = partition,
             feature_dim  = [7] if dataset == "crop" else [32, 32, 3],
         )
         client = FLClient(
@@ -331,24 +334,47 @@ async def run_churn_experiment(
 
 
 async def main_async(args: argparse.Namespace) -> None:
-    seeds = _seeds()
-    torch.manual_seed(seeds.get("experiment_e5", 303))
-    results_dir = Path(args.results_dir)
-    results_dir.mkdir(parents=True, exist_ok=True)
+    from experiments._replication import derive_seeds, load_replicate_seeds
+
+    base_seeds = _seeds()
+
+    if args.all_seeds:
+        master_seeds: list[int | None] = list(load_replicate_seeds())
+    elif args.seeds:
+        master_seeds = list(args.seeds)
+    else:
+        master_seeds = [None]  # canonical single run with seeds.yaml as-is
 
     rates = [float(r) for r in args.churn_rates.split(",")]
-    for rate in rates:
-        await run_churn_experiment(
-            churn_rate  = rate,
-            n_clients   = args.n_clients,
-            rounds      = args.rounds,
-            dataset     = args.dataset,
-            results_dir = results_dir,
-            seeds       = seeds,
-            churn_mode  = args.churn_mode,
-        )
 
-    log.info("E5 complete. Results in: %s", results_dir)
+    for master in master_seeds:
+        seeds = base_seeds if master is None else derive_seeds(base_seeds, master)
+        torch.manual_seed(seeds.get("experiment_e5", 303))
+
+        results_dir = Path(args.results_dir)
+        tag_suffix = ""
+        if master is not None:
+            results_dir = results_dir / "seeds" / f"seed{master}"
+            tag_suffix += f"_seed{master}"
+        if args.partition != "iid":
+            tag_suffix += f"_{args.partition}{args.alpha}"
+        results_dir.mkdir(parents=True, exist_ok=True)
+
+        for rate in rates:
+            await run_churn_experiment(
+                churn_rate  = rate,
+                n_clients   = args.n_clients,
+                rounds      = args.rounds,
+                dataset     = args.dataset,
+                results_dir = results_dir,
+                seeds       = seeds,
+                churn_mode  = args.churn_mode,
+                partition   = args.partition,
+                alpha       = args.alpha,
+                tag_suffix  = tag_suffix,
+            )
+
+    log.info("E5 complete. Results in: %s", args.results_dir)
 
 
 def main() -> None:
@@ -362,6 +388,17 @@ def main() -> None:
                         choices=["select", "real"],
                         help="select=withhold from aggregation (fast, mock-ok); "
                              "real=actual Iroh disconnect/rejoin (needs real Iroh)")
+    parser.add_argument("--partition",    default="iid",
+                        choices=["iid", "dirichlet"],
+                        help="Data partition across clients (churn x non-IID)")
+    parser.add_argument("--alpha",        type=float, default=0.5,
+                        help="Dirichlet concentration when --partition dirichlet")
+    parser.add_argument("--seeds",        nargs="+", type=int, default=None,
+                        help="Master seeds for multi-seed replication "
+                             "(each run lands in results/e5/seeds/seed<S>/)")
+    parser.add_argument("--all-seeds",    action="store_true",
+                        help="Replicate over every seed in seeds.yaml "
+                             "'replicate_seeds'")
     parser.add_argument("--results-dir",  default="results/e5")
     args = parser.parse_args()
     asyncio.run(main_async(args))

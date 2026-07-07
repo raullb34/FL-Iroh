@@ -5,7 +5,8 @@ Designed for the Crop Recommendation Dataset:
   input_dim  = 7  (N, P, K, temperature, humidity, ph, rainfall)
   num_classes = 22 crop types
 
-~15K parameters — intentionally small for edge/IoT deployment (RPi, Arduino-class).
+7,734 trainable parameters (~31 KB float32) — intentionally small for edge/IoT
+deployment (RPi, Jetson-class).
 """
 from __future__ import annotations
 
@@ -23,7 +24,8 @@ class AgriMLP(nn.Module):
         Linear(h2→h3)        → ReLU
         Linear(h3→num_classes)
 
-    Default: 7→64→64→32→22 ≈ 15K params.
+    Default: 7→64→64→32→22 = 7,734 params (BatchNorm+Dropout on the first
+    two hidden layers only).
     """
 
     def __init__(
