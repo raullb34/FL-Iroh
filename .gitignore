@@ -88,3 +88,20 @@ htmlcov/
 # ── SLURM runtime artifacts ───────────────────────────────────────────────────
 slurm*.out
 slurm*.err
+
+# -- LaTeX build artifacts (keep .tex, .bib, .cls, .sty, .bst and .pdf) -------
+*.aux
+*.abs
+*.bbl
+*.blg
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.spl
+*.brf
+*.nav
+*.snm
+*.vrb
