@@ -53,22 +53,22 @@ ralonso@air-institute.com}
 
 % -----------------------------------------------------------------------
 \begin{abstract}
-El Aprendizaje Federado (FL) para IoT agrícola se enfrenta a una barrera fundamental de conectividad: los dispositivos de agricultura inteligente desplegados detrás de Traductores de Direcciones de Red (NAT) y NAT de Grado Operador (CGNAT) no pueden comunicarse entre sí ni con un servidor central de parámetros sin costosas asignaciones de IP estáticas o infraestructura VPN. Presentamos \textbf{FL-Iroh}, un sistema de código abierto que combina el transporte P2P basado en QUIC de \emph{Iroh} con una capa de descubrimiento de servicios CoAP/CoRE para un FL resiliente a NAT respaldado por relay sobre dispositivos de borde con restricciones NAT. El mecanismo de retroceso a relay de Iroh ofrece una garant\'{i}a de conectividad mediante reenv\'{i}o cifrado extremo a extremo de forma transparente cuando el hole-punching directo no es viable (p.~ej., bajo CGNAT), mientras que CoAP proporciona un plano de control ligero para la coordinación de rondas y el descubrimiento de clientes bajo topologías de red heterogéneas. Evaluamos FL-Iroh sobre dos dominios IoT agrícolas: (1)~el conjunto de datos de Recomendación de Cultivos (7 características, 22 clases) con AgriMLP ($\sim$15K parámetros); y (2)~el conjunto histórico de calidad del aire de Castilla y Le\'{o}n (10 provincias, 2011--2019) con AirMLP ($\sim$3,7K parámetros, FedAvg) y un GAM de Prophet federado (FedGAM), demostrando transporte agn\'{o}stico al algoritmo. En seis experimentos: (E1) rendimiento del transporte---relay 27,2~Mbps local y 2,8~Mbps WAN; (E2) convergencia FL---65,9\% de precisi\'{o}n en CIFAR-10 IID, degradaci\'{o}n al 44,2\% bajo heterogeneidad No-IID severa (Dirichlet $\alpha{=}0,1$, $n{=}5$ semillas, IC95\%); (E3) traversal NAT---el hole-punching QUIC directo tuvo \'{e}xito en el 98\% de las conexiones WAN en cinco escenarios NAT/CGNAT/cortafuegos (0\% de uso de relay, confirmado por inspecci\'{o}n de la direcci\'{o}n p\'{u}blica del camino activo), con el relay cifrado como respaldo garantizado; (E4) resiliencia a churns---93,2--93,6\% con abandono 0--50\% en Recomendaci\'{o}n de Cultivos; (E5) descubrimiento CoAP---O(1) 1,9~ms; y (E6) FL de calidad del aire exterior (pron\'{o}stico ICA a 7 d\'{i}as)---un GAM de Prophet federado alcanza un 57,9\% de precisi\'{o}n frente al 49,6\% del baseline neuronal AirMLP, con la ganancia atribuible a la clase de modelo m\'{a}s que a la regla de agregaci\'{o}n (ablaci\'{o}n Prophet+FedGAM vs. Prophet+FedAvg: $\Delta{<}0,3$pp, $p{=}0,35$, $n{=}5$ semillas). FL-Iroh demuestra que el FL robusto y sin infraestructura es alcanzable para la agricultura de precisión y la monitorización de calidad del aire, con una única capa de transporte que soporta tanto redes neuronales como modelos estadísticos de series temporales.
+El Aprendizaje Federado (FL) para IoT agrícola y ambiental se enfrenta a una barrera práctica de conectividad: los dispositivos de borde desplegados detrás de Traductores de Direcciones de Red (NAT) y NAT de Grado Operador (CGNAT) no pueden alojar ni exponer un punto de agregación sin asignaciones de IP estáticas, superposiciones VPN o relays en la nube de terceros. Presentamos FL-Iroh, un sistema de FL de código abierto que integra la traversía de NAT en la propia capa de transporte, combinando el transporte peer-to-peer basado en QUIC de Iroh con un plano de control CoAP/CoRE para el descubrimiento de servicios y la coordinación de rondas. Los pares se direccionan por clave pública en lugar de por dirección IP, y un relay cifrado extremo a extremo garantiza la conectividad siempre que no pueda formarse un camino directo. En pruebas con hardware real entre un PC y una Raspberry Pi~4B en distintos ISP separados 300~km, todas las sesiones conectaron, y 118 de 120 transferencias WAN (98.3\%) usaron un camino directo QUIC con hole-punching---incluso bajo CGNAT, NAT simétrico y un cortafuegos restringido al puerto~443---sin que el relay se ejercitara nunca. El transporte es agnóstico al algoritmo: el mismo canal QUIC federa una red neuronal compacta para recomendación de cultivos (AgriMLP, 7.7K parámetros) y, para la predicción de calidad del aire a siete días vista en diez zonas de monitorización de Castilla y Le\'on, tanto una línea base neuronal como un GAM de Prophet federado bajo dos reglas de agregación (FedAvg y la agregación parcial FedGAM). El modelo Prophet alcanza un 57.9\% de precisión de test frente a una línea base de persistencia a siete días del 47.5\%, mientras que una ablación con el mismo modelo muestra que la regla de agregación en sí no es el factor determinante ($\Delta{<}0.3$pp, $p{=}0.35$). FL-Iroh demuestra que el FL puede desplegarse en IoT agrícola y ambiental con restricciones de NAT sin IP estáticas, superposiciones VPN ni demonios de sistema por nodo.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Aprendizaje Federado, IoT, Agricultura, Calidad del Aire, Iroh, CoAP
+Aprendizaje Federado, Traversía de NAT, QUIC, CoAP, Computación en el Borde, Agricultura Inteligente, Predicción de Calidad del Aire
 \end{IEEEkeywords}
 
-% -----------------------------------------------------------------------
+% =========================================================================
 \section{Introducción}
-\label{sec:introduccion}
+\label{sec:introduction}
 
 La agricultura de precisión depende cada vez más de redes de sensores IoT distribuidas para recopilar datos de química del suelo, microclima y salud de cultivos. El Aprendizaje Federado (FL)~\cite{mcmahan2017} ofrece un paradigma atractivo para este dominio: distintas granjas pueden entrenar colaborativamente modelos compartidos de recomendación de cultivos o detección de enfermedades sin transmitir datos agronómicos brutos fuera del sitio, preservando tanto la privacidad de los datos como el ancho de banda de red en enlaces rurales habitualmente limitados.
 
-Sin embargo, existe una barrera crítica de infraestructura: la gran mayoría de los despliegues IoT agrícolas operan detrás de NAT o CGNAT, sin una dirección IP públicamente alcanzable. Los frameworks FL estándar (Flower, TFF, PySyft) asumen que los servidores de parámetros son accesibles públicamente, lo que en la práctica implica asignaciones costosas de IPv4 estáticas, despliegue de VPN o servicios de relay en la nube con importantes penalizaciones en latencia y costo. Ninguna de estas soluciones es práctica para granjas pequeñas o medianas, ni para dispositivos alimentados por energía solar intermitente.
+Sin embargo, se interpone una barrera práctica de infraestructura: la gran mayoría de los despliegues IoT agrícolas operan detrás de NAT o CGNAT, sin una dirección IP públicamente alcanzable. Los frameworks FL predominantes, como Flower~\cite{flower2022}, TensorFlow Federated y FedML~\cite{fedml2020}, siguen una topología en estrella iniciada por el cliente, de modo que los \emph{clientes} con restricciones de NAT pueden participar, pero el \emph{servidor} de agregación debe permanecer públicamente alcanzable. Un VPS en la nube alquilado puede proporcionar ese punto de acceso; lo que no puede proporcionar es (i)~un agregador alojado en las instalaciones (p.~ej., en una granja o cooperativa) tras CGNAT, como suelen exigir consideraciones de soberanía de datos y de coste; (ii)~una identidad de servidor estable que sobreviva al cambio de IP en enlaces rurales fijos y celulares; o (iii)~operación sin un host de terceros que deba aprovisionarse, pagarse, asegurarse y mantenerse activo. Para despliegues desatendidos, alimentados por energía solar y sin administrador en el sitio, estos requisitos operativos---más que el precio mensual de un VPS---son el obstáculo.
 
-La técnica de \emph{hole-punching}, utilizada por aplicaciones P2P de consumo, puede establecer conexiones UDP directas entre pares tras NAT sin infraestructura. Funciona sin problemas para NAT de cono completo y restringido, y las pilas modernas basadas en QUIC a menudo tambi\'{e}n logran atravesar NAT sim\'{e}trico y CGNAT ---prevalentes en LTE m\'{o}vil y banda ancha rural compartida---; pero el \'{e}xito no est\'{a} garantizado y depende del comportamiento espec\'{i}fico del mapeo NAT, por lo que se necesita un relay como alternativa para garantizar la conectividad. Un \emph{relay} es un servidor intermediario con IP p\'{u}blica que retransmite los paquetes entre los dos extremos; a diferencia de un proxy convencional, el relay DERP de Iroh cifra el tr\'{a}fico extremo a extremo, de modo que nunca puede acceder al contenido de los par\'{a}metros del modelo. La Fig.~\ref{fig:holepunch} ilustra ambos caminos.
+La técnica de \emph{hole-punching}~\cite{ford2005}, utilizada por aplicaciones P2P de consumo, puede establecer conexiones UDP directas entre pares tras NAT sin infraestructura dedicada. Funciona sin problemas para NAT de cono completo y de cono restringido, y las pilas modernas basadas en QUIC~\cite{rfc9000} a menudo también logran atravesar NAT simétrico y CGNAT---prevalentes en LTE móvil y banda ancha rural compartida---; pero el éxito no está garantizado y depende del comportamiento específico del mapeo NAT, por lo que se necesita un relay como alternativa para garantizar la conectividad. Un \emph{relay} es un servidor intermediario con IP pública que retransmite los paquetes entre ambos extremos; a diferencia de un proxy convencional, el relay DERP (Designated Encrypted Relay for Packets) de Iroh solo reenvía tráfico cifrado extremo a extremo, de modo que nunca ve el contenido en claro de los parámetros del modelo. La Fig.~\ref{fig:holepunch} ilustra ambos caminos. Los sistemas FL existentes no ofrecen ningún mecanismo integrado para esta transición elegante.
 
 \begin{figure}[t]
 \centering
@@ -78,76 +78,84 @@ La técnica de \emph{hole-punching}, utilizada por aplicaciones P2P de consumo, 
     nat/.style={draw, ellipse, fill=gray!10, minimum width=1.3cm, minimum height=0.6cm, align=center, font=\tiny},
     rly/.style={draw, rounded corners, fill=yellow!20, minimum width=1.3cm, minimum height=0.65cm, align=center, font=\scriptsize},
     >=Stealth]
-  \node[dev, fill=green!10] (A) {IoT\\Granja};
+  \node[dev, fill=green!10] (A) {Dispositivo\\IoT};
   \node[nat, right=0.9cm of A] (NA) {NAT /\\CGNAT};
   \node[rly, right=1.2cm of NA] (R) {Relay\\DERP};
   \node[nat, right=1.2cm of R] (NB) {NAT /\\FW};
   \node[dev, fill=blue!10, right=0.9cm of NB] (B) {Servidor\\FL};
-  % Respaldo por relay (discontinuo, usado solo si no se forma el camino directo)
   \draw[->, thick, gray, dashed, bend left=45] (A) to
     node[above, font=\tiny, align=center]{respaldo relay\\(si falla directo)} (R);
   \draw[->, thick, gray, dashed, bend left=45] (R) to (B);
-  % Hole-punch directo (camino primario, tiene \'exito en nuestras pruebas WAN)
   \draw[<->, thick, green!55!black] ([yshift=-4pt]A.south) to[bend right=28]
-    node[below, font=\tiny, green!55!black, align=center]{hole-punch QUIC directo, cifrado E2E\\\'exito 98\% (NAT/CGNAT/FW)} ([yshift=-4pt]B.south);
+    node[below, font=\tiny, green!55!black, align=center]{hole-punch QUIC directo, cifrado E2E\\98.3\% de transfers WAN (NAT/CGNAT/FW)} ([yshift=-4pt]B.south);
 \end{tikzpicture}
-\caption{Traversal NAT en FL-Iroh. El hole-punching QUIC directo se intenta primero y, en nuestras pruebas WAN, tiene \'{e}xito incluso bajo CGNAT y cortafuegos al puerto~443 (verde, cifrado extremo a extremo). El relay DERP permanece como respaldo garantizado (gris discontinuo), usado solo si no puede formarse un camino directo; la aplicaci\'{o}n no percibe qu\'{e} camino est\'{a} activo.}
+\caption{Traversía de NAT en FL-Iroh. Primero se intenta el hole-punching QUIC directo y, en nuestras pruebas WAN, tiene éxito incluso bajo CGNAT y cortafuegos de puerto~443 (verde, cifrado extremo a extremo). El relay DERP permanece como respaldo garantizado (gris discontinuo), usado solo si no puede formarse un camino directo; la aplicación desconoce qué camino está activo.}
 \label{fig:holepunch}
 \end{figure}
 
-Abordamos esta brecha con \textbf{FL-Iroh}, un sistema que integra:
+Abordamos esta carencia con \textbf{FL-Iroh}, un sistema que integra:
 
 \begin{enumerate}
-    \item \textbf{Iroh}~\cite{iroh2024}, una biblioteca de transporte P2P basada en QUIC que implementa el protocolo relay DERP~\cite{tailscale2023}: el hole-punching se intenta primero; si falla, todo el tráfico se retransmite de manera transparente a través de un servidor DERP con cifrado extremo a extremo, sin que la aplicación note el cambio.
-    \item \textbf{CoAP/CoRE}~\cite{rfc7252} como plano de control ligero para el descubrimiento de servicios FL (directorio de recursos, coordinación de rondas), usando serialización CBOR para mínima sobrecarga en enlaces con restricciones.
-    \item \textbf{FedAvg}~\cite{mcmahan2017} y \textbf{FedGAM} (agregaci\'{o}n selectiva de coeficientes de estacionalidad para modelos GAM) como algoritmos de agregaci\'{o}n, operando sobre flujos QUIC de Iroh. El plano de datos es independiente del direccionamiento IP y, cr\'{i}ticamente, \emph{agn\'{o}stico al tipo de modelo}: el mismo canal QUIC transporta tensores de pesos de redes neuronales y coeficientes Fourier de Prophet sin modificaci\'{o}n de protocolo.
+    \item \textbf{Iroh}~\cite{iroh2024}, una biblioteca de transporte P2P basada en QUIC que implementa el protocolo de relay DERP~\cite{tailscale2023}: primero se intenta el hole-punching; si falla, todo el tráfico se retransmite de forma transparente a través de un servidor DERP con cifrado extremo a extremo---la aplicación desconoce el cambio.
+    \item \textbf{CoAP/CoRE}~\cite{rfc7252} como plano de control ligero para el descubrimiento de servicios de FL (directorio de recursos, coordinación de rondas), usando serialización CBOR para un sobrecoste mínimo en enlaces limitados.
+    \item \textbf{FedAvg}~\cite{mcmahan2017} y \textbf{FedGAM} (agregación selectiva de los coeficientes de estacionalidad compartidos de Modelos Aditivos Generalizados, GAM) como algoritmos de agregación, operando sobre flujos QUIC de Iroh. El plano de datos es independiente del direccionamiento IP y, de forma crítica, \emph{agnóstico al algoritmo}: el mismo canal QUIC transporta tensores de pesos de redes neuronales y coeficientes de Fourier de Prophet sin modificar el protocolo.
 \end{enumerate}
 
-Nuestro dominio de aplicación principal es el IoT agrícola: recomendación de cultivos basada en suelo, donde los sensores miden el contenido de N, P, K, temperatura, humedad, pH y precipitaciones para recomendar la selección óptima de cultivos. Esto representa una tarea de inferencia tabular bien adaptada para modelos MLP ligeros en dispositivos de borde de clase Cortex-A (p.\,ej., Raspberry Pi~4B), con potencial de despliegue de inferencia en plataformas de menor capacidad.
+Nuestro dominio de aplicación principal es el IoT agrícola: recomendación de cultivos basada en suelo, donde los sensores miden contenido de N, P, K, temperatura, humedad, pH y precipitación para recomendar la selección óptima de cultivo. Esto representa una tarea de inferencia tabular bien adaptada a modelos MLP ligeros en dispositivos de borde de clase Cortex-A (p.~ej., Raspberry Pi~4B), con potencial de despliegue de inferencia en plataformas más limitadas.
 
 \noindent\textbf{Contribuciones:}
 \begin{enumerate}
-    \item Diseñamos e implementamos FL-Iroh, un sistema FL transparente a NAT que combina el transporte P2P QUIC de Iroh con descubrimiento de servicios CoAP (\S\ref{sec:sistema}).
-    \item Presentamos AgriMLP, una arquitectura MLP ligera ($7\to64\to64\to32\to22$, $\sim$15K parámetros) optimizada para inferencia tabular de características de suelo en dispositivos de borde con recursos limitados (\S\ref{sec:sistema}).
-    \item Realizamos una evaluaci\'{o}n exhaustiva en seis experimentos (E1--E6) que cubren rendimiento del transporte, traversal NAT, convergencia FL bajo heterogeneidad No-IID, resiliencia a churns, sobrecarga del descubrimiento CoAP y FL de calidad del aire exterior con dos familias de modelos y dos algoritmos de agregaci\'{o}n distintos (\S\ref{sec:evaluacion}).
-    \item Demostramos una garant\'{i}a de conectividad en pruebas con hardware real (PC $\leftrightarrow$ Raspberry Pi a través de 300~km WAN, ISP distintos): toda sesi\'{o}n conecta, y el hole-punching QUIC directo tiene \'{e}xito en el 98\% de las conexiones (con direcci\'{o}n p\'{u}blica real en el camino) incluso bajo CGNAT, NAT sim\'{e}trico y cortafuegos al puerto~443, con el relay cifrado como respaldo garantizado (\S\ref{sec:e3}).
+    \item Diseñamos e implementamos FL-Iroh, una arquitectura de FL de código abierto y agnóstica al algoritmo que integra la traversía de NAT en el transporte a nivel de aplicación---un plano de datos Iroh/QUIC con direccionamiento de pares por clave pública---coordinado por un plano de control ligero CoAP/CBOR (\S\ref{sec:system}). La maquinaria de traversía de NAT en sí la proporciona la biblioteca Iroh~\cite{iroh2024}; nuestra contribución es su integración en, y evaluación como, un sustrato de FL.
+    \item Proporcionamos una caracterización empírica del hole-punching QUIC y del transporte por relay para cargas de trabajo de FL sobre hardware real (PC $\leftrightarrow$ Raspberry Pi a través de una WAN de 300~km, distintos ISP): todas las sesiones conectaron, y 118 de 120 transferencias WAN (98.3\%) usaron un camino directo con hole-punching---verificado por inspección del camino activo---bajo NAT de cono completo, NAT simétrico, CGNAT y un cortafuegos restringido al puerto~443, con el relay cifrado retenido como respaldo garantizado (\S\ref{sec:e3}).
+    \item Realizamos una evaluación de seis experimentos (E1--E6) más una comparación operativa con Flower-sobre-Tailscale, cubriendo el rendimiento del transporte, la convergencia bajo heterogeneidad No-IID, la resiliencia a la rotación, el escalado del descubrimiento CoAP y un estudio de aplicación de dos dominios: recomendación de cultivos con un MLP compacto (AgriMLP, 7.7K parámetros) y predicción de calidad del aire a siete días vista (\S\ref{sec:evaluation}).
+    \item Proponemos FedGAM, una regla de agregación parcial que federa solo los coeficientes de estacionalidad compartidos de los modelos GAM de Prophet, y reportamos una ablación honesta con el mismo modelo que muestra que, con ocho años de datos de entrenamiento locales, FedGAM es estadísticamente indistinguible de FedAvg---delimitando el régimen en el que la agregación parcial puede importar (\S\ref{sec:e6}).
 \end{enumerate}
 
-% -----------------------------------------------------------------------
+El resto del artículo se organiza como sigue. La Sección~\ref{sec:related} revisa el trabajo relacionado. La Sección~\ref{sec:system} presenta la arquitectura de FL-Iroh, el transporte, el plano de control y los modelos de aplicación. La Sección~\ref{sec:evaluation} reporta la evaluación experimental (E1--E6) y la comparación operativa con Flower-sobre-Tailscale. La Sección~\ref{sec:discussion} discute las implicaciones, el modelo de seguridad y las limitaciones. La Sección~\ref{sec:conclusion} concluye y esboza el trabajo futuro.
+
+% =========================================================================
 \section{Trabajo Relacionado}
-\label{sec:relacionado}
+\label{sec:related}
 
-\subsection{Aprendizaje Federado para IoT Agr\'{i}cola}
+Organizamos el trabajo previo en cinco ejes: FL en agricultura y monitorización ambiental, traversía de NAT, planos de control para ML en IoT, mitigación de No-IID y sustratos de conectividad alternativos (VPN de superposición y FL descentralizado).
 
-El FL se ha aplicado recientemente en el sector agroalimentario. Durrant~et~al.~\cite{durrant2022} demuestran FL entre silos (\emph{cross-silo}) para el intercambio colaborativo de datos entre actores agr\'{i}colas, y Friha~et~al.~\cite{friha2022} proponen un sistema de detecci\'{o}n de intrusiones federado (FELIDS) para la Internet de las Cosas agr\'{i}cola. La heterogeneidad de los dispositivos sensores ---distintos tipos de suelo, cultivos y microclimas--- genera distribuciones No-IID naturales que suponen un reto para FedAvg~\cite{mcmahan2017}. Adem\'{a}s, los dataloggers agr\'{i}colas transmiten datos agron\'{o}micos sensibles (variedades, rendimientos, pr\'{a}cticas de abonado) que los propietarios no desean compartir, lo que hace que la privacidad del FL sea especialmente relevante en este dominio. Sin embargo, estos trabajos asumen servidores de agregaci\'{o}n p\'{u}blicamente accesibles sobre infraestructura convencional (centros de datos entre silos o pasarelas preconfiguradas); ninguno aborda la barrera de traversal NAT que es el obst\'{a}culo pr\'{a}ctico dominante para el despliegue real de FL agr\'{i}cola en entornos rurales con NAT/CGNAT.
+\subsection{Aprendizaje Federado para IoT Agrícola y Ambiental}
 
-\subsection{Traversal NAT en P2P e IoT}
+El FL se ha aplicado recientemente en el sector agroalimentario. Durrant~et~al.~\cite{durrant2022} demuestran FL cross-silo para el intercambio colaborativo de datos entre actores agrícolas, y Friha~et~al.~\cite{friha2022} proponen un sistema de detección de intrusiones federado (FELIDS) para el Internet de las Cosas agrícola. La heterogeneidad de dispositivos entre granjas---distintos tipos de suelo, cultivos y microclimas---crea distribuciones No-IID naturales que desafían al FedAvg estándar~\cite{mcmahan2017}. La privacidad es también una preocupación de primer orden: los datos agronómicos (variedades de cultivos, rendimientos, calendarios de fertilización) son comercialmente sensibles y los agricultores son reacios a compartirlos. Sin embargo, estos trabajos asumen servidores de agregación públicamente alcanzables a través de infraestructura convencional (centros de datos cross-silo o pasarelas preaprovisionadas); ninguno aborda la barrera de traversía de NAT que, en nuestra experiencia, es un obstáculo práctico importante para el despliegue de FL agrícola en el mundo real en entornos rurales con NAT/CGNAT. Las aplicaciones de FL a la monitorización de calidad del aire en exteriores---nuestro segundo dominio---siguen siendo escasas en la literatura, lo que motiva el estudio E6 de este artículo.
 
-El traversal NAT ha sido estudiado extensamente para VoIP~\cite{rfc5128}, WebRTC~\cite{webrtc2021} y sistemas de intercambio de archivos. Los protocolos STUN~\cite{rfc5389} y TURN~\cite{rfc5766} proporcionan las bases para el hole-punching y el retroceso a relay en el marco IETF. DERP, desarrollado por Tailscale~\cite{tailscale2023}, extiende esto con un relay autenticado y cifrado que sirve tanto como señalización como relay compatible con TURN, desplegado como parte del ecosistema VPN WireGuard. Iroh adapta DERP para aplicaciones P2P de propósito general~\cite{iroh2024}. En el espacio IoT, NGROK y servicios de tunelización similares proporcionan conectividad, pero introducen dependencias centralizadas y costos por byte inadecuados para despliegues con restricciones de energía.
+\subsection{Traversía de NAT en P2P e IoT}
 
-\subsection{CoAP para el Plano de Control FL}
+La traversía de NAT se ha estudiado extensamente desde el análisis fundacional de Ford~et~al.\ sobre la comunicación peer-to-peer a través de NAT~\cite{ford2005,rfc5128}, y sustenta VoIP, WebRTC~\cite{webrtc2021} y sistemas de intercambio de archivos. Los protocolos STUN~\cite{rfc8489} y TURN~\cite{rfc8656} proporcionan los fundamentos del IETF para el hole-punching y el respaldo por relay, y campañas de medición a gran escala en el ecosistema libp2p han caracterizado las tasas de éxito de hole-punching en la práctica~\cite{seemann2022}. DERP (Designated Encrypted Relay for Packets), desarrollado por Tailscale~\cite{tailscale2023}, proporciona un relay autenticado, cifrado y basado en HTTPS que actúa tanto como canal de rendezvous/señalización como relay de último recurso---cumpliendo el mismo papel arquitectónico que TURN, aunque no es compatible con él a nivel de protocolo---dentro del ecosistema VPN de WireGuard. Iroh adapta DERP para aplicaciones P2P de propósito general~\cite{iroh2024}. En el ámbito del IoT, NGROK y servicios de tunelización similares proporcionan conectividad pero introducen dependencias centralizadas y costes por byte inadecuados para despliegues con restricciones de energía.
 
-CoAP~\cite{rfc7252} se ha propuesto como plano de \emph{control} ligero para pipelines de ML en IoT, separando la se\~{n}alizaci\'{o}n (descubrimiento, coordinaci\'{o}n de rondas) de la transferencia de datos. MQTT-FL~\cite{mqttfl2021} usa MQTT para la se\~{n}alizaci\'{o}n FL; sin embargo, MQTT carece del modelo RESTful de recursos de CoAP que permite el filtrado sem\'{a}ntico de clientes por capacidad del sensor. Briggs~et~al.~\cite{briggs2021coap} eval\'{u}an CoAP como plano de control FL para redes 6LoWPAN, reportando una reducci\'{o}n del 40\% en cabeceras frente a gRPC, aunque no estudian la interacci\'{o}n con el traversal NAT. Nuestro trabajo utiliza CoAP exclusivamente como plano de control (registro, descubrimiento, se\~{n}alizaci\'{o}n de ronda); la transferencia de par\'{a}metros del modelo ---el plano de \emph{datos}--- transcurre sobre Iroh/QUIC, que gestiona el traversal NAT de forma transparente e independiente del plano de control.
+\subsection{CoAP como Plano de Control de FL}
+
+CoAP~\cite{rfc7252} (Constrained Application Protocol) proporciona un protocolo de transferencia RESTful para nodos limitados y, junto con el formato de enlace CoRE~\cite{rfc6690} y la codificación CBOR~\cite{rfc8949} (Concise Binary Object Representation), es un candidato natural para un \emph{plano de control} ligero en tuberías de ML para IoT, separando la señalización (descubrimiento, coordinación de rondas) de la transferencia de datos en bloque. La señalización de publicación--suscripción basada en MQTT también se ha usado para coordinar el entrenamiento distribuido y federado en despliegues IoT; MQTT, sin embargo, carece del modelo de recursos RESTful que permite el filtrado semántico de clientes por capacidad de sensor. Hasta donde sabemos, ningún sistema FL previo combina un plano de control CoAP con un transporte de plano de datos que atraviese NAT; el FL coordinado por CoAP en sí sigue estando en gran medida sin evaluar. Nuestro trabajo usa CoAP exclusivamente como plano de control (registro, descubrimiento, señalización de rondas); la transferencia de parámetros del modelo---el \emph{plano de datos}---ocurre sobre Iroh/QUIC, que gestiona la traversía de NAT de forma transparente e independiente del canal de control.
 
 \subsection{FL No-IID en Entornos con Recursos Limitados}
 
-El No-IID es un desaf\'{i}o bien estudiado en FL~\cite{li2022noniid,kairouz2021}. En entornos agr\'{i}colas surge naturalmente de la heterogeneidad geogr\'{a}fica: granjas en distintas zonas clim\'{a}ticas o con tipos de suelo diferentes presentar\'{a}n distribuciones de caracter\'{i}sticas claramente distintas. FedProx~\cite{fedprox2020} y SCAFFOLD~\cite{scaffold2020} mitigan la deriva de gradientes regulando el alejamiento del modelo global. Sin embargo, para modelos no neuronales ---como los GAMs de Prophet--- FedAvg no es solo subóptimo: es sem\'{a}nticamente incorrecto, ya que promedia par\'{a}metros localmente incomparables (p.~ej., la tendencia industrial de Ponferrada con la tendencia rural de Soria). FL-Iroh aborda esta limitaci\'{o}n con FedGAM, que aplica agregaci\'{o}n \emph{parcial} sobre los coeficientes de estacionalidad compartidos, extendiendo el ecosistema FL m\'{a}s all\'{a} de FedAvg/FedProx hacia familias de modelos estad\'{i}sticos. Usamos particiones Dirichlet~$\alpha$ como referencia est\'{a}ndar en E2.
+Los datos No-IID son un desafío bien estudiado en FL~\cite{zhao2018noniid,li2022noniid,kairouz2021}. En entornos agrícolas, lo No-IID surge naturalmente de la heterogeneidad geográfica: granjas en distintas zonas climáticas o con distintos tipos de suelo exhiben distribuciones de características claramente diferenciadas. FedProx~\cite{fedprox2020} y SCAFFOLD~\cite{scaffold2020} mitigan la deriva de gradientes regularizando frente a la desviación del modelo global, y los enfoques de agrupamiento de clientes agrupan clientes con distribuciones locales similares antes de la agregación~\cite{briggs2020cluster}. Para modelos no neuronales---como los GAM de Prophet (Modelos Aditivos Generalizados)---el FedAvg simple es semánticamente cuestionable: promedia parámetros cuyos significados locales difieren entre clientes (p.~ej., la tendencia de emisión industrial de Ponferrada con la línea base rural de Soria). FL-Iroh explora FedGAM, que aplica \emph{agregación parcial} solo sobre los coeficientes de estacionalidad compartidos; nuestra evaluación tanto demuestra este diseño como, mediante una ablación con el mismo modelo, delimita cuándo realmente compensa (\S\ref{sec:e6}). Usamos particiones de Dirichlet $\alpha$ como benchmark No-IID estándar en E2.
 
-\subsection{FL sobre Redes Overlay y VPN}
+\subsection{FL sobre Redes de Superposición y VPN}
 
-Una forma pragm\'{a}tica de alcanzar dispositivos tras NAT es situarlos en una red overlay compartida. Las mallas basadas en WireGuard~\cite{wireguard2017} como Tailscale~\cite{tailscale2023} y ZeroTier asignan a cada nodo una IP virtual estable y atraviesan NAT/CGNAT mediante los mismos relays de estilo DERP que usa Iroh, y se han adoptado para interconectar cl\'{u}steres de ML distribuido y de borde. Frente a FL-Iroh, sin embargo, estos enfoques delegan la conectividad en un demonio VPN de nivel de sistema independiente---que suele requerir privilegios elevados y un servidor de coordinaci\'{o}n gestionado por cuenta---mientras que el propio marco de FL (p.~ej., Flower~\cite{flower2022}) a\'{u}n debe dirigirse a un servidor alcanzable sobre una topolog\'{i}a en estrella centralizada. FL-Iroh, en cambio, integra el traversal NAT en el transporte de nivel de aplicaci\'{o}n: los pares se nombran por clave p\'{u}blica en lugar de por IP overlay, no se requiere VPN de sistema ni una direcci\'{o}n de servidor persistente, y el plano de datos es capaz de operar sin servidor. Ofrecemos una comparaci\'{o}n directa frente a un baseline Flower-sobre-Tailscale en nuestra evaluaci\'{o}n.
+Una forma pragmática de alcanzar dispositivos tras NAT es colocarlos en una red de superposición compartida. Las mallas basadas en WireGuard~\cite{wireguard2017}, como Tailscale~\cite{tailscale2023} y ZeroTier, dan a cada nodo una IP virtual estable y atraviesan NAT/CGNAT a través de los mismos relays de estilo DERP que usa Iroh, y se han adoptado para interconectar clústeres de ML distribuido y de borde. Respecto a FL-Iroh, sin embargo, estos enfoques delegan la conectividad a un demonio VPN separado a nivel de sistema---que típicamente requiere privilegios elevados y un servidor de coordinación gestionado por cuenta---mientras que el propio framework de FL (p.~ej., Flower~\cite{flower2022}) todavía debe direccionar un servidor alcanzable sobre una topología en estrella centralizada. FL-Iroh, en cambio, integra la traversía de NAT en el transporte a nivel de aplicación: los pares se nombran por clave pública en lugar de por IP de superposición, y no se requiere ninguna VPN de sistema ni dirección de servidor persistente. Proporcionamos una comparación operativa cualitativa frente a Flower-sobre-Tailscale, junto con una comprobación de paridad de precisión usando un arnés compatible con Flower, en \S\ref{sec:e7}.
 
-% -----------------------------------------------------------------------
+\subsection{FL Descentralizado y sin Servidor}
+
+Una línea de trabajo ortogonal elimina por completo el agregador central. El SGD descentralizado entrena sobre grafos de comunicación dispersos sin un servidor de parámetros~\cite{lian2017}, el gossip learning propaga y fusiona modelos de forma epidémica entre pares~\cite{hegedus2019}, y BrainTorrent demuestra FL peer-to-peer sin servidor central en imagen médica~\cite{roy2019braintorrent}. Estos enfoques abordan el agregador como un cuello de botella estadístico y topológico, pero por lo general \emph{asumen} que los pares pueden alcanzarse entre sí---precisamente la suposición que NAT y CGNAT rompen en el campo. Los frameworks de FL orientados a producción (Flower~\cite{flower2022}, FedML~\cite{fedml2020}, OpenFL~\cite{openfl2022}, NVIDIA FLARE~\cite{flare2022}) también asumen un punto de coordinación alcanzable. FL-Iroh es complementario: retiene un agregador lógico (simplificando la semántica de convergencia) al tiempo que elimina el requisito de que cualquier participante sea públicamente enrutable; dado que los pares se direccionan por clave pública, el mismo transporte podría también soportar las topologías totalmente descentralizadas anteriores.
+
+% =========================================================================
 \section{Diseño del Sistema}
-\label{sec:sistema}
+\label{sec:system}
+
+Esta sección describe la arquitectura de FL-Iroh (planos de control y de datos), el transporte y formato de trama de Iroh, el plano de control CoAP y los modelos de aplicación usados en la evaluación. La Fig.~\ref{fig:agro} ilustra el despliegue objetivo: los sensores de campo alimentan un cliente FL de clase Raspberry Pi que se registra vía CoAP e intercambia parámetros del modelo sobre Iroh/QUIC desde detrás de NAT o CGNAT.
 
 \subsection{Visión General de la Arquitectura}
 
-FL-Iroh se estructura en dos planos (Fig.~\ref{fig:arquitectura}):
+FL-Iroh se estructura en dos planos (Fig.~\ref{fig:architecture}):
 
 \begin{itemize}
-    \item \textbf{Plano de control (CoAP/CoRE)}: Un directorio de recursos CoAP que se ejecuta en el nodo de agregación FL. Los clientes registran sus descriptores de endpoint Iroh (ID de nodo, direcciones, URL de relay) como recursos CoAP al arrancar. El servidor descubre los clientes, gestiona el estado de la ronda y difunde metadatos ligeros de ronda (\texttt{round\_id}, \texttt{model\_hash}, ID de nodo del servidor) mediante CoAP GET/PUT con codificación CBOR; los clientes descargan luego los tensores del modelo por Iroh/QUIC (ALPN \texttt{fl-model/1}).
-    \item \textbf{Plano de datos (Iroh/QUIC)}: Todos los datos tensoriales ---distribuciones de modelos (servidor$\to$cliente) y subidas de gradientes (cliente$\to$servidor)--- fluyen sobre flujos QUIC establecidos por Iroh. Cada flujo QUIC transporta un payload prefijado con longitud y verificado con SHA-256. Los identificadores de protocolo ALPN \texttt{fl-model/1} y \texttt{fl-update/1} distinguen el push de modelos de la subida de actualizaciones.
+    \item \textbf{Plano de control (CoAP/CoRE)}: Un directorio de recursos CoAP que se ejecuta en el nodo de agregación de FL. Los clientes registran sus descriptores de punto de acceso Iroh (node ID, direcciones, URL de relay) como recursos CoAP al arrancar. El servidor descubre clientes, gestiona el estado de las rondas y disemina metadatos ligeros de ronda (\texttt{round\_id}, \texttt{model\_hash}, node ID del servidor) vía CoAP GET/PUT con codificación CBOR; los clientes obtienen entonces los tensores del modelo sobre Iroh/QUIC (ALPN \texttt{fl-model/1}).
+    \item \textbf{Plano de datos (Iroh/QUIC)}: Todos los datos tensoriales---distribuciones del modelo (servidor$\to$cliente) y subidas de gradientes (cliente$\to$servidor)---fluyen sobre flujos QUIC establecidos por Iroh. Cada flujo QUIC transporta una carga con prefijo de longitud y verificada con SHA-256. Los identificadores de protocolo ALPN \texttt{fl-model/1} y \texttt{fl-update/1} distinguen el envío del modelo de la subida de la actualización.
 \end{itemize}
 
 \begin{figure}[t]
@@ -159,24 +167,21 @@ FL-Iroh se estructura en dos planos (Fig.~\ref{fig:arquitectura}):
     plane/.style={draw, dashed, rounded corners, fill=gray!5, inner sep=4pt},
     >=Stealth
 ]
-    \node[box, fill=blue!10] (srv) {Servidor FL\\(CoAP RD +\\nodo Iroh)};
+    \node[box, fill=blue!10] (srv) {Servidor FL\\(RD CoAP +\\nodo Iroh)};
     \node[client, below left=1.4cm and 1.4cm of srv, fill=green!10] (c1) {Cliente $c_1$\\(Sensor A)};
     \node[client, below=1.4cm of srv, fill=orange!10] (c2) {Cliente $c_2$\\(Sensor B)};
     \node[client, below right=1.4cm and 1.4cm of srv, fill=red!10] (ck) {Cliente $c_K$\\(Sensor K)};
     \node[box, above right=0.5cm and 0.2cm of srv, fill=yellow!10, minimum width=1.6cm, minimum height=0.7cm] (relay) {Relay\\DERP};
-
-    % CoAP (control)
     \draw[<->, blue, thick] (srv) -- node[left, font=\tiny, black] {CoAP/CBOR} (c1);
     \draw[<->, blue, thick] (srv) -- (c2);
     \draw[<->, blue, thick] (srv) -- node[right, font=\tiny, black] {CoAP/CBOR} (ck);
-    % Iroh data
     \draw[<->, red, thick, dashed] (srv) -- node[above, font=\tiny, black] {QUIC} (relay);
     \draw[->, red, thick, dashed, bend left=15] (relay) to node[right, font=\tiny, black] {relay} (c1);
     \draw[->, red, thick, dashed] (relay) -- (c2);
     \draw[->, red, thick, dashed, bend right=15] (relay) to (ck);
 \end{tikzpicture}
-\caption{Arquitectura FL-Iroh. CoAP gestiona el descubrimiento de servicios y el control de ronda (azul). Iroh/QUIC transporta los datos tensoriales con retroceso transparente a relay (rojo discontinuo) cuando falla el hole-punch directo.}
-\label{fig:arquitectura}
+\caption{Arquitectura de FL-Iroh. CoAP gestiona el descubrimiento de servicios y el control de rondas (azul). Iroh/QUIC transporta los datos tensoriales con respaldo transparente por relay (rojo discontinuo) cuando falla el hole-punch directo.}
+\label{fig:architecture}
 \end{figure}
 
 \begin{figure}[t]
@@ -189,88 +194,90 @@ FL-Iroh se estructura en dos planos (Fig.~\ref{fig:arquitectura}):
     rtr/.style={draw, ellipse, fill=gray!10, minimum width=1.2cm, minimum height=0.55cm, align=center, font=\tiny},
     rly/.style={draw, rounded corners, fill=yellow!15, minimum width=1.2cm, minimum height=0.55cm, align=center, font=\tiny},
     >=Stealth]
-  \node[sensor] (s1) {Sensor\\suelo NPK};
-  \node[sensor, below=0.25cm of s1] (s2) {Estaci\'{o}n\\meteo.};
-  \node[sensor, below=0.25cm of s2] (s3) {C\'{a}mara\\cultivos};
-  \node[edge, right=1.1cm of s2] (pi) {RPi 4B\\FL Client};
+  \node[sensor] (s1) {Sensor\\NPK};
+  \node[sensor, below=0.25cm of s1] (s2) {Estación\\Meteo.};
+  \node[sensor, below=0.25cm of s2] (s3) {Cámara\\Cultivo};
+  \node[edge, right=1.1cm of s2] (pi) {RPi 4B\\Cliente FL};
   \node[rtr, right=1cm of pi] (nat) {NAT /\\CGNAT};
   \node[rly, above right=0.3cm and 0.9cm of nat] (relay) {Relay\\DERP};
-  \node[srv, below right=0.3cm and 0.9cm of nat] (srv) {Servidor\\FL (HPC)};
+  \node[srv, below right=0.3cm and 0.9cm of nat] (srv) {Servidor FL\\(HPC)};
   \draw[->, gray, thin] (s1.east) -- (pi.north west);
   \draw[->, gray, thin] (s2.east) -- (pi.west);
   \draw[->, gray, thin] (s3.east) -- (pi.south west);
-  \draw[->, blue, thick] (pi) -- node[above, font=\tiny]{CoAP reg.} (nat);
+  \draw[->, blue, thick] (pi) -- node[above, font=\tiny]{reg. CoAP} (nat);
   \draw[->, blue!60, thick] (nat.north east) -- node[right, font=\tiny]{QUIC} (relay.south west);
   \draw[->, blue!60, thick] (relay.south east) -- node[right, font=\tiny]{relay} (srv.north west);
   \draw[<->, red!50, dashed, thick, bend right=30] (pi) to
     node[below, font=\tiny]{modelo FL} (srv);
 \end{tikzpicture}
-\caption{Despliegue FL-Iroh en IoT agr\'{i}cola. Los sensores de campo alimentan al cliente FL (Raspberry Pi), que se registra en el servidor v\'{i}a CoAP y transfiere par\'{a}metros del modelo usando Iroh/QUIC con retroceso autom\'{a}tico al relay DERP bajo NAT/CGNAT.}
+\caption{Despliegue de FL-Iroh en IoT agrícola. Los sensores de campo alimentan el cliente FL (Raspberry Pi), que se registra vía CoAP e intercambia parámetros del modelo sobre Iroh/QUIC con respaldo automático al relay DERP bajo NAT/CGNAT.}
 \label{fig:agro}
 \end{figure}
 
 \subsection{Transporte Iroh}
 
-Iroh~\cite{iroh2024} crea un endpoint QUIC que incorpora una \emph{dirección de nodo} compuesta por una clave pública de 32 bytes (ID de nodo), una lista de direcciones UDP directas y una URL de relay DERP. Cuando un cliente inicia una conexión con otro nodo, Iroh:
+Iroh~\cite{iroh2024} crea un punto de acceso QUIC que incorpora una \emph{dirección de nodo} consistente en una clave pública de 32 bytes (node ID), una lista de direcciones UDP directas y una URL de relay DERP. Cuando un cliente inicia una conexión a otro nodo, Iroh:
 \begin{enumerate}
-    \item Registra a ambas partes con el relay DERP para señalización.
+    \item Registra a ambas partes con el relay DERP para la señalización.
     \item Intenta simultáneamente el hole-punching UDP hacia cada dirección directa.
     \item Si el hole-punching tiene éxito dentro de un tiempo de espera configurable, la sesión QUIC migra al camino directo.
-    \item Si no puede negociarse un camino directo (p.~ej., ciertos mapeos restrictivos de NAT sim\'{e}trico), todos los paquetes QUIC son reenviados de manera transparente por el relay DERP.
+    \item Si no puede negociarse ningún camino directo (p.~ej., ciertos mapeos restrictivos de NAT simétrico), todos los paquetes QUIC son reenviados por el relay DERP de forma transparente.
 \end{enumerate}
 
-FL-Iroh usa multiplexado basado en ALPN: múltiples roles de protocolo (push de modelo, subida de actualización) comparten un único nodo Iroh sin asignación de puertos.
+FL-Iroh usa multiplexación basada en ALPN: múltiples roles de protocolo (envío del modelo, subida de la actualización) comparten un único nodo Iroh sin asignación de puertos.
 
 \subsection{Formato de Trama}
 
-Cada flujo unidireccional QUIC transporta un bundle de tensores:
+Cada flujo unidireccional QUIC transporta un paquete tensorial:
 \begin{equation}
-\underbrace{[4\,\text{B}]}_{\text{long.}} \;\; \underbrace{[\text{payload}]}_{\text{blob torch.save}} \;\; \underbrace{[32\,\text{B}]}_{\text{SHA-256}}
-\label{eq:trama}
+\underbrace{[4\,\text{B}]}_{\text{len}} \;\; \underbrace{[\text{payload}]}_{\text{torch.save blob}} \;\; \underbrace{[32\,\text{B}]}_{\text{SHA-256}}
+\label{eq:wire}
 \end{equation}
-El sufijo SHA-256 proporciona verificación de integridad en la capa de aplicación, independiente del cifrado propio de QUIC. El payload se serializa con \texttt{torch.save}, produciendo un formato binario auto-descriptivo que maneja tipos de tensores y dtypes mixtos.
+El sufijo SHA-256 proporciona verificación de integridad en la capa de aplicación, independiente del propio cifrado de QUIC. La carga se serializa con \texttt{torch.save}, produciendo un formato binario autodescriptivo que gestiona tipos y dtypes tensoriales mixtos.
 
 \subsection{Plano de Control CoAP}
 
 El servidor FL expone recursos CoAP siguiendo el directorio de recursos CoRE~\cite{rfc6690}:
 \begin{itemize}
-    \item \texttt{/fl/register}: Los clientes hacen POST de su JSON de endpoint Iroh al arrancar.
-    \item \texttt{/fl/round}: Un PUT del servidor desencadena una nueva ronda de entrenamiento, portando metadatos ligeros de ronda (\texttt{round\_id}, \texttt{model\_hash}, ID de nodo del servidor); los clientes descargan los tensores del modelo global por Iroh/QUIC (ALPN \texttt{fl-model/1}).
-    \item \texttt{/fl/discover}: El servidor consulta los clientes registrados con filtrado semántico opcional por etiquetas de capacidad (p. ej., \texttt{sensor\_type=soil}).
+    \item \texttt{/fl/register}: Los clientes hacen POST de su JSON de punto de acceso Iroh al arrancar.
+    \item \texttt{/fl/round}: Un PUT del servidor dispara una nueva ronda de entrenamiento, transportando metadatos ligeros de ronda (\texttt{round\_id}, \texttt{model\_hash}, node ID del servidor); los clientes obtienen los tensores del modelo global sobre Iroh/QUIC (ALPN \texttt{fl-model/1}).
+    \item \texttt{/fl/discover}: El servidor consulta a los clientes registrados con filtrado semántico opcional por etiquetas de capacidad (p.~ej., \texttt{sensor\_type=soil}).
 \end{itemize}
 
-La codificación CBOR~\cite{rfc8949} reduce la sobrecarga de mensajes frente a JSON en un 30--50\% para payloads numéricos, manteniéndose dentro de los tamaños de bloque 6LoWPAN para mensajes de control.
+La codificación CBOR~\cite{rfc8949} reduce el sobrecoste de mensajes frente a JSON en un 30--50\% para cargas numéricas, manteniéndose dentro de los tamaños de bloque 6LoWPAN para los mensajes de control.
 
 \subsection{Modelos de Aplicación}
 
-\textbf{AgriMLP} (Recomendación de Cultivos). Para la tarea de Recomendación de Cultivos, diseñamos AgriMLP: una red totalmente conectada de cuatro capas con arquitectura $7 \to 64 \to 64 \to 32 \to 22$. Cada capa oculta usa Normalización por Lotes y Dropout (tasa 0,2). Parámetros totales: $\sim$15K (60~KB en float32). Características: macronutrientes del suelo (N, P, K), temperatura, humedad, pH y precipitaciones, normalizadas con puntuación z.
+\textbf{AgriMLP} (Recomendación de Cultivos). Para la tarea de recomendación de cultivos, usamos AgriMLP: una red totalmente conectada de cuatro capas (perceptrón multicapa, MLP) con arquitectura $7 \to 64 \to 64 \to 32 \to 22$ (características de entrada $\to$ clases de salida). Las dos primeras capas ocultas usan Batch Normalization y Dropout (tasa~0.2) para regularización. Parámetros entrenables totales: 7{,}734 ($\approx$31~KB en float32; $\approx$32~KB como state dict serializado incluyendo estadísticas de normalización), lo que la hace trivialmente desplegable para inferencia en dispositivo sobre hardware de clase Cortex-A (Raspberry Pi~4B, Jetson Nano). Las características de entrada se normalizan por z-score: macronutrientes del suelo (N, P, K), temperatura, humedad, pH y precipitación.
 
-\textbf{AirMLP} (Pronóstico ICA a 7 días, exteriores). Para E6 diseñamos AirMLP: arquitectura $6 \to 32 \to 32 \to 16 \to 3$ ($\sim$3,7K parámetros, 15~KB). Entradas: mediciones diarias de NO$_2$, O$_3$, PM, CO junto con predictores meteorológicos AEMET (velocidad del viento y precipitación), normalizados con puntuación~z. La tarea es predicción de la clase ICA 7~días en el futuro, usando terciles de entrenamiento: \textit{Bajo} ($<$Q1$=$7,5~$\mu$g/m$^3$), \textit{Medio} (Q1--Q2) y \textit{Alto} ($\geq$Q2$=$13,0~$\mu$g/m$^3$). Los predictores incluyen variables de exterior (viento y lluvia de AEMET), por lo que el modelo es aplicable a estaciones de monitoreo al aire libre. En invernaderos u otros entornos interiores se requiere un conjunto de características diferente.
+\textbf{AirMLP} (Predicción de ICA a 7 días vista, Exteriores). Para E6 usamos AirMLP, una red compacta de cuatro capas $6 \to 32 \to 32 \to 16 \to 3$ (1{,}987 parámetros, $\approx$8~KB en float32) con el mismo esquema de regularización que AgriMLP. Las entradas son mediciones diarias en exteriores en el instante~$t$ (NO$_2$, O$_3$, material particulado, CO) fusionadas con predictores meteorológicos (velocidad del viento y precipitación) de AEMET, la Agencia Estatal de Meteorología, todas normalizadas por z-score. La tarea es predecir la clase ICA (\'Indice de Calidad del Aire, el índice español de calidad del aire) 7~días vista ($t{+}7$); la definición completa de la tarea, el esquema de etiquetado y la justificación se dan en \S\ref{sec:e6}. Este modelo se aplica solo a estaciones de monitorización al aire libre, no a instalaciones interiores o de invernadero.
 
-\textbf{ProphetWrapper} (GAM Federado). La capa de transporte de FL-Iroh es agnóstica al tipo de modelo: serializa cualquier \texttt{torch.state\_dict()} sobre Iroh/QUIC sin interpretar la semántica de los parámetros. Aprovechamos esto para federar Prophet de Facebook~\cite{taylor2018prophet}, un Modelo Aditivo Generalizado (GAM), envolviéndolo en un adaptador \texttt{nn.Module}. El adaptador expone una interfaz \texttt{state\_dict()}/\texttt{load\_state\_dict()} compatible que extrae e inyecta los coeficientes Fourier de estacionalidad (anual: $N{=}10$ pares sin/cos; semanal: $N{=}3$) y el coeficiente del regresor velocidad de viento como tensores. Los parámetros de tendencia ($k$, $m$, $\delta$) codifican patrones de emisión provinciales específicos (p.~ej., central térmica de Ponferrada vs.\ rural Soria) y \emph{no} se federan. Este diseño, denominado \textbf{FedGAM}, federaliza solo la estructura periódica compartida de los ciclos de contaminantes, preservando la identidad de tendencia local---separación principiada validada en~\cite{lopezblanco2024airquality}.
+\textbf{ProphetWrapper} (GAM Federado). La capa de transporte de FL-Iroh es estadísticamente agnóstica al modelo: serializa cualquier \texttt{torch.state\_dict()} sobre Iroh/QUIC sin interpretar la semántica de los parámetros. Aprovechamos esto para federar Facebook Prophet~\cite{taylor2018prophet}, un Modelo Aditivo Generalizado (GAM), envolviéndolo en un adaptador \texttt{nn.Module}. El envoltorio expone una interfaz compatible \texttt{state\_dict()}/\texttt{load\_state\_dict()} que extrae e inyecta los coeficientes de estacionalidad de Fourier (anual: $N{=}10$ pares seno/coseno; semanal: $N{=}3$) y el peso del regresor de velocidad del viento como tensores en punto flotante. Los parámetros de tendencia ($k$, $m$, $\delta$) codifican patrones de emisión industriales y demográficos específicos de cada provincia (p.~ej., la central de carbón de Ponferrada frente a la Soria rural) y por tanto \emph{no} se federan; permanecen locales a cada cliente provincial. Este diseño, que denominamos \textbf{FedGAM}, federa solo la estructura periódica compartida de los ciclos de contaminantes preservando la identidad de tendencia local---una separación coherente con la estructura estacional documentada para este conjunto de datos en trabajos previos~\cite{lopezblanco2024airquality}.
 
-El cliente FL actual requiere Python~3.11 y PyTorch; la portabilidad a MCU Cortex-M requeriría reimplementación en C o Rust.
+El cliente FL actual requiere Python~3.11 y PyTorch; portarlo a plataformas de clase MCU Cortex-M requeriría una reimplementación en C o Rust del entorno de ejecución del cliente.
 
-% -----------------------------------------------------------------------
+% =========================================================================
 \section{Evaluación Experimental}
-\label{sec:evaluacion}
+\label{sec:evaluation}
+
+Reportamos seis experimentos (E1--E6) seguidos de una comparación operativa con Flower-sobre-Tailscale (\S\ref{sec:e7}). A lo largo del texto distinguimos dos métricas de conectividad: el \emph{establecimiento a nivel de sesión} (si finalmente se forma una conexión utilizable, incluyendo reintentos) y la \emph{tasa de camino directo por transferencia} (la fracción de transferencias individuales llevadas por un camino con hole-punching en lugar del relay).
 
 \subsection{Configuración Experimental}
 
-Todos los experimentos se ejecutan en un clúster HPC de un nodo (Intel Xeon, 16 núcleos, sin GPU) para E2, E4, E5, E6, y en hardware real (PC con WSL2 + Raspberry Pi~4B, 300~km de separación WAN) para E1 distribuido y E3. Los experimentos FL usan $K{=}10$ clientes con FedAvg (o FedGAM en E6-Prophet), $E{=}1$ época local por ronda, SGD (lr$=$0,01), $R{=}50$ rondas (E4: $R{=}100$). El conjunto de datos E6 de calidad del aire cubre 10 provincias (entrenamiento 2011--2018, test 2019) con partición geográfica e IID como línea base. El conjunto de datos de Recomendación de Cultivos contiene 2.200 registros en 22 clases de cultivos (100 registros/clase), particionados mediante asignación Dirichlet con concentraci\'{o}n $\alpha \in \{0,1, 0,5, 1,0\}$ e IID como línea base. El código y los datos están disponibles en \url{https://github.com/raullb34/FL-Iroh}.
+Todos los experimentos se ejecutan en un clúster HPC de un solo nodo (Intel Xeon, 16 núcleos, sin GPU) para E2, E4, E5, E6, y sobre hardware real (PC con WSL2 + Raspberry Pi~4B, separación WAN de 300~km) para E1 distribuido y E3. Los experimentos de FL usan $K{=}10$ clientes con FedAvg (o FedGAM para E6-Prophet), $E{=}1$ época local por ronda, optimizador SGD (lr$=$0.01), y $R{=}100$ rondas globales para E2 y E4, $R{=}50$ para E6. E2 usa SimpleCNN, una red convolucional de tres bloques (bloques Conv--BN--ReLU de 32/64/128 canales con max-pooling, global average pooling y una cabeza lineal; 94{,}762 parámetros entrenables, $\approx$0.38~MB de state dict serializado) sobre CIFAR-10~\cite{cifar2009}. El conjunto de datos de Recomendación de Cultivos~\cite{cropdataset} contiene 2,200 registros en 22 clases de cultivos (100 registros/clase), particionado mediante asignación de Dirichlet con concentración $\alpha \in \{0.1, 0.5, 1.0\}$ e IID como línea base. El conjunto de datos de calidad del aire de E6 cubre 10 zonas de monitorización de Castilla y Le\'on---las nueve capitales de provincia más Ponferrada---durante 2011--2019 (entrenamiento: 2011--2018, test: 2019) con una partición geográfica (un cliente por zona) y una línea base IID barajada. Las ejecuciones multi-semilla usan un registro fijo de semillas de replicación ($n{=}5$ semillas); los intervalos de confianza al 95\% usan la distribución $t$ de Student. El código y los datos están disponibles en \url{https://github.com/raullb34/FL-Iroh}.
 
 \subsection{E1: Rendimiento del Transporte}
 \label{sec:e1}
 
-Evaluamos tres configuraciones de transporte con cuatro tamaños de payload (100~KB, 1~MB, 10~MB, 100~MB):
+Evaluamos tres configuraciones de transporte a lo largo de cuatro tamaños de carga (100~KB, 1~MB, 10~MB, 100~MB):
 
 \begin{itemize}
-    \item \textbf{HTTP/2 (bucle local)}: Servidor+cliente aiohttp en localhost, como referencia de techo.
-    \item \textbf{iroh\_relay\_loopback}: Dos nodos Iroh en el mismo proceso en la misma máquina, usando el relay DERP público \texttt{euw1-1.relay.iroh.network}.
-    \item \textbf{iroh\_relay\_wan}: PC como servidor y Raspberry Pi~4B (300~km de separaci\'{o}n geogr\'{a}fica, ISPs distintos) como cliente, usando el mismo relay DERP p\'{u}blico. La separaci\'{o}n entre pares garantiza ausencia de infraestructura de enrutamiento compartida, representando el peor caso realista de conectividad WAN sin configuraci\'{o}n previa.
+    \item \textbf{HTTP/2 (loopback)}: servidor+cliente aiohttp en localhost, como línea base de techo.
+    \item \textbf{iroh\_relay\_loopback}: Dos nodos Iroh en proceso en la misma máquina, usando el relay DERP público \texttt{euw1-1.relay.iroh.network}.
+    \item \textbf{iroh\_relay\_wan}: PC como servidor y Raspberry Pi~4B (separación geográfica de 300~km, distintos ISP) como cliente, usando el mismo relay DERP público. La separación garantiza que no hay infraestructura de enrutamiento compartida, representando un escenario WAN realista en el peor caso.
 \end{itemize}
 
-Los resultados se muestran en la Tabla~\ref{tab:e1}. HTTP/2 alcanza un pico de 573~Mbps para payloads de 1~MB en bucle local, cayendo a 244~Mbps en 100~MB (limitado por ancho de banda de memoria). El relay iroh en bucle local alcanza 27,2~Mbps en 100~KB ($N{=}14$, preliminar), reflejando la sobrecarga de cifrado QUIC+relay en un camino local rápido. El relay WAN se satura en \textbf{2,8~Mbps} independientemente del tamaño del payload ($N{=}30$ por celda), confirmando que el ancho de banda del servidor relay DERP, no los enlaces subyacentes, es el cuello de botella. Para actualizaciones del modelo AgriMLP ($\sim$60~KB), el tiempo de transporte de ida y vuelta sobre el relay WAN es $\sim$200~ms, lo que supone menos de 1~s por ronda federada a nivel de red.
+Los resultados se muestran en la Tabla~\ref{tab:e1}. HTTP/2 alcanza un máximo de 573~Mbps para cargas de 1~MB en loopback, cayendo a 244~Mbps a 100~MB (limitado por ancho de banda de memoria). El iroh relay loopback logra 27.2~Mbps a 100~KB ($N{=}14$, preliminar), reflejando el sobrecoste de cifrado de QUIC+relay en un camino local rápido. El relay WAN se satura a 2.8~Mbps con independencia del tamaño de carga ($N{=}30$ por celda). Para intercambios del modelo AgriMLP ($\approx$31~KB por dirección), el tiempo de transporte sobre el relay WAN es de $\approx$110~ms por envío y $\approx$220~ms para un intercambio completo de descarga más subida, dando $<$1~s por ronda federada a nivel de red. Nótese que la Tabla~\ref{tab:e1} caracteriza el camino de \emph{relay}, que E3 muestra que es el caso de respaldo poco común; los caminos directos con hole-punching evitan por completo el salto por el relay y están limitados en cambio por la capacidad del enlace extremo a extremo.
 
 \begin{table}[t]
 \centering
@@ -279,201 +286,204 @@ Los resultados se muestran en la Tabla~\ref{tab:e1}. HTTP/2 alcanza un pico de 5
 \footnotesize
 \begin{tabular}{l r r r r}
 \toprule
-\textbf{Transporte} & \textbf{Payload} & \textbf{Media (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
+\textbf{Transporte} & \textbf{Carga} & \textbf{Media (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
 \midrule
-HTTP/2                  & 100~KB  & 208,2  & 245,5  & 30 \\
-HTTP/2                  & 1~MB    & 573,6  & 603,3  & 30 \\
-HTTP/2                  & 10~MB   & 479,2  & 560,3  & 30 \\
-HTTP/2                  & 100~MB  & 244,6  & 248,9  & 30 \\
+HTTP/2               & 100~KB  & 208.2  & 245.5  & 30 \\
+HTTP/2               & 1~MB    & 573.6  & 603.3  & 30 \\
+HTTP/2               & 10~MB   & 479.2  & 560.3  & 30 \\
+HTTP/2               & 100~MB  & 244.6  & 248.9  & 30 \\
 \midrule
-iroh relay bucle local  & 100~KB  & 27,2   & 29,2   & 14 \\
+iroh relay loopback  & 100~KB  & 27.2   & 29.2   & 14 \\
 \midrule
-iroh relay WAN          & 100~KB  & 2,26   & 2,43   & 30 \\
-iroh relay WAN          & 1~MB    & 2,75   & 2,79   & 30 \\
-iroh relay WAN          & 10~MB   & 2,81   & 2,82   & 30 \\
-iroh relay WAN          & 100~MB  & 2,81   & 2,83   & 30 \\
+iroh relay WAN       & 100~KB  & 2.26   & 2.43   & 30 \\
+iroh relay WAN       & 1~MB    & 2.75   & 2.79   & 30 \\
+iroh relay WAN       & 10~MB   & 2.81   & 2.82   & 30 \\
+iroh relay WAN       & 100~MB  & 2.81   & 2.83   & 30 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-La curva de rendimiento plana entre payloads (100~KB a 100~MB todos se saturan a $\approx$2,8~Mbps, $N{=}30$ por celda, desv.~est.${<}$0,05~Mbps) indica saturación de CPU/ancho de banda del servidor relay en lugar de sobrecarga del protocolo QUIC. Un relay DERP auto-hospedado en un servidor dedicado eliminaría este cuello de botella, pero el relay público ya es suficiente para actualizaciones del tamaño de AgriMLP ($<$200~ms por ronda).
+La curva de rendimiento plana a lo largo de las cargas (100~KB a 100~MB, todas saturando a $\approx$2.8~Mbps, $N{=}30$ por celda, stdev${<}$0.05~Mbps) apunta a un techo del lado del relay---capacidad del servidor o limitación de tasa por conexión en el relay público---más que a sobrecoste del protocolo QUIC; no evaluamos un relay DERP autoalojado para separar ambas explicaciones. En cualquier caso, un relay autoalojado en un servidor dedicado elevaría este techo, y el relay público ya basta para actualizaciones del modelo del tamaño de AgriMLP ($\approx$220~ms por intercambio de ida y vuelta).
 
-\subsection{E2: Convergencia FL bajo Datos No-IID}
+\subsection{E2: Convergencia de FL bajo Datos No-IID}
 \label{sec:e2}
 
-Evaluamos la convergencia de FedAvg sobre CIFAR-10 con SimpleCNN bajo particionamiento IID y No-IID (Dirichlet $\alpha{=}0,1$). Todas las ejecuciones usan $K{=}10$ clientes, $E{=}1$ \'epoca local, p\'erdida de entrop\'ia cruzada, optimizador SGD (lr$=$0,01), $R{=}100$ rondas. La replicaci\'on multi-seed ($n{=}5$) proporciona intervalos de confianza del 95\% v\'ia distribuci\'on t de Student. Resultados en la Tabla~\ref{tab:e2}.
+Evaluamos la convergencia de FedAvg en CIFAR-10 con SimpleCNN bajo particionado IID y no-IID (Dirichlet $\alpha{=}0.1$). Todas las ejecuciones usan $K{=}10$ clientes, $E{=}1$ época local, pérdida de entropía cruzada, optimizador SGD (lr$=$0.01), $R{=}100$ rondas. La replicación multi-semilla ($n{=}5$) proporciona intervalos de confianza al 95\% mediante la distribución $t$ de Student. Resultados en la Tabla~\ref{tab:e2}.
 
 \begin{table}[t]
 \centering
-\caption{E2: Convergencia FL en CIFAR-10 (SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ semillas)}
+\caption{E2: Convergencia de FL en CIFAR-10 (SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ semillas)}
 \label{tab:e2}
 \footnotesize
 \begin{tabular}{l r r}
 \toprule
-\textbf{Partici\'on} & \textbf{Prec. (final)} & \textbf{IC 95\%} \\
+\textbf{Partición} & \textbf{Prec. test (final)} & \textbf{IC 95\%} \\
 \midrule
-IID                    & 65,86\% & [65,66\%, 66,06\%] \\
-Dirichlet $\alpha{=}0,1$ & 44,18\% & [39,45\%, 48,92\%] \\
+IID                  & 65.86\% & [65.66\%, 66.06\%] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% & [39.45\%, 48.92\%] \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Bajo particionamiento IID, SimpleCNN converge al 65,86\% de precisi\'on de test con un IC95\% ajustado de $\pm$0,2pp ($n{=}5$ semillas), demostrando convergencia reproducible. La heterogeneidad No-IID severa (Dirichlet $\alpha{=}0,1$) causa una degradaci\'on sustancial al 44,18\%, con un IC m\'as amplio de $\pm$4,7pp reflejando mayor varianza entre diferentes asignaciones cliente-dato. La brecha de 21,7pp en precisi\'on cuantifica el costo del sesgo de etiquetas en FL con CIFAR-10, consistente con trabajos previos~\cite{li2020federated,scaffold2020}. A pesar de la heterogeneidad, FedAvg converge sin divergencia, validando la robustez de la capa de transporte bajo condiciones No-IID realistas.
+Bajo particionado IID, SimpleCNN converge a un 65.86\% de precisión de test con un IC 95\% ajustado de $\pm$0.2pp ($n{=}5$ semillas), demostrando convergencia reproducible. La heterogeneidad no-IID severa (Dirichlet $\alpha{=}0.1$) causa una degradación sustancial hasta el 44.18\%, con un IC más ancho de $\pm$4.7pp que refleja mayor varianza entre distintas asignaciones de datos a clientes. La brecha de precisión de 21.7pp cuantifica el coste del sesgo de etiquetas en el FL sobre CIFAR-10, coherente con el trabajo previo~\cite{li2020federated,scaffold2020}. Pese a la heterogeneidad, FedAvg converge sin divergir, validando la robustez de la capa de transporte bajo condiciones no-IID realistas.
 
-Un barrido de heterogeneidad sobre el par\'ametro de concentraci\'on de Dirichlet (ejecuciones de una sola semilla) confirma la tendencia mon\'otona esperada: la precisi\'on se degrada suavemente desde IID (65,86\%) pasando por $\alpha{=}1,0$ (63,95\%) y $\alpha{=}0,5$ (62,64\%) hasta el r\'egimen severo $\alpha{=}0,1$, donde el sesgo de etiquetas se convierte en la fuente de error dominante. La capa de transporte no impone penalizaci\'on de convergencia adicional en ning\'un nivel de heterogeneidad: todas las ejecuciones completan sus 100 rondas con 100\% de \'exito por ronda e id\'entico costo de bytes por ronda (3,87~MB/ronda al agregador).
+Un barrido de heterogeneidad sobre el parámetro de concentración de Dirichlet (ejecuciones de una sola semilla) confirma la tendencia monótona esperada: la precisión se degrada suavemente desde IID (65.86\%) pasando por $\alpha{=}1.0$ (63.95\%) y $\alpha{=}0.5$ (62.64\%) hasta el régimen severo $\alpha{=}0.1$, donde el sesgo de etiquetas se convierte en la fuente de error dominante. La capa de transporte no impone penalización de convergencia adicional en ningún nivel de heterogeneidad: todas las ejecuciones completan sus 100 rondas completas con un 100\% de éxito a nivel de ronda y un coste de bytes por ronda idéntico de 3.87~MB de actualizaciones de cliente agregadas ($K{=}10$ actualizaciones $\times$ $\approx$0.387~MB de state dict serializado de SimpleCNN cada una).
 
-\subsection{E3: Tasa de Éxito en Traversal NAT}
+\subsection{E3: Tasa de Éxito de Traversía de NAT}
 \label{sec:e3}
 
-Medimos el éxito en el establecimiento de conexiones y, cuando la API de transporte lo expone, el tipo de conexión (hole-punch directo vs.~relay) en cinco escenarios de red con hardware real:
+Medimos el éxito de establecimiento de conexión y, donde la API del transporte lo expone, el tipo de conexión (hole-punch directo vs.~relay) a través de cinco escenarios de red usando hardware real:
 
 \begin{itemize}
-    \item \textbf{net\_lan}: ambos pares en la misma red local (l\'{i}nea base de control).
-    \item \textbf{net\_nat1} (NAT de cono completo): PC detrás de un enrutador doméstico estándar (España) $\leftrightarrow$ Raspberry Pi~4B (ubicación remota, 300~km).
-    \item \textbf{net\_nat2} (NAT sim\'{e}trico): una segunda topolog\'{i}a NAT con un emparejamiento de enrutadores distinto.
-    \item \textbf{net\_cgnat} (NAT de Grado Operador): mismo hardware, con el PC detrás de un CGNAT de nivel ISP.
-    \item \textbf{net\_fw443} (cortafuegos restrictivo): tr\'{a}fico saliente limitado \'{u}nicamente al puerto~443.
+    \item \textbf{net\_lan}: ambos pares en la misma red local (línea base de control).
+    \item \textbf{net\_nat1} (NAT de cono completo): PC detrás de un router doméstico estándar (España) $\leftrightarrow$ Raspberry Pi~4B (ubicación remota, 300~km).
+    \item \textbf{net\_nat2} (NAT simétrico): una segunda topología NAT con un emparejamiento de router distinto.
+    \item \textbf{net\_cgnat} (NAT de Grado Operador): mismo hardware, con el PC detrás de un CGNAT a nivel de ISP.
+    \item \textbf{net\_fw443} (cortafuegos restrictivo): tráfico saliente restringido solo al puerto~443.
 \end{itemize}
 
-Cada escenario ejecuta $N{=}30$ transferencias sobre una sesión establecida (1--3 conexiones QUIC distintas por ejecución). Los resultados se muestran en la Tabla~\ref{tab:e3}.
+Cada escenario ejecuta $N{=}30$ transferencias sobre una única sesión establecida (1--3 conexiones QUIC distintas por ejecución), de modo que la unidad de análisis en la Tabla~\ref{tab:e3} es la \emph{transferencia}, no un intento independiente de establecimiento de conexión: a través de los cuatro escenarios WAN las 120 transferencias corresponden a aproximadamente 4--12 conexiones QUIC distintas sobre un único par de hardware PC$\leftrightarrow$Raspberry~Pi. Los porcentajes a nivel de transferencia miden por tanto la estabilidad del camino directo durante la operación; no deben leerse como una probabilidad de éxito de hole-punching a nivel poblacional (véase \S\ref{sec:limitations}). Los resultados se muestran en la Tabla~\ref{tab:e3}.
 
 \begin{table*}[t]
 \centering
-\caption{E3: Resultados de Traversal NAT ($N{=}30$ transferencias por escenario, una sesi\'{o}n establecida cada uno; camino de conexi\'{o}n clasificado v\'{i}a inspecci\'{o}n del camino activo con \texttt{remote\_info()} de Iroh)}
+\caption{E3: Resultados de Traversía de NAT ($N{=}30$ transferencias por escenario, una sesión establecida cada una; camino de conexión clasificado vía inspección del camino activo con Iroh \texttt{remote\_info()})}
 \label{tab:e3}
 \footnotesize
 \begin{tabular}{l r r r r l}
 \toprule
 \textbf{Escenario} & \textbf{$N$} & \textbf{Directo (\%)} & \textbf{Relay (\%)} & \textbf{Fallido (\%)} & \textbf{Camino activo} \\
 \midrule
-net\_lan   (l\'{i}nea base LAN) & 30 & 100,0 & 0,0 & 0,0 & directo (local)  \\
-net\_nat1  (cono completo)     & 30 & 96,7  & 0,0 & 3,3 & directo (p\'{u}blico) \\
-net\_nat2  (sim\'{e}trico)      & 30 & 100,0 & 0,0 & 0,0 & directo (p\'{u}blico) \\
-net\_cgnat (CGNAT)             & 30 & 96,7  & 0,0 & 3,3 & directo (p\'{u}blico) \\
-net\_fw443 (cortafuegos :443)  & 30 & 100,0 & 0,0 & 0,0 & directo (p\'{u}blico) \\
+net\_lan   (línea base LAN)   & 30 & 100.0 & 0.0 & 0.0 & directo (local)  \\
+net\_nat1  (NAT cono completo) & 30 & 96.7  & 0.0 & 3.3 & directo (pública) \\
+net\_nat2  (NAT simétrico)    & 30 & 100.0 & 0.0 & 0.0 & directo (pública) \\
+net\_cgnat (CGNAT)            & 30 & 96.7  & 0.0 & 3.3 & directo (pública) \\
+net\_fw443 (cortafuegos :443) & 30 & 100.0 & 0.0 & 0.0 & directo (pública) \\
 \midrule
-\textbf{Agregado WAN}         & 120 & \textbf{98,3} & \textbf{0,0} & 1,7 & directo (p\'{u}blico) \\
+\textbf{Agregado WAN}         & 120 & \textbf{98.3} & \textbf{0.0} & 1.7 & directo (pública) \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\textbf{El resultado clave: el hole-punching QUIC directo tiene \'{e}xito en todos los escenarios NAT, CGNAT y cortafuegos ---con 0\% de uso de relay.} De 120 transferencias WAN (cuatro escenarios $\times$ 30), 118 (98,3\%) establecieron un camino \emph{directo} punto a punto y ninguna recurri\'{o} al relay DERP; los dos fallos (1,7\%) fueron expiraciones de arranque en fr\'{i}o en el primer intento, que tuvieron \'{e}xito al reintentar en la misma sesi\'{o}n. En cada conexi\'{o}n directa la direcci\'{o}n activa del cable fue la IP \emph{p\'{u}blica} del par remoto (85.48.2.235), no una direcci\'{o}n LAN privada ---confirmando un camino WAN genuinamente perforado en lugar de un atajo por colocaci\'{o}n. Para el escenario CGNAT verificamos adem\'{a}s el aislamiento de red comprobando que las subredes privadas de ambos pares eran mutuamente inalcanzables (100\% de p\'{e}rdida de paquetes), con el PC en una CGNAT de operador m\'{o}vil (p\'{u}blica 31.4.138.149) y la Raspberry Pi a 300~km en un ISP fijo distinto. La conectividad directa se mantuvo as\'{i} incluso bajo CGNAT, NAT sim\'{e}trico y un cortafuegos limitado al puerto~443, entre ISP distintos. Como control, el baseline en la misma LAN (net\_lan, ambos pares co-localizados) report\'{o} en cambio la direcci\'{o}n \emph{privada} del par (10.50.16.202) con latencia inferior a 50~ms (15--47~ms frente a 62--625~ms sobre WAN), confirmando que el clasificador de camino activo distingue fielmente un camino directo local de uno perforado sobre WAN en lugar de recurrir por defecto a una direcci\'{o}n p\'{u}blica.
+El resultado clave: el hole-punching QUIC directo llevó cada transferencia WAN completada en todos los escenarios de NAT, CGNAT y cortafuegos---con un 0\% de uso de relay. De 120 transferencias WAN (cuatro escenarios $\times$ 30), 118 (98.3\%) circularon por un camino peer-to-peer \emph{directo} y ninguna recurrió al relay DERP; los dos fallos (1.7\%) fueron tiempos de espera de arranque en frío en el primer intento que tuvieron éxito al reintentar dentro de la misma sesión, de modo que el establecimiento a nivel de sesión fue del 100\%. En cada conexión directa la dirección de cable activa era la IP \emph{pública} del par remoto, no una dirección LAN privada---confirmando un camino WAN genuino con hole-punching en lugar de un atajo co-localizado. Para el escenario CGNAT verificamos además el aislamiento de red confirmando que las subredes privadas de ambos pares eran mutuamente inalcanzables (100\% de pérdida de paquetes), con el PC en un CGNAT de operador móvil y la Raspberry Pi a 300~km en un ISP fijo distinto. La conectividad directa se mantuvo así incluso bajo NAT de Grado Operador, NAT simétrico y un cortafuegos restringido al puerto~443, entre ISP distintos. Como control, la línea base en la misma LAN (net\_lan, ambos pares co-localizados) reportó en cambio la dirección \emph{privada} RFC1918 del par con latencia sub-50~ms (15--47~ms vs.~62--625~ms sobre WAN), confirmando que el clasificador de camino activo distingue fielmente un camino directo local de uno WAN con hole-punching en lugar de recurrir por defecto a una dirección pública.
 
-El establecimiento de conexi\'{o}n (arranque en fr\'{i}o) es variable ---de 5,3~s (CGNAT) a 113~s (NAT sim\'{e}trico)--- mientras se negocian el camino directo y los candidatos de relay y se descubre el mapeo NAT; una vez establecido, la latencia de transferencia en estado estacionario es baja (62--625~ms, t\'{i}picamente $<$300~ms), y las transferencias posteriores reutilizan el camino directo. Estas latencias son aceptables para el intercambio de modelos FL, donde el entrenamiento local domina el tiempo de ronda.
+El establecimiento de conexión (arranque en frío) es variable---de 5.3~s (CGNAT) a 113~s (NAT simétrico)---mientras se negocian el camino directo y los candidatos de relay y se descubre el mapeo NAT; una vez establecida, la latencia de transferencia en estado estacionario es baja (62--625~ms, típicamente $<$300~ms), y las transferencias posteriores reutilizan el camino directo. Estas latencias son aceptables para el intercambio de modelos de FL, donde el entrenamiento local domina el tiempo de ronda.
 
-Este resultado es m\'{a}s fuerte que la mera garant\'{i}a de respaldo por relay: el hole-punching de Iroh forma caminos directos incluso bajo las condiciones de NAT sim\'{e}trico y CGNAT que cl\'{a}sicamente lo derrotan. El relay DERP permanece como respaldo \emph{garantizado} ---asegurando por construcci\'{o}n un 0\% de fallo de conectividad--- pero no se ejercit\'{o} en ning\'{u}n ensayo. La evaluaci\'{o}n es un peor caso conservador: dos pares sin infraestructura de enrutamiento compartida, en ISP distintos a 300~km, tensionados por CGNAT y restricciones de puerto. En despliegues gestionados m\'{a}s favorables (p.~ej., dispositivos tras un \'{u}nico proveedor LTE o red de campus), el \'{e}xito del camino directo solo puede mejorar.
+Este resultado es más fuerte que la mera garantía de respaldo por relay: el hole-punching de Iroh formó caminos directos incluso bajo las condiciones de NAT simétrico y CGNAT que clásicamente lo derrotan. El relay DERP permanece como respaldo \emph{garantizado}---asegurando la conectividad por construcción cuando no puede formarse un camino directo---pero no se ejercitó en ninguna prueba. Dos salvedades acotan la generalidad de este hallazgo: las mediciones provienen de un único par de hardware sobre un solo emparejamiento de ISP, y las etiquetas de escenario reflejan las configuraciones de router/ISP desplegadas---no clasificamos independientemente el comportamiento de mapeo y filtrado de cada NAT con sondas STUN de estilo RFC~4787, de modo que ``NAT simétrico'' describe la topología configurada más que un tipo de mapeo verificado. No obstante, la evaluación es un entorno conservador: dos pares sin infraestructura de enrutamiento compartida, en distintos ISP separados 300~km, sometidos a CGNAT y restricciones de puerto.
 
-\subsection{E4: Resiliencia a Churns}
+\subsection{E4: Resiliencia a la Rotación}
 \label{sec:e4}
 
-Los dispositivos IoT agrícolas están sujetos a conectividad intermitente: cortes de energía, caídas de señal celular y mantenimiento de dispositivos causan que los clientes abandonen a mitad de ronda. Simulamos churns abandonando aleatoriamente $p \in \{0, 10, 30, 50\}$\% de clientes por ronda. FedAvg agrega únicamente las actualizaciones recibidas en cada ronda, sin tratamiento especial para los clientes ausentes.
+Los dispositivos IoT agrícolas están sujetos a conectividad intermitente: cortes de energía, caídas de señal celular y mantenimiento de dispositivos hacen que los clientes se caigan a mitad de ronda. Simulamos la rotación (churn) descartando aleatoriamente $p \in \{0, 10, 30, 50\}$\% de los clientes por ronda. FedAvg agrega solo las actualizaciones recibidas en cada ronda, sin manejo especial para los clientes ausentes. La Tabla~\ref{tab:e4} reporta la precisión final y máxima, un marcador de convergencia temprana (la primera ronda en la que la precisión de test supera el 40\%) y la finalización de rondas. Cada configuración es una única ejecución; las diferencias por debajo de un punto porcentual entre filas no deben sobreinterpretarse.
 
 \begin{table*}[t]
 \centering
-\caption{E4: Resiliencia a Churns (Recomendaci\'{o}n de Cultivos, IID, $R{=}100$)}
+\caption{E4: Resiliencia a la Rotación (Recomendación de Cultivos, IID, $R{=}100$)}
 \label{tab:e4}
 \footnotesize
 \begin{tabular}{l r r r r}
 \toprule
-\textbf{Tasa churn} & \textbf{Prec. (final)} & \textbf{Prec. (m\'{a}x.)} & \textbf{Rondas$\to$40\%} & \textbf{Rondas completadas} \\
+\textbf{Tasa de rotación} & \textbf{Prec (final)} & \textbf{Prec (máx)} & \textbf{Rondas$\to$40\%} & \textbf{Rondas completadas} \\
 \midrule
-0\%  & 93,18\% & 93,18\% & 16 & 100/100 \\
-10\% & 92,95\% & 93,86\% & 17 & 100/100 \\
-30\% & 93,64\% & 94,32\% & 16 & 100/100 \\
-50\% & 93,64\% & 93,64\% & 18 & 100/100 \\
+0\%  & 93.18\% & 93.18\% & 16 & 100/100 \\
+10\% & 92.95\% & 93.86\% & 17 & 100/100 \\
+30\% & 93.64\% & 94.32\% & 16 & 100/100 \\
+50\% & 93.64\% & 93.64\% & 18 & 100/100 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-La precisión se mantiene estable en 93,2--93,6\% con todas las tasas de churn, sin degradación significativa incluso con el 50\% de abandono. Las 100 rondas de entrenamiento se completan en cada configuración. Esta robustez surge de dos factores: (i) la agregación FedAvg tolera la participación parcial ---el servidor agrega las actualizaciones de los clientes disponibles en cada ronda---, y (ii) con distribución IID las contribuciones de gradiente de cualquier subconjunto de clientes siguen siendo representativas de la distribución global.
+La precisión se mantiene estable en 93.2--93.6\% a través de todas las tasas de rotación, sin degradación significativa ni siquiera con un 50\% de caídas. Las 100 rondas de entrenamiento se completan en todas las configuraciones. Esta robustez surge de dos factores: (i) la agregación FedAvg tolera la participación parcial---el servidor agrega las actualizaciones de cliente que llegan en cada ronda, y (ii) con una distribución de datos IID las contribuciones de gradiente de cualquier subconjunto de clientes siguen siendo representativas de la distribución global.
 
-\emph{Nota}: el churn se simula excluyendo probabilísticamente a los clientes de cada ronda (en proceso, sin desconexión de red real). En un despliegue real, el retroceso a relay de Iroh garantiza que los clientes que se reconecten puedan siempre contactar al servidor incluso después de que cambie su dirección IP o mapeo NAT, por lo que el modelo de participación parcial es un proxy fiel del abandono transitorio.
+Nótese que la rotación se simula reteniendo probabilísticamente clientes en cada ronda (en proceso, sin desconexión de red real). En un despliegue real, el respaldo por relay de Iroh garantiza que los clientes que se reconectan siempre pueden alcanzar el servidor incluso después de que su dirección IP o su mapeo NAT haya cambiado, de modo que el modelo de participación parcial es un proxy preciso de las caídas transitorias.
 
-El resultado valida la idoneidad de FL-Iroh para despliegues agrícolas reales donde la disponibilidad de los dispositivos no puede garantizarse. El retroceso a relay de Iroh asegura que los clientes que se reconectan siempre puedan alcanzar al servidor, incluso si su dirección IP o mapeo NAT ha cambiado durante el período de desconexión.
-
-\subsection{E5: Sobrecarga del Descubrimiento CoAP}
+\subsection{E5: Sobrecoste del Descubrimiento CoAP}
 \label{sec:e5}
 
-El descubrimiento de servicios es un prerequisito para FL: en cada ronda, el servidor debe localizar a los clientes disponibles. Medimos la latencia del descubrimiento CoAP y el tamaño de la respuesta en función del tamaño de red $N_{\text{nodos}} \in \{10, 50, 100\}$ y el tipo de filtro:
+El descubrimiento de servicios es un prerrequisito para el FL: en cada ronda, el servidor debe localizar los clientes disponibles. Medimos la latencia y el tamaño de respuesta del descubrimiento CoAP en función del tamaño de red $N_{\text{nodes}} \in \{10, 50, 100\}$ y el tipo de filtro:
 
 \begin{itemize}
-    \item \textbf{Sin filtro}: Devuelve todos los endpoints registrados (sin filtrado).
-    \item \textbf{Filtro semántico}: Filtra endpoints por etiqueta de capacidad del sensor (p. ej., tipo de suelo), requiriendo coincidencia de cadenas sobre descripciones de recursos.
+    \item \textbf{Filtro ninguno}: Devuelve todos los puntos de acceso registrados (sin filtrado).
+    \item \textbf{Filtro semántico}: Filtra los puntos de acceso por etiqueta de capacidad de sensor (p.~ej., tipo de suelo), requiriendo coincidencia de cadenas sobre las descripciones de recursos.
 \end{itemize}
 
 \begin{table}[t]
 \centering
-\caption{E5: Sobrecarga del Descubrimiento CoAP}
+\caption{E5: Sobrecoste del Descubrimiento CoAP}
 \label{tab:e5}
 \footnotesize
 \begin{tabular}{r l r r r r}
 \toprule
 \textbf{N nodos} & \textbf{Filtro} & \textbf{Media (ms)} & \textbf{P95 (ms)} & \textbf{Bytes} & \textbf{N} \\
 \midrule
-10  & ninguno    & 1,6  & 1,9  & 250   & 30 \\
-10  & semántico  & 24,0 & 26,4 & 2500  & 30 \\
-50  & ninguno    & 1,9  & 2,1  & 250   & 30 \\
-50  & semántico  & 130,7 & 156,6 & 12500 & 30 \\
-100 & ninguno    & 1,9  & 2,2  & 250   & 30 \\
-100 & semántico  & 278,7 & 344,1 & 25000 & 30 \\
+10  & ninguno  & 1.6  & 1.9  & 250   & 30 \\
+10  & semántico & 24.0 & 26.4 & 2500  & 30 \\
+50  & ninguno  & 1.9  & 2.1  & 250   & 30 \\
+50  & semántico & 130.7 & 156.6 & 12500 & 30 \\
+100 & ninguno  & 1.9  & 2.2  & 250   & 30 \\
+100 & semántico & 278.7 & 344.1 & 25000 & 30 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-El filtro sin filtrado logra latencia constante O(1) ($\approx$1,9~ms) y ancho de banda (250~bytes) independientemente del tamaño de la red, ya que el servidor devuelve solo los participantes de la ronda activa sin iterar todos los recursos. El filtro semántico muestra escala O(n): 24~ms/2500~B con 10 nodos, creciendo a 278~ms/25000~B con 100 nodos ---aproximadamente 2,8~ms y 250~bytes por nodo adicional. Para despliegues agrícolas típicos con menos de 50 dispositivos por clúster de granja, el descubrimiento semántico se completa en menos de 157~ms, aceptable como paso de configuración de ronda ejecutado una vez por ronda FL.
+La Tabla~\ref{tab:e5} resume los resultados. El filtro ninguno logra latencia constante ($\approx$1.9~ms) y ancho de banda (250~bytes) con independencia del tamaño de red---O(1) \emph{por diseño}, ya que el servidor devuelve solo los participantes de la ronda activa sin iterar todos los recursos. El filtro semántico, que es la operación de descubrimiento realista al seleccionar clientes por capacidad, muestra el escalado O(n) esperado: 24~ms/2500~B con 10 nodos, creciendo a 278~ms/25000~B con 100 nodos---aproximadamente 2.8~ms y 250~bytes por nodo adicional. Para despliegues agrícolas típicos con $<$50 dispositivos por clúster de granja, el descubrimiento semántico se completa en $<$157~ms, aceptable como paso de configuración de ronda ejecutado una vez por ronda de FL.
 
-\emph{Nota sobre las estimaciones de bytes}: la latencia de descubrimiento se mide emitiendo $N_\text{nodes}$ peticiones CoAP GET reales por iteración. Los recuentos de bytes reportados para las filas con filtro semántico se extrapolan como $250\,\text{B} \times N_\text{nodes}$ a partir de la medición por nodo; los despliegues reales con múltiples servidores pueden diferir en un factor constante pequeño debido al encuadrado CoAP.
+\emph{Nota sobre las estimaciones de bytes}: La latencia de descubrimiento se mide emitiendo $N_\text{nodes}$ peticiones CoAP GET reales por iteración. Los recuentos de bytes reportados para las filas de filtro semántico se extrapolan como $250\,\text{B} \times N_\text{nodes}$ a partir de la medición por nodo; los despliegues multi-servidor reales pueden diferir en un pequeño factor constante debido al encuadre CoAP.
 
-% -----------------------------------------------------------------------
 \subsection{E6: Aprendizaje Federado de Calidad del Aire}
 \label{sec:e6}
 
-\textbf{Conjunto de datos y tarea.} Utilizamos el archivo hist\'{o}rico diario de calidad del aire de Castilla y Le\'{o}n~\cite{cyl2023airquality} (1997--2020, 10 provincias), fusionado con datos meteorol\'{o}gicos AEMET~\cite{aemet2023} (velocidad del viento, precipitaci\'{o}n). Restringimos a 2011--2019 para evitar el artefacto COVID-19 (documentado en~\cite{lopezblanco2024airquality}). Entrenamiento: 2011--2018; test: 2019.
+\textbf{Conjunto de datos y tarea.} Usamos el archivo histórico diario de calidad del aire de Castilla y Le\'on~\cite{cyl2023airquality} (1997--2020, 10 provincias), fusionado con datos meteorológicos de AEMET~\cite{aemet2023} (velocidad del viento, precipitación). Nos restringimos a 2011--2019 para evitar el artefacto del confinamiento por COVID-19 (NO$_2$ anómalamente bajo en marzo--mayo~2020 documentado en~\cite{lopezblanco2024airquality}). Entrenamiento: 2011--2018; test: 2019.
 
-La tarea de predicci\'{o}n es \textbf{pron\'{o}stico ICA a 7 d\'{i}as vista}: dado un conjunto de mediciones de estaciones exteriores en el d\'{i}a~$t$ (NO$_2$, O$_3$, PM, CO, velocidad del viento, precipitaci\'{o}n), predecir la clase ICA de calidad del aire 7~d\'{i}as en el futuro ($t{+}7$). Este horizonte es \'{u}til para planificaci\'{o}n agr\'{i}cola: el agricultor observa las lecturas de hoy y recibe una perspectiva semanal del riesgo de calidad del aire exterior (p.\,ej., para programar tratamientos fitosanitarios en campo abierto o tareas de recolecci\'{o}n). El desplazamiento de 7 d\'{i}as elimina adem\'{a}s la fuga de objetivo que surgir\'{i}a al clasificar el mismo valor de NO$_2$ que aparece como variable predictora.
+La tarea de predicción es la \textbf{predicción de ICA a 7 días vista}: dadas las lecturas de sensores en exteriores en el día~$t$ (NO$_2$, O$_3$, PM, CO, velocidad del viento, precipitación), predecir la clase de calidad del aire ICA 7~días vista ($t{+}7$). Este horizonte es accionable para la planificación agrícola: un agricultor observa las lecturas de hoy y recibe una previsión semanal del riesgo de calidad del aire en exteriores (p.~ej., para programar la fumigación en campo abierto o las operaciones de cosecha). El desplazamiento de 7 días también elimina la fuga de objetivo que surgiría al clasificar el valor de NO$_2$ del mismo día que también está presente como característica.
 
-Las etiquetas ICA se derivan de los terciles de NO$_2$ del conjunto de entrenamiento (Q1$=$7,5, Q2$=$13,0~$\mu$g/m$^3$), produciendo tres clases equilibradas: \textit{Bajo}, \textit{Medio} y \textit{Alto}. Los umbrales absolutos espa\~noles (40/100~$\mu$g/m$^3$) est\'{a}n dise\~nados para picos horarios y generan un desequilibrio del 99\%{+} sobre medianas diarias.
+Las etiquetas ICA usan los terciles de NO$_2$ del conjunto de entrenamiento ($T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3$) para objetivos de 3 clases balanceados \emph{en muestra}: \textit{Bajo}~(bajo), \textit{Medio}~(medio), \textit{Alto}~(alto). Esto reemplaza los umbrales absolutos del ICA español (40/100~$\mu$g/m$^3$), que están diseñados para picos horarios y producen un desequilibrio de una sola clase superior al 99\% sobre medianas diarias. El enfoque de terciles preserva el ranking de NO$_2$ y produce distribuciones geográficamente no-IID: la Valladolid industrial tiene un 73\% de días \textit{Alto} frente al 18\% de la Soria rural. Dado que los terciles se ajustan sobre los datos de entrenamiento 2011--2018 y los niveles de NO$_2$ disminuyeron a lo largo de la década, el año de test 2019 retenido \emph{no} está balanceado: su distribución de clases es 49.3\% \textit{Bajo}, 27.8\% \textit{Medio}, 22.9\% \textit{Alto}. Las líneas base triviales deben por tanto calcularse sobre el año de test en lugar de asumirse a partir del balance en muestra; las reportamos en la Tabla~\ref{tab:e6}.
 
-\textbf{Alcance del despliegue.} Los predictores incluyen variables meteorol\'{o}gicas exteriores de AEMET. Este conjunto de datos es aplicable exclusivamente a instalaciones de monitoreo \textbf{en exterior}; los invernaderos u otras instalaciones interiores requieren un conjunto de caracter\'{i}sticas diferente (sin viento/precipitaci\'{o}n, con CO$_2$, humedad). Los 10 clientes provinciales son: \'{A}vila, Burgos, Le\'{o}n, Palencia, Ponferrada, Salamanca, Segovia, Soria, Valladolid y Zamora. Las etiquetas de sensor se registran en CoAP con el atributo \texttt{rt=air-quality}.
+\textbf{Alcance de despliegue.} El conjunto de características incluye variables meteorológicas de exteriores (velocidad del viento y precipitación de AEMET). Este conjunto de datos se aplica a instalaciones de monitorización \emph{en exteriores}; los despliegues en invernadero o interiores requieren un conjunto de características distinto (eliminando viento/precipitación, añadiendo CO$_2$, humedad). Los 10 clientes de zona de monitorización son: \'Avila, Burgos, Le\'on, Palencia, Ponferrada, Salamanca, Segovia, Soria, Valladolid y Zamora (las nueve capitales de provincia más Ponferrada). Las etiquetas de sensor se registran vía CoAP con el atributo \texttt{rt=air-quality}.
 
-\textbf{Configuraciones.} Ejecutamos cuatro configuraciones: (\textit{A})~AirMLP~+~FedAvg, partici\'{o}n geogr\'{a}fica; (\textit{B})~AirMLP~+~FedAvg, l\'{i}nea base IID; (\textit{C})~ProphetWrapper~+~FedGAM, geogr\'{a}fica; (\textit{D})~ProphetWrapper~+~FedGAM, IID.
+\textbf{Configuraciones.} Ejecutamos seis configuraciones para aislar los efectos de modelo y agregación: AirMLP~+~FedAvg (geográfica e IID), ProphetWrapper~+~FedGAM, y ProphetWrapper~+~FedAvg (geográfica e IID). La replicación multi-semilla ($n{=}5$) proporciona intervalos de confianza al 95\%.
 
 \begin{table}[t]
 \centering
-\caption{E6: Pron\'{o}stico ICA a 7 D\'{i}as ($K{=}10$, $R{=}50$, test 2019, $n{=}5$ semillas)}
+\caption{E6: Predicción de ICA a 7 Días Vista ($K{=}10$, $R{=}50$, test 2019, $n{=}5$ semillas)}
 \label{tab:e6}
 \footnotesize
 \begin{tabular}{l l r r}
 \toprule
-\textbf{Modelo} & \textbf{Partici\'{o}n} & \textbf{Precisi\'{o}n} & \textbf{IC 95\%} \\
+\textbf{Modelo} & \textbf{Partición} & \textbf{Prec. test} & \textbf{IC 95\%} \\
 \midrule
-AirMLP (FedAvg)             & Geogr\'{a}fica & 47,26\% & [46,38\%, 48,14\%] \\
-AirMLP (FedAvg)             & IID         & 49,63\% & [49,08\%, 50,17\%] \\
+Clase mayoritaria (train)   & ---        & 22.94\% & (determinista) \\
+Persistencia (clase en $t{-}7$) & ---     & 47.54\% & (determinista) \\
 \midrule
-ProphetWrapper (FedGAM)     & Geogr\'{a}fica & 56,78\% & [56,78\%, 56,78\%] \\
-ProphetWrapper (FedGAM)     & IID         & 57,93\% & [57,31\%, 58,55\%] \\
-ProphetWrapper (FedAvg)     & Geogr\'{a}fica & 56,59\% & [56,59\%, 56,59\%] \\
-ProphetWrapper (FedAvg)     & IID         & 57,66\% & [57,26\%, 58,06\%] \\
+AirMLP (FedAvg)             & Geográfica & 47.26\% & [46.38\%, 48.14\%] \\
+AirMLP (FedAvg)             & IID        & 49.63\% & [49.08\%, 50.17\%] \\
+\midrule
+ProphetWrapper (FedGAM)     & Geográfica & 56.78\% & (determinista) \\
+ProphetWrapper (FedGAM)     & IID        & 57.93\% & [57.31\%, 58.55\%] \\
+ProphetWrapper (FedAvg)     & Geográfica & 56.59\% & (determinista) \\
+ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
 \bottomrule
 \end{tabular}
+\vspace{0.5em}
 
-\emph{Pron\'{o}stico ICA a 7 d\'{i}as en estaciones exteriores de CyL, test 2019. Baseline aleatorio: 33,3\% (3 clases equilibradas). Partici\'{o}n geogr\'{a}fica: 10 provincias naturales. Etiquetas por terciles de NO$_2$ (Q1$=$7,5, Q2$=$13,0~$\mu$g/m$^3$). Varianza pr\'{a}cticamente nula en Prophet: ajuste MAP determin\'{i}stico con 8 a\~nos de datos.}
+\emph{Predicción de ICA a 7 días vista en estaciones de exterior de CyL, año de test 2019 (distribución de clases 49.3/27.8/22.9\%; etiquetas a partir de los terciles de NO$_2$ del conjunto de entrenamiento $T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3$, balanceados solo en muestra). Líneas base triviales: clase mayoritaria ajustada sobre train (\textit{Alto}) y persistencia a 7 días (predecir la clase observada en $t{-}7$; 3,551 de 3,561 filas de test tienen disponible la observación en $t{-}7$). No-IID geográfico: 10 particiones de zona naturales. Las ejecuciones geográficas de Prophet son ajustes MAP deterministas: las cinco semillas coinciden, por lo que no existe un IC significativo (efectivamente $n{=}1$). Los valores de precisión son sobre el conjunto de test retenido de 2019.}
 \end{table}
 
-\textbf{AirMLP + FedAvg.} La tarea de pron\'{o}stico ICA a 7 d\'{i}as es intr\'{i}nsecamente dif\'{i}cil para un MLP sin memoria: el modelo recibe las mediciones de un solo d\'{i}a en~$t$ y debe predecir la clase ICA 7~d\'{i}as despu\'{e}s, sin acceso a la trayectoria intermedia. AirMLP alcanza 49,63\% de precisi\'{o}n (IID, IC95\% [49,08\%, 50,17\%]) y 47,26\% (geogr\'{a}fico, [46,38\%, 48,14\%]), ambos sustancialmente por encima del baseline aleatorio de 33,3\%. La brecha de 2,4pp entre IID y geogr\'{a}fico confirma que la partici\'{o}n provincial aumenta la varianza, pero FedAvg gestiona esta heterogeneidad sin divergencia. El MLP act\'{u}a como l\'{i}nea base reproducible de bajo coste.
+\textbf{Líneas base triviales.} Dos líneas base deterministas calibran la dificultad de la tarea sobre el año de test 2019. Un predictor de clase mayoritaria ajustado sobre los datos de entrenamiento (\textit{Alto}) logra solo un 22.94\%---\emph{por debajo} del 33.3\% nominal de una conjetura aleatoria balanceada---porque la distribución de clases cambia entre la ventana de entrenamiento y 2019. La línea base trivial más fuerte es la \emph{persistencia} a 7 días (predecir para $t{+}7$ la clase observada en $t$), la referencia canónica en predicción, que logra un 47.54\%.
 
-\textbf{ProphetWrapper: Ablaci\'{o}n FedGAM vs. FedAvg.} Los modelos Prophet GAM alcanzan 57,93\% (IID) y 56,78\% (geogr\'{a}fico) con FedGAM, una mejora de +8,3pp y +9,5pp sobre AirMLP respectivamente. Cr\'{i}ticamente, la ablaci\'{o}n del mismo modelo Prophet+FedAvg produce 57,66\% (IID) y 56,59\% (geogr\'{a}fico)---estad\'{i}sticamente indistinguibles de FedGAM (Welch $p{=}0,35$ para IID, $\Delta{<}0,3$pp para geogr\'{a}fico, $n{=}5$ semillas). Esto confirma que \emph{la familia de modelo, no la regla de agregaci\'{o}n}, impulsa la ganancia de precisi\'{o}n: la descomposici\'{o}n Fourier interna de Prophet captura la estacionalidad de NO$_2$ que un MLP sin memoria no puede. La agregaci\'{o}n parcial de FedGAM (federando solo coeficientes de estacionalidad, manteniendo par\'{a}metros de tendencia locales) no ofrece ventaja medible sobre FedAvg na\"{i}ve en esta tarea, probablemente porque 8 a\~nos de datos de entrenamiento proporcionan suficiente estimaci\'{o}n de tendencia local incluso sin federaci\'{o}n. La varianza casi nula en ejecuciones Prophet (ajuste MAP determin\'{i}stico) confirma reproducibilidad.
+\textbf{AirMLP + FedAvg.} La tarea de predicción de ICA a 7 días vista es intrínsecamente difícil para un MLP sin memoria: el modelo recibe las mediciones de un solo día en el instante~$t$ y debe predecir la clase ICA 7~días después, sin acceso a la trayectoria intermedia. AirMLP alcanza un 49.63\% de precisión (IID, IC 95\% [49.08\%, 50.17\%]) y un 47.26\% (geográfica, [46.38\%, 48.14\%]). Medida frente a la línea base de persistencia, AirMLP-IID mejora solo en $+$2.1pp y la configuración geográfica es estadísticamente indistinguible de la persistencia---el MLP sin memoria esencialmente iguala, pero no supera, al predictor trivial. Su papel en este estudio es por tanto el de una línea base de \emph{sistema} reproducible y de bajo consumo (ejercita el transporte de FL con tensores realistas), no un modelo de predicción competitivo. La brecha de 2.4pp entre las particiones IID y geográfica confirma que lo no-IID a nivel de zona cuesta precisión---Ponferrada (industrial, de carbón) frente a la Soria rural exhiben distribuciones de NO$_2$ distintas---aunque FedAvg converge sin divergir.
 
-\textbf{Agnosticismo algor\'{i}tmico de FL-Iroh.} Cambiar de FedAvg a FedGAM requiere un \'{u}nico cambio en el servidor: \texttt{aggregator\_fn=fedgam\_aggregate}. El plano de datos Iroh/QUIC es ajeno a la sem\'{a}ntica de los par\'{a}metros---serializa cualquier \texttt{torch.state\_dict()} como un blob binario opaco y lo entrega a cada cliente sin modificaci\'{o}n. Los mismos canales Iroh que transportaron tensores de pesos AirMLP (3,7K par\'{a}metros, $\approx$15~KB) tambi\'{e}n transportan tensores Fourier de ProphetWrapper (27 par\'{a}metros, $<$1~KB) sin cambio de protocolo. Esta es la afirmaci\'{o}n central de FL-Iroh: \emph{el transporte no constriñe el algoritmo}. Los operadores pueden desplegar estrategias de agregaci\'{o}n espec\'{i}ficas del dominio---FedGAM para GAMs, FedProx para redes neuronales heterog\'{e}neas, agregaci\'{o}n parcial para \'{a}rboles potenciados---sobre redes IoT existentes sin modificar la capa de conectividad.
+\textbf{ProphetWrapper: Ablación FedGAM vs. FedAvg.} Los modelos GAM de Prophet alcanzan un 57.93\% (IID) y un 56.78\% (geográfica) con FedGAM---$+$10.4pp sobre la línea base de persistencia y $+$8.3/$+$9.5pp sobre AirMLP---haciendo de las configuraciones Prophet las únicas que superan claramente al predictor trivial. De forma crítica, la ablación con el mismo modelo Prophet+FedAvg produce un 57.66\% (IID) y un 56.59\% (geográfica)---estadísticamente indistinguibles de FedGAM (Welch $p{=}0.35$ para IID, $\Delta{<}0.3$pp para geográfica, $n{=}5$ semillas). Esto confirma que \emph{la familia del modelo, no la regla de agregación}, impulsa la ganancia de precisión: la descomposición interna de Fourier de Prophet captura la estacionalidad de NO$_2$ que un MLP sin memoria no puede. La agregación parcial de FedGAM (federando solo los coeficientes de estacionalidad, manteniendo los parámetros de tendencia locales) no ofrece ventaja medible sobre el FedAvg simple en esta tarea, probablemente porque 8 años de datos de entrenamiento proporcionan estimación de tendencia local suficiente incluso sin federación. Las ejecuciones geográficas de Prophet son ajustes MAP deterministas (todas las semillas coinciden, efectivamente $n{=}1$), de modo que sus valores reportados no llevan estimación de incertidumbre a nivel de semilla.
 
-\subsection{Comparaci\'{o}n Operativa con Flower sobre Tailscale}
+\textbf{Agnosticismo al Algoritmo de FL-Iroh.} Cambiar de FedAvg a FedGAM requiere un único cambio del lado del servidor: \texttt{aggregator\_fn=fedgam\_aggregate}. El plano de datos Iroh/QUIC es ajeno a la semántica de los parámetros---serializa cualquier \texttt{torch.state\_dict()} como un blob binario y lo entrega a cada cliente sin alterar. Los mismos canales Iroh que transportaron tensores de pesos de AirMLP (1{,}987 parámetros, $\approx$8~KB) también transportan los tensores de Fourier de ProphetWrapper (27 parámetros, $<$1~KB) sin modificación del protocolo. Esta es la afirmación central de FL-Iroh: \emph{el transporte no restringe el algoritmo}. Los operadores pueden desplegar estrategias de agregación específicas del dominio---FedGAM para GAM, FedProx para redes neuronales heterogéneas, agregación parcial para árboles con gradient boosting---sobre redes IoT existentes sin tocar la capa de conectividad.
+
+\subsection{Comparación Operativa con Flower sobre Tailscale}
 \label{sec:e7}
 
-La alternativa desplegable m\'{a}s cercana a FL-Iroh para FL con restricci\'{o}n de NAT es ejecutar un framework convencional (Flower~\cite{flower2022}) sobre una malla VPN WireGuard como Tailscale~\cite{tailscale2023}, que asigna a cada nodo una IP virtual estable y atraviesa NAT/CGNAT mediante relays de estilo DERP. Ambas pilas dependen en \'{u}ltima instancia de traversal NAT asistido por relay y de cifrado extremo a extremo; la diferencia est\'{a} en \emph{d\'{o}nde} reside la conectividad. La Tabla~\ref{tab:e7} contrasta ambas a lo largo de ocho ejes operativos. La comparaci\'{o}n es principalmente arquitect\'{o}nica, pero adem\'{a}s verificamos emp\'{i}ricamente la paridad de precisi\'{o}n (Tabla~\ref{tab:e7acc}): dado que ambas pilas ejecutan algoritmos FL id\'{e}nticos, los factores diferenciadores son la superficie de despliegue, las dependencias externas y el coste operativo, no el rendimiento estad\'{i}stico.
+La alternativa desplegable más cercana a FL-Iroh para FL con restricciones de NAT es ejecutar un framework convencional (Flower~\cite{flower2022}) sobre una VPN de malla WireGuard como Tailscale~\cite{tailscale2023}, que da a cada nodo una IP virtual estable y atraviesa NAT/CGNAT a través de relays de estilo DERP. Ambas pilas dependen en última instancia de la traversía de NAT asistida por relay y del cifrado extremo a extremo; la diferencia es \emph{dónde} reside la conectividad. La Tabla~\ref{tab:e7} contrasta ambas a lo largo de ocho ejes operativos. La comparación es principalmente arquitectónica, pero también verificamos empíricamente la paridad de precisión (Tabla~\ref{tab:e7acc}): dado que ambas pilas ejecutan algoritmos de FL idénticos, los factores distintivos son la superficie de despliegue, las dependencias externas y el coste operativo más que el rendimiento estadístico.
 
 \begin{table*}[t]
 \centering
-\caption{Comparaci\'{o}n operativa FL-Iroh vs.\ Flower-sobre-Tailscale}
+\caption{Comparación operativa FL-Iroh vs.\ Flower-sobre-Tailscale}
 \label{tab:e7}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
@@ -481,130 +491,153 @@ La alternativa desplegable m\'{a}s cercana a FL-Iroh para FL con restricci\'{o}n
 \toprule
 \textbf{Eje} & \textbf{FL-Iroh} & \textbf{Flower + Tailscale} \\
 \midrule
-Traversal NAT / CGNAT & Integrado: hole-punching QUIC con retroceso transparente a relay DERP (cifrado E2E) & Delegado al overlay Tailscale (WireGuard + DERP); Flower a\'{u}n necesita una direcci\'{o}n de servidor alcanzable \\
-Alcance del servidor & Par direccionado por node ID p\'{u}blico de 32 bytes; no requiere IP de servidor enrutable & Los clientes deben conocer la IP Tailnet del servidor (100.x.y.z); topolog\'{i}a en estrella centralizada \\
-Infraestructura externa & Solo relay DERP p\'{u}blico o auto-hospedado (sin estado, intercambiable) & Servidor de coordinaci\'{o}n Tailscale (plano de control) $+$ DERP $+$ proceso servidor FL persistente \\
-Demonio de sistema extra & Ninguno---biblioteca en espacio de usuario, sin privilegios elevados & Demonio \texttt{tailscaled} en cada nodo (t\'{i}picamente root / \texttt{NET\_ADMIN}) \\
+Traversía de NAT / CGNAT & Integrada: hole-punching QUIC con respaldo transparente por relay DERP (cifrado E2E) & Delegada a la superposición Tailscale (WireGuard + DERP); Flower en sí todavía necesita una dirección de servidor alcanzable \\
+Alcanzabilidad del servidor & Par direccionado por node ID público de 32 bytes; no se requiere IP de servidor enrutable & Los clientes deben conocer la IP de Tailnet del servidor (100.x.y.z); topología en estrella centralizada \\
+Infraestructura externa & Solo relay DERP público o autoalojado (sin estado, intercambiable) & Servidor de coordinación de Tailscale (plano de control) $+$ DERP $+$ proceso de servidor FL de larga duración \\
+Demonio de sistema extra & Ninguno---biblioteca en espacio de usuario, sin privilegios elevados & Demonio de sistema \texttt{tailscaled} en cada nodo (típicamente root / \texttt{NET\_ADMIN}) \\
 Cifrado de transporte & QUIC/TLS~1.3 extremo a extremo (el relay solo ve texto cifrado) & WireGuard extremo a extremo (el relay solo ve texto cifrado) \\
-Configuraci\'{o}n manual por nodo & Intercambiar node IDs (un valor fuera de banda) & Instalar \texttt{tailscaled}, autenticar nodo, descubrir IP del servidor, abrir/redirigir puerto \\
-Topolog\'{i}a & Plano de datos P2P $+$ plano de control CoAP (capaz de operar sin servidor) & Estrella centralizada; el servidor FL es un punto \'{u}nico de fallo \\
-Dependencia de cuenta / ToS & Ninguna para relays por defecto; totalmente auto-hospedable & Cuenta Tailscale $+$ gesti\'{o}n de pol\'{i}ticas ACL (l\'{i}mites de dispositivos/usuarios en plan gratuito) \\
+Configuración manual por nodo & Intercambiar node IDs (un valor fuera de banda) & Instalar \texttt{tailscaled}, autenticar el nodo en la tailnet, descubrir la IP del servidor, abrir/reenviar puerto \\
+Topología & Plano de datos P2P $+$ plano de control CoAP; no se requiere IP de servidor enrutable & Estrella centralizada; el servidor FL es un único punto de fallo \\
+Dependencia de cuenta / ToS & Sin cuenta; relay público por defecto operado por n0 (sujeto a sus términos), totalmente autoalojable & Cuenta de Tailscale $+$ gestión de políticas ACL (límites de dispositivos/usuarios del nivel gratuito) \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\paragraph{Paridad de precisi\'{o}n.}
-Para confirmar que la elecci\'{o}n de transporte no afecta la calidad del modelo, ejecutamos la misma carga FedAvg (SimpleCNN sobre CIFAR-10, $K{=}10$ clientes, $R{=}100$ rondas, $n{=}5$ semillas, usando las mismas semillas de replicaci\'{o}n que E2) a trav\'{e}s del harness compatible con Flower de E8 y comparamos la precisi\'{o}n final de test frente a las mediciones E2 de FL-Iroh (Tabla~\ref{tab:e7acc}). Bajo particiones IID y no-IID severa ($\alpha{=}0,1$) ambos transportes son estad\'{i}sticamente indistinguibles ---cada media cae dentro del IC~95\% del otro--- confirmando que el plano de datos P2P sin servidor de FL-Iroh no impone penalizaci\'{o}n de precisi\'{o}n frente a un framework convencional en estrella. Esta paridad es esperable por construcci\'{o}n (ambos ejecutan FedAvg con hiperpar\'{a}metros y semillas id\'{e}nticos) y a\'{i}sla la contribuci\'{o}n de FL-Iroh a la capa de transporte.
+\paragraph{Paridad de precisión.}
+Para confirmar que la elección de transporte no afecta a la calidad del modelo, ejecutamos la carga FedAvg idéntica (SimpleCNN en CIFAR-10, $K{=}10$ clientes, $R{=}100$ rondas, $n{=}5$ semillas usando las mismas semillas de replicación que E2) a través de un arnés de referencia compatible con Flower---una \emph{simulación en proceso} que reutiliza el mismo modelo, particiones y bucle de entrenamiento, no un despliegue en vivo de Flower sobre una malla Tailscale---y comparamos la precisión de test final frente a las mediciones E2 de FL-Iroh (Tabla~\ref{tab:e7acc}). Bajo ambas particiones IID y no-IID severa ($\alpha{=}0.1$) las dos pilas son estadísticamente indistinguibles---cada media queda dentro del IC 95\% de la otra. Esta paridad es esperable por construcción (ambas ejecutan FedAvg con hiperparámetros y semillas idénticos); sirve como comprobación de sanidad de que el plano de datos P2P de FL-Iroh no introduce artefacto de precisión, no como evidencia de superioridad operativa. Las mediciones operativas cuantitativas de un despliegue en vivo de Flower-sobre-Tailscale (tiempo de configuración por nodo, tiempo de reloj por ronda, comportamiento de traversía bajo los escenarios de E3) se dejan para trabajo futuro; la Tabla~\ref{tab:e7} es una comparación arquitectónica.
 
 \begin{table}[t]
 \centering
-\caption{Paridad de precisi\'{o}n agn\'{o}stica al transporte (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ semillas; precisi\'{o}n final de test, media con IC~95\%)}
+\caption{Paridad de precisión agnóstica al transporte (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ semillas; precisión de test final, media con IC 95\%)}
 \label{tab:e7acc}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{l c c}
 \toprule
-\textbf{Partici\'{o}n} & \textbf{FL-Iroh (E2)} & \textbf{Harness Flower (E8)} \\
+\textbf{Partición} & \textbf{FL-Iroh (E2)} & \textbf{Arnés Flower (E8)} \\
 \midrule
-IID                      & 65,86\% [65,66, 66,06] & 65,98\% [65,79, 66,17] \\
-Dirichlet $\alpha{=}0,1$ & 44,18\% [39,45, 48,92] & 46,10\% [41,20, 51,00] \\
+IID                      & 65.86\% [65.66, 66.06] & 65.98\% [65.79, 66.17] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-El contraste directo resalta la ventaja arquitect\'{o}nica central de FL-Iroh: el traversal NAT est\'{a} integrado en el transporte de nivel de aplicaci\'{o}n en lugar de delegado a una VPN de sistema privilegiada y gestionada por cuenta. FL-Iroh no requiere demonio root, ni IP de servidor persistente, ni cuenta de coordinaci\'{o}n de terceros, y su plano de datos es capaz de operar sin servidor (pares nombrados por clave p\'{u}blica). Flower+Tailscale, en cambio, superpone un framework FL que a\'{u}n asume un servidor en estrella alcanzable sobre una VPN separada que debe instalarse y autenticarse en cada nodo. Para dataloggers agr\'{i}colas desatendidos ---a menudo alimentados por energ\'{i}a solar, tras CGNAT, sin administrador in situ--- eliminar el demonio por nodo, la dependencia de cuenta y el servidor como punto \'{u}nico de fallo es una simplificaci\'{o}n operativa decisiva.
+La comparación resalta la diferencia arquitectónica central de FL-Iroh: la traversía de NAT está integrada en el transporte a nivel de aplicación en lugar de delegada a una VPN de sistema privilegiada y gestionada por cuenta. FL-Iroh no requiere demonio root, ni IP de servidor persistente, ni cuenta de coordinación de terceros; los pares se nombran por clave pública. Flower+Tailscale, en cambio, superpone un framework de FL que todavía asume un servidor alcanzable en topología en estrella sobre una VPN separada que debe instalarse y autenticarse en cada nodo. Para dataloggers agrícolas desatendidos---a menudo alimentados por energía solar, tras CGNAT, sin administrador en el sitio---eliminar el demonio por nodo, la dependencia de cuenta y la dirección de servidor fija es una simplificación operativa sustancial.
 
-\subsection{Traversal NAT y Garantías de Conectividad}
+% =========================================================================
+\section{Discusión}
+\label{sec:discussion}
 
-FL-Iroh logra un 100\% de \'{e}xito en establecimiento de conexi\'{o}n en las cinco configuraciones NAT y de cortafuegos probadas (E3), y ---con el clasificador de camino activo--- medimos que el 98,3\% de las conexiones WAN usan un camino \emph{directo} perforado (0\% de relay). El rendimiento del camino de relay que medimos (27,2~Mbps en bucle local, 2,8~Mbps WAN) es por tanto una cifra de respaldo del peor caso; los caminos directos evitan por completo el salto por el relay. Para actualizaciones del tama\~no de AgriMLP ($\sim$60~KB), un push de modelo \'{u}nico tarda $\approx$200~ms incluso al rendimiento del peor caso de relay ---despreciable comparado con el tiempo de entrenamiento local ($\sim$2--5~s por ronda en una Raspberry Pi). Para modelos m\'{a}s grandes (p.~ej., ResNet-18 con 100~MB), el rendimiento del relay ser\'{i}a el cuello de botella solo en los raros casos en que el hole-punching directo falla: una transferencia de 100~MB tarda $\approx$285~s a 2,8~Mbps. FL-Iroh es as\'{i} m\'{a}s adecuado para modelos de borde ligeros; el FL de modelos grandes que recae en un relay WAN se beneficiar\'{i}a de compresi\'{o}n de gradientes~\cite{konecny2016} o un servidor relay auto-hospedado.
+\subsection{Traversía de NAT y Garantías de Conectividad}
 
-En contra de la expectativa com\'{u}n de que el NAT sim\'{e}trico y el CGNAT derrotan al hole-punching, nuestras mediciones muestran que Iroh establece caminos directos incluso entre ISP distintos a 300~km y tras una CGNAT de operador m\'{o}vil ---la direcci\'{o}n activa del cable fue la IP p\'{u}blica del par en cada conexi\'{o}n directa. Nuestros resultados son por tanto una l\'{i}nea base conservadora; en despliegues IoT agr\'{i}colas gestionados (p.~ej., granjas usando un \'{u}nico proveedor LTE), la conectividad directa solo puede ser mayor. El relay conserva su valor como garant\'{i}a de correcci\'{o}n ---asegurando un 0\% de fallo de conectividad cuando un camino directo genuinamente no puede formarse--- en lugar de como camino de datos del caso com\'{u}n.
+FL-Iroh logró el establecimiento de conexión a nivel de sesión en todas las configuraciones de NAT y cortafuegos probadas (E3), y---con el clasificador de camino activo---el 98.3\% de las transferencias WAN usaron un camino \emph{directo} con hole-punching (0\% relay). El rendimiento del camino de relay que evaluamos (27.2~Mbps loopback, 2.8~Mbps WAN) es por tanto una cifra de respaldo en el peor caso; los caminos directos evitan por completo el salto por el relay. Para actualizaciones del tamaño de AgriMLP ($\approx$31~KB), un único envío del modelo tarda $\approx$110~ms incluso con el rendimiento de relay en el peor caso---despreciable comparado con el tiempo de entrenamiento local ($\sim$2--5~s por ronda en una Raspberry Pi). Para modelos más grandes (p.~ej., ResNet-18 a $\approx$45~MB en float32), el rendimiento del relay sería el cuello de botella solo en los raros casos en que falla el hole-punching directo: una transferencia de 45~MB tarda $\approx$130~s a 2.8~Mbps. FL-Iroh está por tanto mejor adaptado a modelos de borde ligeros; el FL de modelos grandes que recurre a un relay WAN se beneficiaría de la compresión de gradientes~\cite{konecny2016} o de un servidor de relay autoalojado. Una dependencia merece énfasis: incluso las conexiones directas dependen de un relay DERP alcanzable para el rendezvous y la señalización, de modo que el relay es infraestructura que debe existir---lo que FL-Iroh elimina es la necesidad de que sea operado por la federación, de que mantenga una identidad estable a nivel de aplicación, o de que vea texto en claro alguno.
+
+Contrariamente a la expectativa común de que el NAT simétrico y el CGNAT derrotan al hole-punching, nuestras mediciones muestran a Iroh estableciendo caminos directos entre distintos ISP separados 300~km y detrás de un CGNAT de operador móvil---la dirección de cable activa fue la IP pública del par en cada conexión directa. Dentro de los límites de un único par de hardware (\S\ref{sec:limitations}), esto sugiere que nuestro entorno es una línea base conservadora, y que en despliegues IoT agrícolas gestionados (p.~ej., granjas en un único operador LTE) la conectividad directa debería ser al menos igual de buena. El relay sigue siendo valioso como garantía de corrección---asegurando la conectividad cuando un camino directo genuinamente no puede formarse---más que como camino de datos del caso común.
 
 \subsection{Degradación No-IID y Mitigación}
 
-La caída de precisión de 21,7 puntos porcentuales de IID a $\alpha{=}0,1$ (65,9\%~$\to$~44,2\%) es esperada con FedAvg bajo heterogeneidad severa en CIFAR-10. Esta degradación cuantifica el costo del sesgo de etiquetas en FL, consistente con la literatura previa~\cite{li2020federated,scaffold2020}. Sin embargo, reemplazar FedAvg por FedProx~\cite{fedprox2020} o SCAFFOLD~\cite{scaffold2020} podría recuperar 5--10 puntos porcentuales con mayor heterogeneidad, ya que estos algoritmos regularizan explícitamente contra la deriva de gradientes. La capa de transporte de FL-Iroh es agn\'{o}stica al algoritmo; cambiar la estrategia de agregaci\'{o}n no requiere cambios en los componentes de Iroh o CoAP.
+La caída de precisión de 21.7 puntos porcentuales de IID a $\alpha{=}0.1$ (65.86\%~$\to$~44.18\%) en CIFAR-10 es esperable bajo FedAvg con sesgo de etiquetas severo. Para heterogeneidad menos extrema la degradación es leve---la precisión se mantiene por encima del 62\% para $\alpha{\geq}0.5$---de modo que la caída abrupta se confina al régimen patológico $\alpha{=}0.1$ donde cada cliente ve solo unas pocas clases. Reemplazar FedAvg por FedProx~\cite{fedprox2020} o SCAFFOLD~\cite{scaffold2020} podría recuperar varios puntos porcentuales en alta heterogeneidad, ya que estos algoritmos regularizan explícitamente frente a la deriva de gradientes. La capa de transporte de FL-Iroh es agnóstica al algoritmo; intercambiar la estrategia de agregación no requiere cambios en los componentes Iroh o CoAP.
 
-\subsection{Agnosticismo Algor\'{i}tmico y FedGAM}
+\subsection{Agnosticismo al Algoritmo y FedGAM}
 
-E6 cristaliza la afirmaci\'{o}n de dise\~no central de FL-Iroh: la capa de transporte no constriñe el algoritmo de agregaci\'{o}n. Dado que el plano de datos Iroh/QUIC transmite cualquier \texttt{torch.state\_dict()} como un blob binario opaco, los operadores pueden elegir la sem\'{a}ntica de agregaci\'{o}n que mejor se adapte a su familia de modelos. Cambiar de FedAvg a FedGAM requiere un \'{u}nico cambio en el servidor: \texttt{aggregator\_fn=fedgam\_aggregate}. Los mismos canales Iroh que transportaron tensores AirMLP (3,7K par\'{a}metros, $\approx$15~KB) tambi\'{e}n transportan tensores Fourier de Prophet (27 par\'{a}metros, $<$1~KB) sin cambio de protocolo.
-
-Los resultados de E6 demuestran que Prophet GAM supera a AirMLP por +8--9pp, pero la ablaci\'{o}n del mismo modelo (Prophet+FedGAM vs. Prophet+FedAvg) revela que esta ventaja proviene de la descomposici\'{o}n interna de series temporales del modelo (tendencia + estacionalidad Fourier), no de la regla de agregaci\'{o}n ($\Delta{<}0,3$pp, $p{=}0,35$, $n{=}5$). FedGAM federa selectivamente los coeficientes Fourier de estacionalidad---ciclos clim\'{a}ticos compartidos por todas las provincias de Castilla y Le\'{o}n---mientras mantiene los par\'{a}metros de tendencia locales (central t\'{e}rmica de Ponferrada vs. rural Soria). Sin embargo, con 8 a\~nos de datos locales de entrenamiento, esta agregaci\'{o}n parcial no ofrece beneficio medible sobre FedAvg na\"{i}ve. El papel del transporte aqu\'{i} es hacer desplegable cualquiera de las dos reglas sin cambios de protocolo.
+E6 cristaliza la afirmación de diseño central de FL-Iroh: la capa de transporte no restringe el algoritmo de agregación. Dado que el plano de datos Iroh/QUIC transmite cualquier \texttt{torch.state\_dict()} como un blob binario opaco, los operadores son libres de elegir la semántica de agregación que mejor se ajuste a su familia de modelos. FedGAM aplica \emph{agregación parcial}: solo los coeficientes de estacionalidad de Fourier---que representan ciclos climatológicos compartidos por todas las provincias de Castilla y Le\'on---se federan, mientras que los parámetros de tendencia permanecen locales. En nuestros resultados, el GAM de Prophet alcanza un 57.9\% de precisión (IID) frente al 49.6\% de la línea base neuronal AirMLP+FedAvg, una diferencia de $\approx$8~pp. De forma crítica, ejecutamos la ablación con modelo fijo que aísla la agregación de la clase de modelo: Prophet+FedGAM vs.~Prophet+FedAvg sobre datos y transporte idénticos, cambiando solo el \texttt{aggregator\_fn} del lado del servidor. Las dos reglas de agregación son \emph{estadísticamente indistinguibles} (57.93\% vs.~57.66\% IID, Welch $p{=}0.35$; $\Delta{<}0.3$pp geográfica, $n{=}5$ semillas). La ventaja de precisión proviene por tanto de la familia del modelo (la descomposición de Fourier de la estacionalidad de NO$_2$ de Prophet), no de la agregación parcial, al menos cuando se dispone de 8~años de datos de entrenamiento locales. El papel del transporte aquí es únicamente hacer que cualquiera de las dos reglas de agregación sea desplegable sin cambios de protocolo.
 
 \subsection{Seguridad y Modelo de Amenaza}
 \label{sec:threat}
 
-La seguridad de transporte de FL-Iroh descansa en el canal QUIC/TLS~1.3 de Iroh: cada byte intercambiado entre pares---incluidos todos los par\'{a}metros del modelo---est\'{a} cifrado extremo a extremo. Consideramos un relay DERP honesto-pero-curioso junto con un adversario de red pasivo en el camino WAN.
+La seguridad de transporte de FL-Iroh descansa sobre el canal QUIC/TLS~1.3 de Iroh: cada byte intercambiado entre pares---incluidos todos los parámetros del modelo---está cifrado extremo a extremo. Consideramos un relay DERP honesto-pero-curioso junto con un adversario de red pasivo en el camino WAN.
 
-\textbf{Qu\'{e} ve el relay.} Cuando el hole-punching directo falla y el tr\'{a}fico recurre a un relay DERP, el relay reenv\'{i}a \'{u}nicamente \emph{texto cifrado} QUIC; nunca posee las claves de sesi\'{o}n y por tanto no puede leer ni alterar las actualizaciones del modelo. S\'{i} observa metadatos inevitables: los node ID p\'{u}blicos de los pares, los tama\~{n}os de paquete y la temporizaci\'{o}n. Como el tama\~{n}o de actualizaci\'{o}n es fijo por modelo, el tama\~{n}o solo revela la familia de modelo y no el contenido de los datos, mientras que la temporizaci\'{o}n puede revelar la cadencia de rondas.
+\textbf{Qué ve el relay.} Cuando el hole-punching directo falla y el tráfico recurre a un relay DERP, el relay reenvía solo \emph{texto cifrado} QUIC; nunca posee las claves de sesión y por tanto no puede leer ni alterar las actualizaciones del modelo. Sí observa metadatos inevitables: los node IDs públicos de los pares que se comunican, los tamaños de paquete y la temporización. Dado que el tamaño de actualización es fijo por modelo, el tamaño filtra solo la familia del modelo en lugar del contenido de los datos, mientras que la temporización puede revelar la cadencia de rondas.
 
-\textbf{Control de admisi\'{o}n.} Un par se direcciona por su node ID p\'{u}blico de 32 bytes (una clave Ed25519), lo que proporciona una base criptogr\'{a}fica natural para la pertenencia a la federaci\'{o}n: el agregador puede aceptar actualizaciones solo de una lista blanca de node IDs autorizados, rechazando claves desconocidas antes de cualquier intercambio de modelo. El prototipo actual a\'{u}n no aplica esta lista blanca (\S\ref{sec:limitaciones}).
+\textbf{Control de admisión.} Un par se direcciona por su node ID público de 32 bytes (una clave Ed25519), que proporciona una base criptográfica natural para la pertenencia a la federación: el agregador puede aceptar actualizaciones solo de una lista de permitidos de node IDs autorizados, rechazando claves desconocidas antes de cualquier intercambio de modelo. El prototipo actual aún no impone esta lista de permitidos (\S\ref{sec:limitations}).
 
-\textbf{Fuera de alcance.} No defendemos frente a participantes maliciosos que env\'{i}en actualizaciones envenenadas, ni proporcionamos privacidad formal frente a la inversi\'{o}n de gradientes: los par\'{a}metros se env\'{i}an en claro \emph{a pares autorizados}, sin a\~{n}adir ruido de privacidad diferencial. La agregaci\'{o}n robusta (p.~ej., Krum, media recortada) y la privacidad diferencial son mecanismos ortogonales que se componen con nuestro transporte sin cambios de protocolo; dejamos su integraci\'{o}n para trabajo futuro.
+\textbf{Fuera de alcance.} No nos defendemos contra participantes maliciosos que envían actualizaciones envenenadas, ni proporcionamos privacidad formal frente a la inversión de gradientes: los parámetros se envían en claro \emph{a pares autorizados}, sin añadir ruido de privacidad diferencial. La agregación robusta (p.~ej., Krum, media recortada) y la privacidad diferencial son mecanismos ortogonales que se componen con nuestro transporte sin cambios de protocolo; dejamos su integración para trabajo futuro.
 
 \subsection{Limitaciones}
-\label{sec:limitaciones}
+\label{sec:limitations}
 
-FL-Iroh resuelve específicamente la capa de transporte y conectividad para FL en entornos NAT-restringidos; no es una pila de producción completa. Las siguientes limitaciones deben tenerse en cuenta:
+FL-Iroh aborda específicamente la capa de transporte y conectividad para FL en entornos con restricciones de NAT; no es una pila completa de grado de producción. Deben señalarse las siguientes limitaciones:
 
-\textbf{Alcance del prototipo.} La implementación usa Python~3.11, PyTorch y \texttt{torch.save}, adecuada para dispositivos Cortex-A (Raspberry Pi, Jetson). No es apta para clientes FL en microcontroladores Cortex-M sin reimplementación en C o Rust.
+\textbf{Alcance de prototipo.} La implementación usa Python~3.11, PyTorch y \texttt{torch.save}, adecuados para dispositivos Cortex-A (Raspberry Pi, Jetson). No es adecuada para clientes FL de clase MCU Cortex-M sin una reimplementación en C o Rust.
 
-\textbf{Conectividad: un \'{u}nico par de hardware.} E3 clasifica el camino de conexi\'{o}n (directo vs.~relay) v\'{i}a inspecci\'{o}n del camino activo con \texttt{remote\_info()} de Iroh y muestra un 98,3\% de hole-punching directo en cinco escenarios NAT/CGNAT/cortafuegos (0\% de relay). Estas ejecuciones usan un \'{u}nico par PC$\leftrightarrow$Raspberry~Pi sobre un par de ISP; las tasas de \'{e}xito para otras combinaciones de fabricantes de NAT y a mayor escala (muchos pares simult\'{a}neos tras la misma CGNAT) quedan por caracterizar. Como el \'{e}xito depende del comportamiento espec\'{i}fico del mapeo NAT, el respaldo por relay se conserva para garantizar la conectividad en los casos que el hole-punching directo no pueda cubrir.
+\textbf{Conectividad: un único par de hardware, estadísticas a nivel de transferencia.} E3 clasifica el camino de conexión (directo vs.~relay) vía la inspección del camino activo con \texttt{remote\_info()} de Iroh y muestra una tasa de camino directo del 98.3\% sobre 120 \emph{transferencias} WAN (aproximadamente 4--12 conexiones QUIC distintas) sobre un único par PC$\leftrightarrow$Raspberry~Pi sobre un solo emparejamiento de ISP. Estos son demasiado pocos eventos independientes de establecimiento de conexión para estimar una probabilidad de éxito de hole-punching a nivel poblacional; las tasas de éxito para otras combinaciones de fabricantes de NAT y a mayor escala (muchos pares simultáneos detrás del mismo CGNAT) quedan por caracterizar, y los escenarios NAT se configuraron a nivel de router/ISP en lugar de verificarse con sondas de mapeo/filtrado de estilo RFC~4787. Dado que el éxito depende del comportamiento específico del mapeo NAT, el respaldo por relay se retiene para garantizar la conectividad en los casos que el hole-punching directo no puede cubrir.
 
-\textbf{Conjuntos de datos tabulares peque\~nos.} El benchmark de Recomendaci\'{o}n de Cultivos (2.200 registros, 22 clases balanceadas) y el conjunto de calidad del aire de CyL (medianas provinciales diarias agregadas) son est\'{a}ticos y relativamente limpios. No capturan ruido de sensor sub-horario, deriva de concepto a lo largo de ventanas de datos plurianuales ni la heterogeneidad espacial completa de redes de monitoreo reales.
+\textbf{Conjuntos de datos tabulares pequeños.} El benchmark de Recomendación de Cultivos (2,200 registros, 22 clases balanceadas) y el conjunto de datos de calidad del aire de CyL (medianas provinciales diarias agregadas) son ambos estáticos y relativamente limpios. No capturan el ruido de sensor subhorario, la deriva de concepto a lo largo de ventanas de datos plurianuales, ni la plena heterogeneidad espacial de las redes de monitorización provinciales reales (cientos de estaciones).
 
-\textbf{Churn transitorio, no desconexión prolongada.} E4 modela abandono por ronda, no periodos de días sin conectividad con acumulación local de datos. FL asíncrono (p.\,ej., FedBuff) sería necesario para ese escenario.
+\textbf{Rotación transitoria, no desconexión prolongada.} E4 modela las caídas por ronda, no periodos offline de varios días con acumulación de datos locales; el FL asíncrono (p.~ej., FedBuff~\cite{fedbuff2022}) sería necesario para tales escenarios. E4 es además una única ejecución por tasa de rotación y usa una partición IID---un entorno en el que la participación parcial se espera benigna; la interacción rotación~$\times$~no-IID queda por medir.
 
-\textbf{Sin control de admisión de federación.} El prototipo no implementa autorización de clientes. En despliegue real, el servidor debe validar que el node ID Iroh del cliente pertenece a la federación autorizada. El node ID es una clave pública persistente y constituye una base criptográfica adecuada para este control de acceso.
+\textbf{Aún sin mediciones de recursos ni de red degradada.} Aún no reportamos las huellas de energía, CPU o memoria en el cliente Raspberry Pi, ni el comportamiento de transporte/convergencia bajo pérdida de paquetes y latencia inyectadas; el arnés de experimentos soporta ambos (los escenarios netem y un estimador de energía se incluyen en el artefacto) y planeamos reportarlos en trabajo futuro.
 
-\textbf{Selecci\'{o}n de Modelo en E6.} Los resultados de E6 demuestran que los modelos Prophet GAM superan a AirMLP por +8--9pp, pero esta ventaja proviene de la descomposici\'{o}n interna de series temporales del modelo (tendencia + estacionalidad Fourier), no de la regla de agregaci\'{o}n. La ablaci\'{o}n del mismo modelo (Prophet+FedGAM vs. Prophet+FedAvg) no muestra diferencia estad\'{i}sticamente significativa ($\Delta{<}0,3$pp, $p{=}0,35$, $n{=}5$), confirmando que la agregaci\'{o}n parcial de FedGAM no ofrece beneficio medible sobre FedAvg na\"{i}ve cuando hay suficientes datos locales de entrenamiento (8 a\~nos). Trabajos futuros deben investigar si FedGAM proporciona ventajas en reg\'{i}menes de pocos datos o con ventanas de entrenamiento m\'{a}s cortas (p. ej., 1 a\~no), donde la estacionalidad federada puede compensar una estimaci\'{o}n de tendencia local insuficiente.
+\textbf{Sin control de admisión de la federación.} El prototipo no implementa la autorización de clientes. En un despliegue real, el servidor debe verificar que el node ID Iroh de un cliente pertenece a la federación autorizada. El node ID es una clave pública persistente y proporciona una base criptográfica adecuada para este control de acceso.
+
+\textbf{Compromisos de Selección de Modelo en E6.} Los resultados de E6 demuestran que los modelos GAM de Prophet superan a AirMLP en +8--9pp, pero esta ventaja proviene de la descomposición interna de series temporales del modelo (tendencia + estacionalidad de Fourier), no de la regla de agregación. La ablación con el mismo modelo (Prophet+FedGAM vs. Prophet+FedAvg) no muestra diferencia estadísticamente significativa ($\Delta{<}0.3$pp, $p{=}0.35$), confirmando que la agregación parcial de FedGAM no ofrece beneficio medible sobre el FedAvg simple cuando se dispone de suficientes datos de entrenamiento locales (8 años). El trabajo futuro debería investigar si FedGAM proporciona ventajas en regímenes de pocos datos o con ventanas de entrenamiento más cortas (p.~ej., 1 año), donde la estacionalidad federada podría compensar una estimación de tendencia local insuficiente.
 
 \subsection{Consideraciones de Despliegue}
 
-FL-Iroh está implementado en Python con bindings de Iroh y aiocoap, desplegable en cualquier entorno Python~3.11+ incluyendo Raspberry Pi OS, NVIDIA Jetson y nodos de borde contenorizados. El ID de nodo Iroh (clave pública) sirve como identificador de dispositivo persistente independiente de cambios de IP, haciendo el sistema resiliente a renovaciones DHCP y traspasos celulares.
+FL-Iroh está implementado en Python con enlaces Iroh y aiocoap, desplegable en cualquier entorno Python~3.11+ incluidos Raspberry Pi OS, NVIDIA Jetson y nodos de borde en contenedores. El node ID Iroh (clave pública) sirve como identificador persistente de dispositivo a través de cambios de IP, haciendo el sistema resiliente a las renovaciones de concesión DHCP y a los traspasos celulares.
 
-En un despliegue real de datalogger agrícola, el ciclo de vida completo del modelo comprende: (1)~rondas de entrenamiento FL hasta convergencia; (2)~empaquetado y versionado del modelo global; (3)~distribución del modelo a los dataloggers vía Iroh/QUIC; (4)~inferencia local \emph{offline}, sin dependencia de conectividad; y (5)~reentrenamiento periódico con datos locales acumulados. Los pasos~1--3 están cubiertos por el prototipo actual. Los pasos~4--5 definen la hoja de ruta hacia un datalogger ``listo'' que mantiene modelos actualizados sin transmitir datos brutos, preservando los objetivos de privacidad de FL.
+En un despliegue real de datalogger agrícola, el ciclo de vida completo del modelo comprende: (1)~rondas de entrenamiento de FL hasta la convergencia; (2)~empaquetado y versionado del modelo global; (3)~distribución del modelo a los dataloggers vía Iroh/QUIC; (4)~inferencia local \emph{offline} sin dependencia de conectividad; y (5)~reentrenamiento periódico con datos acumulados localmente. Los pasos~1--3 están cubiertos por el prototipo actual. Los pasos~4--5 definen la hoja de ruta hacia un datalogger ``inteligente'' que mantiene los modelos actualizados sin transmitir datos brutos, preservando los objetivos de privacidad del FL.
 
-% -----------------------------------------------------------------------
+% =========================================================================
 \section{Conclusión}
 \label{sec:conclusion}
 
-Hemos presentado FL-Iroh, un sistema de aprendizaje federado transparente a NAT que combina el transporte P2P QUIC de Iroh con descubrimiento de servicios CoAP/CoRE para despliegues IoT agr\'{i}colas. Nuestra evaluaci\'{o}n demuestra: (i)~100\% de \'{e}xito en establecimiento de conexi\'{o}n (0\% de fallo) en escenarios LAN, NAT de cono completo, NAT sim\'{e}trico, CGNAT y cortafuegos puerto~443; (ii)~65,86\% de precisi\'{o}n en CIFAR-10 bajo datos IID con un IC ajustado de $\pm$0,2pp sobre $n{=}5$ semillas; (iii)~degradaci\'{o}n gradual y mon\'{o}tona al 44,18\% con heterogeneidad No-IID severa ($\alpha{=}0,1$), mantenido por encima del 62\% para $\alpha{\geq}0,5$; (iv)~precisi\'{o}n estable (93,2--93,6\%) con churns del 0--50\% en la tarea de Recomendaci\'{o}n de Cultivos; (v)~descubrimiento CoAP O(1) a 1,9~ms para hasta 100 nodos; y (vi)~transporte agn\'{o}stico al algoritmo que permite AirMLP~+~FedAvg (49,6\% precisi\'{o}n ICA, IID) y ProphetWrapper (57,9\%, IID) sobre la misma infraestructura Iroh con solo un cambio de agregador en el servidor, donde una ablaci\'{o}n del mismo modelo FedGAM-vs-FedAvg no muestra diferencia estad\'{i}sticamente significativa. FL-Iroh permite el aprendizaje colaborativo preservando la privacidad en agricultura de precisi\'{o}n y monitorizaci\'{o}n de calidad del aire sin requerir IPs est\'{a}ticas, VPNs ni infraestructura en la nube.
+Presentamos FL-Iroh, un sistema de aprendizaje federado transparente a NAT que combina el transporte P2P QUIC de Iroh con el descubrimiento de servicios CoAP/CoRE para despliegues de IoT agrícola y ambiental. Nuestra evaluación demuestra: (i)~el establecimiento de conexión a nivel de sesión en todos los escenarios probados (LAN, NAT de cono completo, NAT simétrico, CGNAT, cortafuegos de puerto~443), con un 98.3\% de las transferencias WAN llevadas por un camino directo con hole-punching y el relay cifrado nunca ejercitado, sobre un único par WAN real PC$\leftrightarrow$Raspberry~Pi; (ii)~un 65.86\% de precisión en CIFAR-10 bajo datos IID con un IC ajustado de $\pm$0.2pp sobre $n{=}5$ semillas, degradándose monótonamente al 44.18\% bajo heterogeneidad No-IID severa ($\alpha{=}0.1$) manteniéndose por encima del 62\% para $\alpha{\geq}0.5$; (iii)~precisión estable (93.2--93.6\%) a través de un 0--50\% de rotación de clientes en la tarea de Recomendación de Cultivos bajo particionado IID; (iv)~señalización de ronda CoAP a escala de milisegundos, con descubrimiento semántico basado en capacidades escalando linealmente hasta 278~ms con 100 nodos; y (v)~transporte agnóstico al algoritmo que federa tanto una red neuronal como un GAM de Prophet sobre la misma infraestructura Iroh con solo un intercambio de agregador del lado del servidor---donde el Prophet federado supera claramente la línea base de persistencia a 7 días (57.9\% vs.\ 47.5\%), el AirMLP sin memoria no, y una ablación FedGAM-vs-FedAvg con el mismo modelo muestra que la regla de agregación no es el factor determinante. FL-Iroh habilita el aprendizaje colaborativo que preserva la privacidad para la agricultura de precisión y la monitorización ambiental de calidad del aire sin IP estáticas, superposiciones VPN ni demonios de sistema por nodo.
 
-El trabajo futuro incluye: evaluaci\'{o}n con conjuntos de datos agron\'{o}micos m\'{a}s grandes y modelos de visi\'{o}n por computador; integraci\'{o}n de FedProx; \'{a}rboles potenciados federados (XGBoost~+~agregaci\'{o}n parcial) para datos tabulares de sensores; relay DERP auto-hospedado; privacidad diferencial; control de admisi\'{o}n de federaci\'{o}n; FL as\'{i}ncrono; e implementaci\'{o}n del cliente en C/Rust para MCU Cortex-M.
+El trabajo futuro incluye: campañas repetidas de establecimiento de conexión caracterizadas según RFC~4787 a través de pares de fabricantes de NAT adicionales y a mayor escala; medición del rendimiento WAN de camino directo y una comparación operativa en vivo de Flower-sobre-Tailscale sobre el mismo hardware; barridos de sensibilidad a pérdida de paquetes/latencia y mediciones de huella de energía/CPU en el cliente Raspberry Pi; evaluación con conjuntos de datos agronómicos más grandes y modelos de visión por computador de enfermedades de cultivos; integración de FedProx para mejorar la robustez No-IID; árboles con gradient boosting federados (XGBoost~\cite{xgboost2016}~+~agregación parcial) para datos tabulares de sensores; despliegue de relay DERP autoalojado; privacidad diferencial y agregación robusta (p.~ej., Krum~\cite{krum2017}); control de admisión de la federación basado en el node ID Iroh; FL asíncrono con almacenamiento en búfer local para desconexiones prolongadas~\cite{fedbuff2022}; y un entorno de ejecución de cliente en C/Rust para plataformas MCU Cortex-M.
+
+% ---- Bloque final Elsevier ------------------------------------------------
+\section*{Declaración de contribución de autoría CRediT}
+% TODO(authors): adjust role assignments before submission.
+\textbf{Ra\'ul L\'opez-Blanco}: Conceptualización, Metodología, Software, Investigación, Curación de datos, Redacción -- borrador original. \textbf{Ricardo S.~Alonso}: Conceptualización, Metodología, Redacción -- revisión y edición, Supervisión. \textbf{Javier Prieto}: Redacción -- revisión y edición, Supervisión, Adquisición de financiación. \textbf{Tiago Pinto}: Redacción -- revisión y edición, Supervisión.
+
+\section*{Declaración de intereses en competencia}
+Los autores declaran que no tienen intereses financieros en competencia ni relaciones personales conocidas que pudieran haber influido en el trabajo reportado en este artículo.
+
+\section*{Disponibilidad de datos}
+El código fuente de FL-Iroh, el arnés de experimentos, los resultados por ejecución que respaldan cada tabla y el conjunto de datos de calidad del aire procesado están disponibles en \url{https://github.com/raullb34/FL-Iroh}. El conjunto de datos de Recomendación de Cultivos está disponible públicamente en Kaggle~\cite{cropdataset}; los datos brutos de calidad del aire y meteorológicos están disponibles en los portales de datos abiertos de la Junta de Castilla y Le\'on~\cite{cyl2023airquality} y de AEMET~\cite{aemet2023}.
+
+\section*{Agradecimientos}
+% TODO(authors): add funding/project acknowledgements before submission.
 
 % -----------------------------------------------------------------------
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{99}
 
 \bibitem{mcmahan2017}
-H.~B. McMahan, E.~Moore, D.~Ramage, S.~Hampson, y B.~A. y Arcas,
+H.~B. McMahan, E.~Moore, D.~Ramage, S.~Hampson, and B.~A. y Arcas,
 ``Communication-efficient learning of deep networks from decentralized data,''
 \emph{Proc. AISTATS}, 2017.
 
-\bibitem{li2022noniid}
-Y.~Zhao, M.~Li, L.~Lai, N.~Suda, D.~Civin, y V.~Chandra,
+\bibitem{zhao2018noniid}
+Y.~Zhao, M.~Li, L.~Lai, N.~Suda, D.~Civin, and V.~Chandra,
 ``Federated learning with non-IID data,''
 \emph{arXiv preprint arXiv:1806.00582}, 2018.
+
+\bibitem{li2022noniid}
+Q.~Li, Y.~Diao, Q.~Chen, and B.~He,
+``Federated learning on non-IID data silos: An experimental study,''
+in \emph{Proc. IEEE 38th Int. Conf. Data Engineering (ICDE)}, 2022, pp. 965--978.
 
 \bibitem{kairouz2021}
 P.~Kairouz \emph{et al.},
 ``Advances and open problems in federated learning,''
-\emph{Found. Trends Mach. Learn.}, vol.~14, n.º~1--2, pp.~1--210, 2021.
+\emph{Found. Trends Mach. Learn.}, vol.~14, no.~1--2, pp.~1--210, 2021.
 
 \bibitem{iroh2024}
-Number Zero,
+Number Zero (n0),
 ``Iroh: A toolkit for building distributed applications,''
-\url{https://iroh.computer}, 2024.
+\url{https://iroh.computer}, 2024 (accessed July 2026).
 
 \bibitem{tailscale2023}
 Tailscale Inc.,
-``DERP: Detour Encrypted Routing Protocol,''
-\url{https://tailscale.com/blog/how-tailscale-works}, 2023.
+``How Tailscale works: DERP (Designated Encrypted Relay for Packets),''
+\url{https://tailscale.com/blog/how-tailscale-works}, 2023 (accessed July 2026).
 
 \bibitem{flower2022}
-D.~J. Beutel \emph{et al.},
-``Flower: A friendly federated learning framework,''
-2022. [Online]. Available: \url{https://flower.ai}
+D.~J. Beutel, T.~Topal, A.~Mathur, X.~Qiu, J.~Fernandez-Marques, Y.~Gao, L.~Sani, K.~H.~Li, T.~Parcollet, P.~P.~B. de~Gusm\~ao, and N.~D. Lane,
+``Flower: A friendly federated learning research framework,''
+\emph{arXiv preprint arXiv:2007.14390}, 2020.
 
 \bibitem{wireguard2017}
 J.~A. Donenfeld,
@@ -612,7 +645,7 @@ J.~A. Donenfeld,
 \emph{Proc. NDSS}, 2017.
 
 \bibitem{rfc7252}
-Z.~Shelby, K.~Hartke, y C.~Bormann,
+Z.~Shelby, K.~Hartke, and C.~Bormann,
 ``The Constrained Application Protocol (CoAP),''
 IETF RFC~7252, 2014.
 
@@ -621,13 +654,8 @@ Z.~Shelby,
 ``Constrained RESTful Environments (CoRE) Link Format,''
 IETF RFC~6690, 2012.
 
-\bibitem{rfc7641}
-K.~Hartke,
-``Observing Resources in the Constrained Application Protocol (CoAP),''
-IETF RFC~7641, 2015.
-
 \bibitem{rfc8949}
-C.~Bormann y P.~Hoffman,
+C.~Bormann and P.~Hoffman,
 ``Concise Binary Object Representation (CBOR),''
 IETF RFC~8949, 2020.
 
@@ -647,69 +675,134 @@ T.~Li, A.~K.~Sahu, A.~Talwalkar, and V.~Smith,
 \emph{IEEE Signal Process. Mag.}, vol.~37, no.~3, pp.~50--60, 2020.
 
 \bibitem{konecny2016}
-J.~Konecny, H.~B. McMahan, F.~X. Yu, P.~Richtarik, A.~T. Suresh, y D.~Bacon,
+J.~Konecny, H.~B. McMahan, F.~X. Yu, P.~Richtarik, A.~T. Suresh, and D.~Bacon,
 ``Federated learning: Strategies for improving communication efficiency,''
 \emph{arXiv preprint arXiv:1610.05492}, 2016.
 
 \bibitem{durrant2022}
-A.~Durrant, M.~Markovic, D.~Matthews, D.~May, J.~Enright, y G.~Leontidis,
+A.~Durrant, M.~Markovic, D.~Matthews, D.~May, J.~Enright, and G.~Leontidis,
 ``The role of cross-silo federated learning in facilitating data sharing in the agri-food sector,''
 \emph{Comput. Electron. Agric.}, vol.~193, p.~106648, 2022.
 
 \bibitem{friha2022}
-O.~Friha, M.~A.~Ferrag, L.~Shu, L.~Maglaras, K.-K.~R.~Choo, y M.~Nafaa,
+O.~Friha, M.~A.~Ferrag, L.~Shu, L.~Maglaras, K.-K.~R.~Choo, and M.~Nafaa,
 ``FELIDS: Federated learning-based intrusion detection system for agricultural Internet of Things,''
 \emph{J. Parallel Distrib. Comput.}, vol.~165, pp.~17--31, 2022.
 
 \bibitem{rfc5128}
-P.~Srisuresh, B.~Ford, y D.~Kegel,
+P.~Srisuresh, B.~Ford, and D.~Kegel,
 ``State of peer-to-peer (P2P) communication across network address translators (NATs),''
 IETF RFC~5128, 2008.
 
 \bibitem{webrtc2021}
-C.~Jennings, H.~Boström, y J.-M. Uberti,
+C.~Jennings, H.~Boström, and J.-M. Uberti,
 ``WebRTC 1.0: Real-time communication between browsers,''
 W3C Recommendation, 2021.
 
-\bibitem{rfc5389}
-J.~Rosenberg, R.~Mahy, P.~Matthews, y D.~Wing,
+\bibitem{rfc8489}
+M.~Petit-Huguenin, G.~Salgueiro, J.~Rosenberg, D.~Wing, R.~Mahy, and P.~Matthews,
 ``Session traversal utilities for NAT (STUN),''
-IETF RFC~5389, 2008.
+IETF RFC~8489, 2020.
 
-\bibitem{rfc5766}
-R.~Mahy, P.~Matthews, y J.~Rosenberg,
-``Traversal using relays around NAT (TURN),''
-IETF RFC~5766, 2010.
+\bibitem{rfc8656}
+T.~Reddy, A.~Johnston, P.~Matthews, and J.~Rosenberg,
+``Traversal using relays around NAT (TURN): Relay extensions to session traversal utilities for NAT (STUN),''
+IETF RFC~8656, 2020.
 
-\bibitem{mqttfl2021}
-O.~Pervaiz, J.~Qadir, y M.~A. Imran,
-``MQTT-FL: A scalable architecture for federated learning over MQTT,''
-\emph{IEEE IoT-J}, 2021.
-
-\bibitem{briggs2021coap}
-C.~Briggs, Z.~Fan, y P.~Andras,
+\bibitem{briggs2020cluster}
+C.~Briggs, Z.~Fan, and P.~Andras,
 ``Federated learning with hierarchical clustering of local updates to improve training on non-IID data,''
-\emph{Proc. IEEE IJCNN}, 2021.
+in \emph{Proc. Int. Joint Conf. Neural Networks (IJCNN)}, 2020.
+
+\bibitem{ford2005}
+B.~Ford, P.~Srisuresh, and D.~Kegel,
+``Peer-to-peer communication across network address translators,''
+in \emph{Proc. USENIX Annual Technical Conference}, 2005, pp. 179--192.
+
+\bibitem{seemann2022}
+M.~Seemann, M.~Inden, and D.~Vyzovitis,
+``Decentralized hole punching,''
+in \emph{Proc. IEEE 42nd Int. Conf. Distributed Computing Systems Workshops (ICDCSW)}, 2022.
+
+\bibitem{rfc9000}
+J.~Iyengar and M.~Thomson,
+``QUIC: A UDP-based multiplexed and secure transport,''
+IETF RFC~9000, 2021.
+
+\bibitem{lian2017}
+X.~Lian, C.~Zhang, H.~Zhang, C.-J. Hsieh, W.~Zhang, and J.~Liu,
+``Can decentralized algorithms outperform centralized algorithms? A case study for decentralized parallel stochastic gradient descent,''
+in \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2017.
+
+\bibitem{hegedus2019}
+I.~Heged\H{u}s, G.~Danner, and M.~Jelasity,
+``Gossip learning as a decentralized alternative to federated learning,''
+in \emph{Proc. IFIP Int. Conf. Distributed Applications and Interoperable Systems (DAIS)}, 2019, pp. 74--90.
+
+\bibitem{roy2019braintorrent}
+A.~G. Roy, S.~Siddiqui, S.~P\"olsterl, N.~Navab, and C.~Wachinger,
+``BrainTorrent: A peer-to-peer environment for decentralized federated learning,''
+\emph{arXiv preprint arXiv:1905.06731}, 2019.
+
+\bibitem{fedml2020}
+C.~He \emph{et al.},
+``FedML: A research library and benchmark for federated machine learning,''
+\emph{arXiv preprint arXiv:2007.13518}, 2020.
+
+\bibitem{openfl2022}
+P.~Foley \emph{et al.},
+``OpenFL: the open federated learning library,''
+\emph{Physics in Medicine \& Biology}, vol.~67, no.~21, 2022.
+
+\bibitem{flare2022}
+H.~R. Roth \emph{et al.},
+``NVIDIA FLARE: Federated learning from simulation to real-world,''
+\emph{arXiv preprint arXiv:2210.13291}, 2022.
+
+\bibitem{cifar2009}
+A.~Krizhevsky,
+``Learning multiple layers of features from tiny images,''
+Tech. Rep., University of Toronto, 2009.
+
+\bibitem{cropdataset}
+A.~Ingle,
+``Crop recommendation dataset,''
+Kaggle, \url{https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset}, 2020 (accessed July 2026).
+
+\bibitem{krum2017}
+P.~Blanchard, E.~M. El~Mhamdi, R.~Guerraoui, and J.~Stainer,
+``Machine learning with adversaries: Byzantine tolerant gradient descent,''
+in \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2017.
+
+\bibitem{fedbuff2022}
+J.~Nguyen, K.~Malik, H.~Zhan, A.~Yousefpour, M.~Rabbat, M.~Malek, and D.~Huba,
+``Federated learning with buffered asynchronous aggregation,''
+in \emph{Proc. Int. Conf. Artificial Intelligence and Statistics (AISTATS)}, 2022.
+
+\bibitem{xgboost2016}
+T.~Chen and C.~Guestrin,
+``XGBoost: A scalable tree boosting system,''
+in \emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining}, 2016, pp. 785--794.
 
 \bibitem{taylor2018prophet}
-S.~J. Taylor y B.~Letham,
+S.~J. Taylor and B.~Letham,
 ``Forecasting at scale,''
-\emph{The American Statistician}, vol.~72, n.\textsuperscript{o}~1, pp.~37--45, 2018.
+\emph{The American Statistician}, vol.~72, no.~1, pp.~37--45, 2018.
 
 \bibitem{lopezblanco2024airquality}
-R.~L\'opez-Blanco, J.~M. Alonso y M.~A. Grantham,
+R.~L\'opez-Blanco, J.~M. Alonso, and M.~A. Grantham,
 ``Pollutant time series analysis for improving air-quality in smart cities,''
 \emph{Int. J. Interact. Multim. Artif. Intell. (IJIMAI)}, 2024.
 
 \bibitem{cyl2023airquality}
 Junta de Castilla y Le\'on,
-``Calidad del aire --- datos hist\'oricos diarios, Castilla y Le\'on,''
-Portal de datos abiertos, \url{https://datos.jcyl.es}, 2023.
+``Calidad del aire -- datos hist\'oricos diarios, Castilla y Le\'on,''
+Open data portal, \url{https://datos.jcyl.es}, 2023 (accessed July 2026).
 
 \bibitem{aemet2023}
 Agencia Estatal de Meteorolog\'ia (AEMET),
 ``Datos climatol\'ogicos hist\'oricos,''
-\url{https://opendata.aemet.es}, 2023.
+\url{https://opendata.aemet.es}, 2023 (accessed July 2026).
 
 \end{thebibliography}
 
