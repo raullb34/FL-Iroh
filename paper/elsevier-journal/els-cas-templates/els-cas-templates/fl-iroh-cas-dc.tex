@@ -306,6 +306,7 @@ Results are shown in Table~\ref{tab:e1}. HTTP/2 peaks at 573~Mbps for 1~MB paylo
 \label{tab:e1}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{l r r r r}
 \toprule
 \textbf{Transport} & \textbf{Payload} & \textbf{Mean (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
@@ -322,7 +323,8 @@ iroh relay WAN       & 1~MB    & 2.75   & 2.79   & 30 \\
 iroh relay WAN       & 10~MB   & 2.81   & 2.82   & 30 \\
 iroh relay WAN       & 100~MB  & 2.81   & 2.83   & 30 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 The flat throughput curve across payloads (100~KB to 100~MB all saturate at $\approx$2.8~Mbps, $N{=}30$ per cell, stdev${<}$0.05~Mbps) points to a relay-side ceiling---server capacity or per-connection rate limiting on the public relay---rather than QUIC protocol overhead; we did not benchmark a self-hosted DERP relay to separate the two explanations. Either way, a self-hosted relay on a dedicated server would lift this ceiling, and the public relay already suffices for AgriMLP-sized model updates ($\approx$220~ms per round-trip exchange).
@@ -457,6 +459,7 @@ Service discovery is a prerequisite for FL: each round, the server must locate a
 \caption{E5: CoAP Discovery Overhead}
 \label{tab:e5}
 \footnotesize
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{r l r r r r}
 \toprule
 \textbf{N nodes} & \textbf{Filter} & \textbf{Mean (ms)} & \textbf{P95 (ms)} & \textbf{Bytes} & \textbf{N} \\
@@ -468,7 +471,8 @@ Service discovery is a prerequisite for FL: each round, the server must locate a
 100 & none     & 1.9  & 2.2  & 250   & 30 \\
 100 & semantic & 278.7 & 344.1 & 25000 & 30 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 Table~\ref{tab:e5} summarizes the results. The none filter achieves constant latency ($\approx$1.9~ms) and bandwidth (250~bytes) regardless of network size---O(1) \emph{by design}, since the server returns only active-round participants without iterating all resources. The semantic filter, which is the realistic discovery operation when selecting clients by capability, shows the expected O(n) scaling: 24~ms/2500~B at 10 nodes, growing to 278~ms/25000~B at 100 nodes---approximately 2.8~ms and 250~bytes per additional node. For typical agricultural deployments with $<$50 devices per farm cluster, semantic discovery completes in $<$157~ms, acceptable as a round-setup step executed once per FL round.
@@ -493,6 +497,7 @@ ICA labels use training-set NO$_2$ terciles ($T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3
 \caption{E6: 7-Day-Ahead ICA Forecasting ($K{=}10$, $R{=}50$, test 2019, $n{=}5$ seeds)}
 \label{tab:e6}
 \footnotesize
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{l l r r}
 \toprule
 \textbf{Model} & \textbf{Partition} & \textbf{Test Acc.} & \textbf{95\% CI} \\
@@ -508,7 +513,8 @@ ProphetWrapper (FedGAM)     & IID        & 57.93\% & [57.31\%, 58.55\%] \\
 ProphetWrapper (FedAvg)     & Geographic & 56.59\% & (deterministic) \\
 ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \vspace{0.5em}
 
 \emph{7-day-ahead ICA forecasting on outdoor CyL stations, test year 2019 (class distribution 49.3/27.8/22.9\%; labels from training-set NO$_2$ terciles $T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3$, balanced in-sample only). Trivial baselines: majority class fitted on train (\textit{Alto}) and 7-day persistence (predict the class observed at $t{-}7$; 3,551 of 3,561 test rows have the $t{-}7$ observation available). Geographic non-IID: 10 natural zone partitions. Prophet geographic runs are deterministic MAP fits: the five seeds coincide, so no meaningful CI exists (effectively $n{=}1$). Accuracy values are on the held-out 2019 test set.}
@@ -559,6 +565,7 @@ To confirm that the choice of transport does not affect model quality, we ran th
 \label{tab:e7acc}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{l c c}
 \toprule
 \textbf{Partition} & \textbf{FL-Iroh (E2)} & \textbf{Flower harness (E8)} \\
@@ -566,7 +573,8 @@ To confirm that the choice of transport does not affect model quality, we ran th
 IID                      & 65.86\% [65.66, 66.06] & 65.98\% [65.79, 66.17] \\
 Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 The comparison highlights FL-Iroh's core architectural difference: NAT traversal is embedded in the application-level transport rather than delegated to a privileged, account-managed system VPN. FL-Iroh requires no root daemon, no persistent server IP, and no third-party coordination account; peers are named by public key. Flower+Tailscale, by contrast, layers an FL framework that still assumes a reachable star-topology server on top of a separate VPN that must be installed and authenticated on every node. For unattended agricultural dataloggers---often solar-powered, behind CGNAT, with no administrator on site---removing the per-node daemon, the account dependency, and the fixed server address is a substantial operational simplification.
