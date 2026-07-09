@@ -15,6 +15,10 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
+% Absorb minor overfull \hbox boxes in the narrow two-column measure
+\emergencystretch=3em
+\tolerance=800
+
 \begin{document}
 \let\WriteBookmarks\relax
 \def\floatpagepagefraction{1}
@@ -122,7 +126,7 @@ Our primary application domain is agricultural IoT: soil-based crop recommendati
 
 \noindent\textbf{Contributions:}
 \begin{enumerate}
-    \item We design and implement FL-Iroh, an open-source, algorithm-agnostic FL architecture that embeds NAT traversal in the application-level transport---an Iroh/QUIC data plane with public-key peer addressing---coordinated by a lightweight CoAP/CBOR control plane (\S\ref{sec:system}). The NAT-traversal machinery itself is provided by the Iroh library~\cite{iroh2024}; our contribution is its integration into, and evaluation as, an FL substrate.
+    \item We design and implement FL-Iroh, an open-source, algorithm-agnostic FL architecture that embeds NAT traversal in the application-level transport---an Iroh\slash QUIC data plane with public-key peer addressing---coordinated by a lightweight CoAP\slash CBOR control plane (\S\ref{sec:system}). The NAT-traversal machinery itself is provided by the Iroh library~\cite{iroh2024}; our contribution is its integration into, and evaluation as, an FL substrate.
     \item We provide an empirical characterization of QUIC hole-punching and relay transport for FL workloads on real hardware (PC $\leftrightarrow$ Raspberry Pi across a 300~km WAN, different ISPs): every session connected, and 118 of 120 WAN transfers (98.3\%) used a direct hole-punched path---verified by active-path inspection---under full-cone NAT, symmetric NAT, CGNAT, and a port-443-only firewall, with the encrypted relay retained as a guaranteed fallback (\S\ref{sec:e3}).
     \item We conduct a six-experiment evaluation (E1--E6) plus an operational comparison with Flower-over-Tailscale, covering transport throughput, convergence under Non-IID heterogeneity, churn resilience, CoAP discovery scaling, and a two-domain application study: crop recommendation with a compact MLP (AgriMLP, 7.7K parameters) and seven-day-ahead air-quality forecasting (\S\ref{sec:evaluation}).
     \item We propose FedGAM, a partial-aggregation rule that federates only the shared seasonality coefficients of Prophet GAM models, and report an honest same-model ablation showing that, with eight years of local training data, FedGAM is statistically indistinguishable from FedAvg---delimiting the regime in which partial aggregation can matter (\S\ref{sec:e6}).
@@ -142,7 +146,7 @@ FL has recently been applied across the agri-food sector. Durrant~et~al.~\cite{d
 
 \subsection{NAT Traversal in P2P and IoT}
 
-NAT traversal has been studied extensively since Ford~et~al.'s foundational analysis of peer-to-peer communication across NATs~\cite{ford2005,rfc5128}, and underpins VoIP, WebRTC~\cite{webrtc2021}, and file-sharing systems. The STUN~\cite{rfc8489} and TURN~\cite{rfc8656} protocols provide the IETF foundations for hole-punching and relay fallback, and large-scale measurement campaigns in the libp2p ecosystem have characterized hole-punching success rates in the wild~\cite{seemann2022}. DERP (Designated Encrypted Relay for Packets), developed by Tailscale~\cite{tailscale2023}, provides an authenticated, encrypted, HTTPS-based relay that acts both as a rendezvous/signaling channel and as a relay of last resort---fulfilling the same architectural role as TURN, though it is not protocol-compatible with it---within the WireGuard VPN ecosystem. Iroh adapts DERP for general-purpose P2P applications~\cite{iroh2024}. In the IoT space, NGROK and similar tunneling services provide connectivity but introduce centralized dependencies and per-byte costs unsuitable for energy-constrained deployments.
+NAT traversal has been studied extensively since Ford et~al.'s foundational analysis of peer-to-peer communication across NATs~\cite{ford2005,rfc5128}, and underpins VoIP, WebRTC~\cite{webrtc2021}, and file-sharing systems. The STUN~\cite{rfc8489} and TURN~\cite{rfc8656} protocols provide the IETF foundations for hole-punching and relay fallback, and large-scale measurement campaigns in the libp2p ecosystem have characterized hole-punching success rates in the wild~\cite{seemann2022}. DERP (Designated Encrypted Relay for Packets), developed by Tailscale~\cite{tailscale2023}, provides an authenticated, encrypted, HTTPS-based relay that acts both as a rendezvous/signaling channel and as a relay of last resort---fulfilling the same architectural role as TURN, though it is not protocol-compatible with it---within the WireGuard VPN ecosystem. Iroh adapts DERP for general-purpose P2P applications~\cite{iroh2024}. In the IoT space, NGROK and similar tunneling services provide connectivity but introduce centralized dependencies and per-byte costs unsuitable for energy-constrained deployments.
 
 \subsection{CoAP for FL Control Plane}
 
@@ -301,6 +305,7 @@ Results are shown in Table~\ref{tab:e1}. HTTP/2 peaks at 573~Mbps for 1~MB paylo
 \caption{E1: Transport Throughput Summary}
 \label{tab:e1}
 \footnotesize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l r r r r}
 \toprule
 \textbf{Transport} & \textbf{Payload} & \textbf{Mean (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
@@ -481,7 +486,7 @@ ICA labels use training-set NO$_2$ terciles ($T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3
 
 \textbf{Deployment scope.} The feature set includes outdoor meteorological variables (AEMET wind speed, precipitation). This dataset applies to \emph{outdoor} monitoring installations; greenhouse or indoor deployments require a different feature set (removing wind/precipitation, adding CO$_2$, humidity). The 10 monitoring-zone clients are: \'Avila, Burgos, Le\'on, Palencia, Ponferrada, Salamanca, Segovia, Soria, Valladolid, and Zamora (the nine provincial capitals plus Ponferrada). Sensor tags are registered via CoAP with the \texttt{rt=air-quality} attribute.
 
-\textbf{Configurations.} We run six configurations to isolate model and aggregation effects: AirMLP~+~FedAvg (geographic and IID), ProphetWrapper~+~FedGAM, and ProphetWrapper~+~FedAvg (geographic and IID). Multi-seed replication ($n{=}5$) provides 95\% confidence intervals.
+\textbf{Configurations.} We run six configurations to isolate model and aggregation effects: AirMLP + FedAvg (geographic and IID), ProphetWrapper + FedGAM, and ProphetWrapper + FedAvg (geographic and IID). Multi-seed replication ($n{=}5$) provides 95\% confidence intervals.
 
 \begin{table}[t]
 \centering
@@ -520,7 +525,7 @@ ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
 \subsection{Operational Comparison with Flower over Tailscale}
 \label{sec:e7}
 
-The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT/CGNAT through DERP-style relays. Both stacks ultimately rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes. The comparison is primarily architectural, but we also empirically verify accuracy parity (Table~\ref{tab:e7acc}): because both stacks run identical FL algorithms, the distinguishing factors are deployment surface, external dependencies, and operational cost rather than statistical performance.
+The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT\slash CGNAT through DERP-style relays. Both stacks ultimately rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes. The comparison is primarily architectural, but we also empirically verify accuracy parity (Table~\ref{tab:e7acc}): because both stacks run identical FL algorithms, the distinguishing factors are deployment surface, external dependencies, and operational cost rather than statistical performance.
 
 \begin{table*}[t]
 \centering
@@ -528,7 +533,8 @@ The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a
 \label{tab:e7}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{p{2.5cm} p{6.3cm} p{6.3cm}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{2.4cm} p{6.2cm} p{6.2cm}}
 \toprule
 \textbf{Axis} & \textbf{FL-Iroh} & \textbf{Flower + Tailscale} \\
 \midrule
