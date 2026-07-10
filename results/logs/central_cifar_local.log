@@ -1,0 +1,15 @@
+20:03:36 [INFO] E2 replication over 5 master seeds: [505, 1009, 2017, 3023, 4099]
+20:03:36 [INFO] === E2 replicate master=505 (dir=results/e2_central/seeds/seed505) ===
+20:04:18 [INFO] === Architecture B — B_iid ===
+20:04:31 [INFO] IID partition: 1 clients, ~50000 samples each
+20:04:31 [INFO] FL_MOCK_IROH=1 — forcing mock transport (iroh bypassed)
+20:04:32 [INFO] CoAP server [server] listening on 0.0.0.0:5683
+20:04:32 [INFO] FLServer server started (mock=True)
+20:04:33 [INFO] FL_MOCK_IROH=1 — forcing mock transport (iroh bypassed)
+20:04:33 [INFO] CoAP server [client-0] listening on 0.0.0.0:5684
+20:04:33 [INFO] FLClient client-0 started (mock=True)
+20:04:33 [INFO] Registered client client-0  iroh=mock-client-0
+20:04:33 [INFO] Round 1 — sending model to 1 clients…
+20:04:33 [INFO] [client-0] client task started (mock=True)
+20:04:33 [INFO] [client-0] Round 1 — receiving model…
+20:04:33 [INFO] [client-0] Round 1 — training locally…

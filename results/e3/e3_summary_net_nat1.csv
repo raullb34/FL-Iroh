@@ -1,0 +1,2 @@
+scenario,total,pct_direct,pct_relay,pct_unknown,pct_failed
+net_nat1,30,90.0,0.0,0.0,10.0

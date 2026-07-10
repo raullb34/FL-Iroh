@@ -1,0 +1,2 @@
+15:31:00 [INFO] Wrote operational comparison: e8_comparison.csv and e8_comparison.md
+15:31:01 [WARNING] flwr not installed — skipping quantitative baseline (pip install flwr)

@@ -1,0 +1,2 @@
+framework,config,transport,dataset,partition,alpha,n_clients,rounds,test_acc_final,payload_bytes_per_round,wall_time_per_round_s,seed
+fedavg-inprocess,noniid,in-process (aggregation-identical to Flower FedAvg),cifar10,noniid,0.1,10,100,0.5081,7580960,37.0147,1009

@@ -1,0 +1,11 @@
+Reading 5 summary files:
+  - /home/raullb/FL-Iroh/results/e8/iid/seeds/e8_flower_summary_seed1009.csv
+  - /home/raullb/FL-Iroh/results/e8/iid/seeds/e8_flower_summary_seed2017.csv
+  - /home/raullb/FL-Iroh/results/e8/iid/seeds/e8_flower_summary_seed3023.csv
+  - /home/raullb/FL-Iroh/results/e8/iid/seeds/e8_flower_summary_seed4099.csv
+  - /home/raullb/FL-Iroh/results/e8/iid/seeds/e8_flower_summary_seed505.csv
+
+=== test_acc_final by config (mean ± CI95, Student-t) ===
+config                               n      mean      std   ci95_low  ci95_high
+-------------------------------------------------------------------------------
+iid                                  5    0.6598   0.0015     0.6579     0.6617

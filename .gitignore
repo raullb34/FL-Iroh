@@ -42,16 +42,12 @@ data/
 !data/air-quailty/notebooks/preprocess_e7.py
 
 # ── Experiment results ────────────────────────────────────────────────────────
-results/
-# Keep directory structure
-!results/.gitkeep
-!results/e1/.gitkeep
-!results/e2/.gitkeep
-!results/e3/.gitkeep
-!results/e5/.gitkeep
-!results/e6/.gitkeep
-!results/logs/.gitkeep
-!results/metadata/.gitkeep
+# Per-run outputs backing the paper's tables ARE tracked (data availability).
+# Local scratch ("* copy" dirs, ad-hoc dev runs, transient reports) is not.
+results/* copy/
+results/B_*
+results/report_*.json
+results/server_endpoint.json
 
 # ── Docker ────────────────────────────────────────────────────────────────────
 .dockerignore
@@ -67,6 +63,8 @@ docker/.buildx-cache/
 *.log
 *.out
 *.err
+# Experiment-run logs under results/ are evidentiary — keep them tracked
+!results/**/*.log
 *.tmp
 *.swp
 *.swo

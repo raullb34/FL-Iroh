@@ -1,0 +1,5 @@
+transport,payload_bytes,n,mean_mbps,median_mbps,p95_mbps,stdev_mbps
+iroh_unknown,100000,15,2.3413,2.3862,2.4389,0.185
+iroh_unknown,1000000,15,2.7671,2.7691,2.7877,0.0124
+iroh_unknown,10000000,15,2.8111,2.8138,2.8177,0.0069
+iroh_unknown,100000000,15,2.8079,2.8166,2.831,0.0224

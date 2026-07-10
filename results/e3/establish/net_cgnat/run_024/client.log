@@ -1,0 +1,6 @@
+13:10:24 [INFO] Connecting to server node_id=f8c3e709f0c869bd…
+13:10:26 [INFO] Iroh node started: b35491849a19700a  addrs=['10.50.16.202:42766', '85.48.2.235:42766', '100.112.148.36:42766']
+13:10:27 [INFO] [conn-dbg] kind=DIRECT addrs=[31.4.129.218:19859 lat=0:00:00.066151 pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.014431, control_msg=pong←) | 172.17.0.1:35264 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.029483, control_msg=call me) | 172.18.0.1:35264 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.029483, control_msg=call me) | 192.168.197.140:35264 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.029483, control_msg=call me)]
+13:10:27 [INFO] send 1577B via direct in 402ms (0.03 Mbit/s) to f8c3e709f0c869bd
+13:10:27 [INFO] [client] iter 1/1 — conn_type=direct  conn_time=386.6ms
+13:10:30 [INFO]   net_cgnat: direct=100% relay=0% unknown=0% failed=0%

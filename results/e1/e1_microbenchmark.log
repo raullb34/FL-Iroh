@@ -1,0 +1,374 @@
+12:22:51 [INFO] Running Iroh benchmark…
+12:22:51 [INFO] Iroh node started: 31ae3cace8c8ce3e  addrs=['10.50.6.111:59339', '10.60.6.11:59339', '192.168.122.1:59339', '212.128.132.67:59339']
+12:22:52 [INFO] Iroh node started: 5000d40201299f42  addrs=['10.50.6.111:44536', '10.60.6.11:44536', '192.168.122.1:44536', '212.128.132.67:44536']
+12:22:52 [INFO] Iroh bench — payload 100000 bytes
+12:22:52 [INFO] send 101545B via unknown in 30ms (26.79 Mbit/s) to 5000d40201299f42
+12:22:53 [WARNING] Iroh iter 0 sz 100000: 
+12:22:53 [INFO] send 101545B via unknown in 29ms (27.66 Mbit/s) to 5000d40201299f42
+12:22:53 [INFO] recv 101545B via unknown in 1ms
+12:22:53 [INFO] send 101545B via unknown in 28ms (28.78 Mbit/s) to 5000d40201299f42
+12:22:54 [WARNING] Iroh iter 2 sz 100000: 
+12:22:54 [INFO] send 101545B via unknown in 31ms (25.96 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 28ms (28.66 Mbit/s) to 5000d40201299f42
+12:22:54 [WARNING] Iroh iter 4 sz 100000: 
+12:22:54 [INFO] send 101545B via unknown in 29ms (27.68 Mbit/s) to 5000d40201299f42
+12:22:54 [WARNING] Iroh iter 5 sz 100000: 
+12:22:54 [INFO] send 101545B via unknown in 29ms (27.81 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 29ms (28.28 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 29ms (27.84 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 29ms (28.49 Mbit/s) to 5000d40201299f42
+12:22:54 [WARNING] Iroh iter 9 sz 100000: 
+12:22:54 [INFO] send 101545B via unknown in 28ms (28.75 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 30ms (27.15 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 28ms (28.51 Mbit/s) to 5000d40201299f42
+12:22:54 [INFO] recv 101545B via unknown in 1ms
+12:22:54 [INFO] send 101545B via unknown in 28ms (29.34 Mbit/s) to 5000d40201299f42
+12:22:55 [WARNING] Iroh iter 13 sz 100000: 
+12:22:55 [INFO] send 101545B via unknown in 31ms (26.29 Mbit/s) to 5000d40201299f42
+12:22:56 [WARNING] Iroh iter 14 sz 100000: 
+12:22:56 [INFO] send 101545B via unknown in 30ms (27.15 Mbit/s) to 5000d40201299f42
+12:22:57 [WARNING] Iroh iter 15 sz 100000: 
+12:22:57 [INFO] send 101545B via unknown in 30ms (27.16 Mbit/s) to 5000d40201299f42
+12:22:57 [INFO] recv 101545B via unknown in 1ms
+12:22:57 [INFO] send 101545B via unknown in 29ms (27.88 Mbit/s) to 5000d40201299f42
+12:22:57 [INFO] recv 101545B via unknown in 1ms
+12:22:57 [INFO] send 101545B via unknown in 28ms (28.74 Mbit/s) to 5000d40201299f42
+12:22:58 [WARNING] Iroh iter 18 sz 100000: 
+12:22:58 [INFO] send 101545B via unknown in 31ms (26.51 Mbit/s) to 5000d40201299f42
+12:22:58 [INFO] recv 101545B via unknown in 1ms
+12:22:58 [INFO] send 101545B via unknown in 28ms (28.89 Mbit/s) to 5000d40201299f42
+12:22:58 [INFO] recv 101545B via unknown in 1ms
+12:22:58 [INFO] send 101545B via unknown in 29ms (27.78 Mbit/s) to 5000d40201299f42
+12:22:58 [INFO] recv 101545B via unknown in 1ms
+12:22:58 [INFO] send 101545B via unknown in 28ms (28.67 Mbit/s) to 5000d40201299f42
+12:23:00 [WARNING] Iroh iter 22 sz 100000: 
+12:23:00 [INFO] send 101545B via unknown in 30ms (27.37 Mbit/s) to 5000d40201299f42
+12:23:01 [WARNING] Iroh iter 23 sz 100000: 
+12:23:01 [INFO] send 101545B via unknown in 29ms (27.83 Mbit/s) to 5000d40201299f42
+12:23:02 [WARNING] Iroh iter 24 sz 100000: 
+12:23:02 [INFO] send 101545B via unknown in 30ms (27.04 Mbit/s) to 5000d40201299f42
+12:23:03 [WARNING] Iroh iter 25 sz 100000: 
+12:23:03 [INFO] send 101545B via unknown in 29ms (27.85 Mbit/s) to 5000d40201299f42
+12:23:04 [WARNING] Iroh iter 26 sz 100000: 
+12:23:04 [INFO] send 101545B via unknown in 29ms (27.64 Mbit/s) to 5000d40201299f42
+12:23:04 [INFO] recv 101545B via unknown in 1ms
+12:23:04 [INFO] send 101545B via unknown in 28ms (29.20 Mbit/s) to 5000d40201299f42
+12:23:05 [WARNING] Iroh iter 28 sz 100000: 
+12:23:05 [INFO] send 101545B via unknown in 29ms (27.67 Mbit/s) to 5000d40201299f42
+12:23:05 [INFO] recv 101545B via unknown in 1ms
+12:23:05 [INFO] Iroh bench — payload 1000000 bytes
+12:23:05 [INFO] send 1001577B via unknown in 254ms (31.50 Mbit/s) to 5000d40201299f42
+12:23:06 [WARNING] Iroh iter 0 sz 1000000: 
+12:23:06 [INFO] send 1001577B via unknown in 256ms (31.36 Mbit/s) to 5000d40201299f42
+12:23:07 [WARNING] Iroh iter 1 sz 1000000: 
+12:23:08 [INFO] send 1001577B via unknown in 258ms (31.02 Mbit/s) to 5000d40201299f42
+12:23:08 [WARNING] Iroh iter 2 sz 1000000: 
+12:23:08 [INFO] send 1001577B via unknown in 257ms (31.22 Mbit/s) to 5000d40201299f42
+12:23:08 [WARNING] Iroh iter 3 sz 1000000: 
+12:23:08 [INFO] send 1001577B via unknown in 256ms (31.34 Mbit/s) to 5000d40201299f42
+12:23:08 [WARNING] Iroh iter 4 sz 1000000: 
+12:23:09 [INFO] send 1001577B via unknown in 256ms (31.30 Mbit/s) to 5000d40201299f42
+12:23:10 [WARNING] Iroh iter 5 sz 1000000: 
+12:23:10 [INFO] send 1001577B via unknown in 255ms (31.40 Mbit/s) to 5000d40201299f42
+12:23:11 [WARNING] Iroh iter 6 sz 1000000: 
+12:23:11 [INFO] send 1001577B via unknown in 257ms (31.14 Mbit/s) to 5000d40201299f42
+12:23:12 [WARNING] Iroh iter 7 sz 1000000: 
+12:23:12 [INFO] send 1001577B via unknown in 256ms (31.27 Mbit/s) to 5000d40201299f42
+12:23:13 [WARNING] Iroh iter 8 sz 1000000: 
+12:23:14 [INFO] send 1001577B via unknown in 256ms (31.32 Mbit/s) to 5000d40201299f42
+12:23:15 [WARNING] Iroh iter 9 sz 1000000: 
+12:23:15 [INFO] send 1001577B via unknown in 255ms (31.47 Mbit/s) to 5000d40201299f42
+12:23:16 [WARNING] Iroh iter 10 sz 1000000: 
+12:23:16 [INFO] send 1001577B via unknown in 255ms (31.41 Mbit/s) to 5000d40201299f42
+12:23:17 [WARNING] Iroh iter 11 sz 1000000: 
+12:23:17 [INFO] send 1001577B via unknown in 257ms (31.17 Mbit/s) to 5000d40201299f42
+12:23:17 [WARNING] Iroh iter 12 sz 1000000: 
+12:23:18 [INFO] send 1001577B via unknown in 256ms (31.35 Mbit/s) to 5000d40201299f42
+12:23:19 [WARNING] Iroh iter 13 sz 1000000: 
+12:23:19 [INFO] send 1001577B via unknown in 255ms (31.38 Mbit/s) to 5000d40201299f42
+12:23:20 [WARNING] Iroh iter 14 sz 1000000: 
+12:23:20 [INFO] send 1001577B via unknown in 255ms (31.41 Mbit/s) to 5000d40201299f42
+12:23:20 [WARNING] Iroh iter 15 sz 1000000: 
+12:23:21 [INFO] send 1001577B via unknown in 256ms (31.27 Mbit/s) to 5000d40201299f42
+12:23:22 [WARNING] Iroh iter 16 sz 1000000: 
+12:23:22 [INFO] send 1001577B via unknown in 255ms (31.38 Mbit/s) to 5000d40201299f42
+12:23:22 [WARNING] Iroh iter 17 sz 1000000: 
+12:23:22 [INFO] send 1001577B via unknown in 257ms (31.16 Mbit/s) to 5000d40201299f42
+12:23:22 [WARNING] Iroh iter 18 sz 1000000: 
+12:23:23 [INFO] send 1001577B via unknown in 256ms (31.30 Mbit/s) to 5000d40201299f42
+12:23:24 [WARNING] Iroh iter 19 sz 1000000: 
+12:23:24 [INFO] send 1001577B via unknown in 257ms (31.23 Mbit/s) to 5000d40201299f42
+12:23:24 [WARNING] Iroh iter 20 sz 1000000: 
+12:23:24 [INFO] send 1001577B via unknown in 257ms (31.15 Mbit/s) to 5000d40201299f42
+12:23:24 [WARNING] Iroh iter 21 sz 1000000: 
+12:23:24 [INFO] send 1001577B via unknown in 256ms (31.28 Mbit/s) to 5000d40201299f42
+12:23:25 [WARNING] Iroh iter 22 sz 1000000: 
+12:23:25 [INFO] send 1001577B via unknown in 257ms (31.22 Mbit/s) to 5000d40201299f42
+12:23:25 [WARNING] Iroh iter 23 sz 1000000: 
+12:23:25 [INFO] send 1001577B via unknown in 255ms (31.41 Mbit/s) to 5000d40201299f42
+12:23:26 [WARNING] Iroh iter 24 sz 1000000: 
+12:23:26 [INFO] send 1001577B via unknown in 256ms (31.27 Mbit/s) to 5000d40201299f42
+12:23:27 [WARNING] Iroh iter 25 sz 1000000: 
+12:23:27 [INFO] send 1001577B via unknown in 256ms (31.32 Mbit/s) to 5000d40201299f42
+12:23:27 [WARNING] Iroh iter 26 sz 1000000: 
+12:23:27 [INFO] send 1001577B via unknown in 255ms (31.44 Mbit/s) to 5000d40201299f42
+12:23:28 [WARNING] Iroh iter 27 sz 1000000: 
+12:23:28 [INFO] send 1001577B via unknown in 256ms (31.36 Mbit/s) to 5000d40201299f42
+12:23:28 [WARNING] Iroh iter 28 sz 1000000: 
+12:23:29 [INFO] send 1001577B via unknown in 256ms (31.36 Mbit/s) to 5000d40201299f42
+12:23:30 [WARNING] Iroh iter 29 sz 1000000: 
+12:23:30 [INFO] Iroh bench — payload 10000000 bytes
+12:23:32 [INFO] send 10001577B via unknown in 2502ms (31.99 Mbit/s) to 5000d40201299f42
+12:23:32 [WARNING] Iroh iter 0 sz 10000000: 
+12:23:35 [INFO] send 10001577B via unknown in 2501ms (31.99 Mbit/s) to 5000d40201299f42
+12:23:36 [WARNING] Iroh iter 1 sz 10000000: 
+12:23:38 [INFO] send 10001577B via unknown in 2519ms (31.76 Mbit/s) to 5000d40201299f42
+12:23:38 [WARNING] Iroh iter 2 sz 10000000: 
+12:23:41 [INFO] send 10001577B via unknown in 2510ms (31.87 Mbit/s) to 5000d40201299f42
+12:23:41 [WARNING] Iroh iter 3 sz 10000000: 
+12:23:44 [INFO] send 10001577B via unknown in 2505ms (31.95 Mbit/s) to 5000d40201299f42
+12:23:45 [WARNING] Iroh iter 4 sz 10000000: 
+12:23:47 [INFO] send 10001577B via unknown in 2508ms (31.90 Mbit/s) to 5000d40201299f42
+12:23:48 [WARNING] Iroh iter 5 sz 10000000: 
+12:23:51 [INFO] send 10001577B via unknown in 2503ms (31.96 Mbit/s) to 5000d40201299f42
+12:23:51 [WARNING] Iroh iter 6 sz 10000000: 
+12:23:53 [INFO] send 10001577B via unknown in 2502ms (31.98 Mbit/s) to 5000d40201299f42
+12:23:53 [WARNING] Iroh iter 7 sz 10000000: 
+12:23:56 [INFO] send 10001577B via unknown in 2513ms (31.84 Mbit/s) to 5000d40201299f42
+12:23:56 [WARNING] Iroh iter 8 sz 10000000: 
+12:23:58 [INFO] send 10001577B via unknown in 2505ms (31.94 Mbit/s) to 5000d40201299f42
+12:23:59 [WARNING] Iroh iter 9 sz 10000000: 
+12:24:02 [INFO] send 10001577B via unknown in 2506ms (31.93 Mbit/s) to 5000d40201299f42
+12:24:02 [WARNING] Iroh iter 10 sz 10000000: 
+12:24:04 [INFO] send 10001577B via unknown in 2497ms (32.04 Mbit/s) to 5000d40201299f42
+12:24:05 [WARNING] Iroh iter 11 sz 10000000: 
+12:24:07 [INFO] send 10001577B via unknown in 2511ms (31.86 Mbit/s) to 5000d40201299f42
+12:24:08 [WARNING] Iroh iter 12 sz 10000000: 
+12:24:11 [INFO] send 10001577B via unknown in 2515ms (31.82 Mbit/s) to 5000d40201299f42
+12:24:12 [WARNING] Iroh iter 13 sz 10000000: 
+12:24:14 [INFO] send 10001577B via unknown in 2511ms (31.86 Mbit/s) to 5000d40201299f42
+12:24:15 [WARNING] Iroh iter 14 sz 10000000: 
+12:24:18 [INFO] send 10001577B via unknown in 2505ms (31.94 Mbit/s) to 5000d40201299f42
+12:24:18 [WARNING] Iroh iter 15 sz 10000000: 
+12:24:20 [INFO] send 10001577B via unknown in 2505ms (31.94 Mbit/s) to 5000d40201299f42
+12:24:20 [WARNING] Iroh iter 16 sz 10000000: 
+12:24:23 [INFO] send 10001577B via unknown in 2510ms (31.88 Mbit/s) to 5000d40201299f42
+12:24:24 [WARNING] Iroh iter 17 sz 10000000: 
+12:24:26 [INFO] send 10001577B via unknown in 2506ms (31.93 Mbit/s) to 5000d40201299f42
+12:24:26 [WARNING] Iroh iter 18 sz 10000000: 
+12:24:29 [INFO] send 10001577B via unknown in 2503ms (31.97 Mbit/s) to 5000d40201299f42
+12:24:30 [WARNING] Iroh iter 19 sz 10000000: 
+12:24:32 [INFO] send 10001577B via unknown in 2505ms (31.95 Mbit/s) to 5000d40201299f42
+12:24:33 [WARNING] Iroh iter 20 sz 10000000: 
+12:24:35 [INFO] send 10001577B via unknown in 2510ms (31.88 Mbit/s) to 5000d40201299f42
+12:24:35 [WARNING] Iroh iter 21 sz 10000000: 
+12:24:38 [INFO] send 10001577B via unknown in 2506ms (31.93 Mbit/s) to 5000d40201299f42
+12:24:38 [WARNING] Iroh iter 22 sz 10000000: 
+12:24:40 [INFO] send 10001577B via unknown in 2503ms (31.96 Mbit/s) to 5000d40201299f42
+12:24:40 [WARNING] Iroh iter 23 sz 10000000: 
+12:24:43 [INFO] send 10001577B via unknown in 2507ms (31.92 Mbit/s) to 5000d40201299f42
+12:24:44 [WARNING] Iroh iter 24 sz 10000000: 
+12:24:46 [INFO] send 10001577B via unknown in 2498ms (32.03 Mbit/s) to 5000d40201299f42
+12:24:46 [WARNING] Iroh iter 25 sz 10000000: 
+12:24:49 [INFO] send 10001577B via unknown in 2497ms (32.05 Mbit/s) to 5000d40201299f42
+12:24:50 [WARNING] Iroh iter 26 sz 10000000: 
+12:24:53 [INFO] send 10001577B via unknown in 2510ms (31.88 Mbit/s) to 5000d40201299f42
+12:24:53 [WARNING] Iroh iter 27 sz 10000000: 
+12:24:55 [INFO] send 10001577B via unknown in 2514ms (31.83 Mbit/s) to 5000d40201299f42
+12:24:55 [WARNING] Iroh iter 28 sz 10000000: 
+12:24:58 [INFO] send 10001577B via unknown in 2504ms (31.95 Mbit/s) to 5000d40201299f42
+12:24:58 [WARNING] Iroh iter 29 sz 10000000: 
+12:24:58 [INFO] Iroh bench — payload 100000000 bytes
+12:25:23 [INFO] send 100001577B via unknown in 25065ms (31.92 Mbit/s) to 5000d40201299f42
+12:25:23 [WARNING] Iroh iter 0 sz 100000000: 
+12:25:48 [INFO] send 100001577B via unknown in 25075ms (31.90 Mbit/s) to 5000d40201299f42
+12:25:48 [WARNING] Iroh iter 1 sz 100000000: 
+12:26:13 [INFO] send 100001577B via unknown in 25012ms (31.98 Mbit/s) to 5000d40201299f42
+12:26:14 [WARNING] Iroh iter 2 sz 100000000: 
+12:26:39 [INFO] send 100001577B via unknown in 25099ms (31.87 Mbit/s) to 5000d40201299f42
+12:26:39 [WARNING] Iroh iter 3 sz 100000000: 
+12:27:04 [INFO] send 100001577B via unknown in 25039ms (31.95 Mbit/s) to 5000d40201299f42
+12:27:04 [WARNING] Iroh iter 4 sz 100000000: 
+12:27:29 [INFO] send 100001577B via unknown in 25133ms (31.83 Mbit/s) to 5000d40201299f42
+12:27:29 [WARNING] Iroh iter 5 sz 100000000: 
+12:27:54 [INFO] send 100001577B via unknown in 25054ms (31.93 Mbit/s) to 5000d40201299f42
+12:27:54 [WARNING] Iroh iter 6 sz 100000000: 
+12:28:20 [INFO] send 100001577B via unknown in 25068ms (31.91 Mbit/s) to 5000d40201299f42
+12:28:20 [WARNING] Iroh iter 7 sz 100000000: 
+12:28:45 [INFO] send 100001577B via unknown in 25117ms (31.85 Mbit/s) to 5000d40201299f42
+12:28:45 [WARNING] Iroh iter 8 sz 100000000: 
+12:29:10 [INFO] send 100001577B via unknown in 25106ms (31.87 Mbit/s) to 5000d40201299f42
+12:29:10 [WARNING] Iroh iter 9 sz 100000000: 
+12:29:35 [INFO] send 100001577B via unknown in 25077ms (31.90 Mbit/s) to 5000d40201299f42
+12:29:35 [WARNING] Iroh iter 10 sz 100000000: 
+12:30:00 [INFO] send 100001577B via unknown in 25088ms (31.89 Mbit/s) to 5000d40201299f42
+12:30:00 [WARNING] Iroh iter 11 sz 100000000: 
+12:30:25 [INFO] send 100001577B via unknown in 25120ms (31.85 Mbit/s) to 5000d40201299f42
+12:30:25 [WARNING] Iroh iter 12 sz 100000000: 
+12:30:51 [INFO] send 100001577B via unknown in 25072ms (31.91 Mbit/s) to 5000d40201299f42
+12:30:51 [WARNING] Iroh iter 13 sz 100000000: 
+12:31:16 [INFO] send 100001577B via unknown in 25055ms (31.93 Mbit/s) to 5000d40201299f42
+12:31:16 [WARNING] Iroh iter 14 sz 100000000: 
+12:31:41 [INFO] send 100001577B via unknown in 25057ms (31.93 Mbit/s) to 5000d40201299f42
+12:31:41 [WARNING] Iroh iter 15 sz 100000000: 
+12:32:06 [INFO] send 100001577B via unknown in 25055ms (31.93 Mbit/s) to 5000d40201299f42
+12:32:06 [WARNING] Iroh iter 16 sz 100000000: 
+12:32:31 [INFO] send 100001577B via unknown in 25051ms (31.93 Mbit/s) to 5000d40201299f42
+12:32:31 [WARNING] Iroh iter 17 sz 100000000: 
+12:32:56 [INFO] send 100001577B via unknown in 25077ms (31.90 Mbit/s) to 5000d40201299f42
+12:32:56 [WARNING] Iroh iter 18 sz 100000000: 
+12:33:21 [INFO] send 100001577B via unknown in 25057ms (31.93 Mbit/s) to 5000d40201299f42
+12:33:21 [WARNING] Iroh iter 19 sz 100000000: 
+12:33:47 [INFO] send 100001577B via unknown in 25092ms (31.88 Mbit/s) to 5000d40201299f42
+12:33:47 [WARNING] Iroh iter 20 sz 100000000: 
+12:34:12 [INFO] send 100001577B via unknown in 25206ms (31.74 Mbit/s) to 5000d40201299f42
+12:34:12 [WARNING] Iroh iter 21 sz 100000000: 
+12:34:37 [INFO] send 100001577B via unknown in 25173ms (31.78 Mbit/s) to 5000d40201299f42
+12:34:37 [WARNING] Iroh iter 22 sz 100000000: 
+12:35:03 [INFO] send 100001577B via unknown in 25394ms (31.50 Mbit/s) to 5000d40201299f42
+12:35:03 [WARNING] Iroh iter 23 sz 100000000: 
+12:35:28 [INFO] send 100001577B via unknown in 25378ms (31.52 Mbit/s) to 5000d40201299f42
+12:35:28 [WARNING] Iroh iter 24 sz 100000000: 
+12:35:54 [INFO] send 100001577B via unknown in 25356ms (31.55 Mbit/s) to 5000d40201299f42
+12:35:54 [WARNING] Iroh iter 25 sz 100000000: 
+12:36:19 [INFO] send 100001577B via unknown in 25316ms (31.60 Mbit/s) to 5000d40201299f42
+12:36:19 [WARNING] Iroh iter 26 sz 100000000: 
+12:36:44 [INFO] send 100001577B via unknown in 25056ms (31.93 Mbit/s) to 5000d40201299f42
+12:36:44 [WARNING] Iroh iter 27 sz 100000000: 
+12:37:10 [INFO] send 100001577B via unknown in 25416ms (31.48 Mbit/s) to 5000d40201299f42
+12:37:10 [WARNING] Iroh iter 28 sz 100000000: 
+12:37:35 [INFO] send 100001577B via unknown in 25218ms (31.72 Mbit/s) to 5000d40201299f42
+12:37:35 [WARNING] Iroh iter 29 sz 100000000: 
+12:37:35 [INFO] Running HTTP/2 benchmark…
+12:37:35 [INFO] HTTP/2 bench — payload 100000 bytes
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 100156 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] HTTP/2 bench — payload 1000000 bytes
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 1000157 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] HTTP/2 bench — payload 10000000 bytes
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:35 [INFO] 127.0.0.1 [06/Jun/2026:12:37:35 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 10000158 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:36 [INFO] HTTP/2 bench — payload 100000000 bytes
+12:37:37 [INFO] 127.0.0.1 [06/Jun/2026:12:37:36 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:37 [INFO] 127.0.0.1 [06/Jun/2026:12:37:37 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:38 [INFO] 127.0.0.1 [06/Jun/2026:12:37:37 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:38 [INFO] 127.0.0.1 [06/Jun/2026:12:37:38 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:38 [INFO] 127.0.0.1 [06/Jun/2026:12:37:38 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:39 [INFO] 127.0.0.1 [06/Jun/2026:12:37:39 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:39 [INFO] 127.0.0.1 [06/Jun/2026:12:37:39 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:40 [INFO] 127.0.0.1 [06/Jun/2026:12:37:39 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:40 [INFO] 127.0.0.1 [06/Jun/2026:12:37:40 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:40 [INFO] 127.0.0.1 [06/Jun/2026:12:37:40 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:41 [INFO] 127.0.0.1 [06/Jun/2026:12:37:41 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:41 [INFO] 127.0.0.1 [06/Jun/2026:12:37:41 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:42 [INFO] 127.0.0.1 [06/Jun/2026:12:37:41 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:42 [INFO] 127.0.0.1 [06/Jun/2026:12:37:42 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:43 [INFO] 127.0.0.1 [06/Jun/2026:12:37:42 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:43 [INFO] 127.0.0.1 [06/Jun/2026:12:37:43 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:43 [INFO] 127.0.0.1 [06/Jun/2026:12:37:43 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:44 [INFO] 127.0.0.1 [06/Jun/2026:12:37:43 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:44 [INFO] 127.0.0.1 [06/Jun/2026:12:37:44 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:45 [INFO] 127.0.0.1 [06/Jun/2026:12:37:44 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:45 [INFO] 127.0.0.1 [06/Jun/2026:12:37:45 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:45 [INFO] 127.0.0.1 [06/Jun/2026:12:37:45 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:46 [INFO] 127.0.0.1 [06/Jun/2026:12:37:45 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:46 [INFO] 127.0.0.1 [06/Jun/2026:12:37:46 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:47 [INFO] 127.0.0.1 [06/Jun/2026:12:37:46 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:47 [INFO] 127.0.0.1 [06/Jun/2026:12:37:47 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:47 [INFO] 127.0.0.1 [06/Jun/2026:12:37:47 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:48 [INFO] 127.0.0.1 [06/Jun/2026:12:37:48 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:48 [INFO] 127.0.0.1 [06/Jun/2026:12:37:48 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:49 [INFO] 127.0.0.1 [06/Jun/2026:12:37:48 +0200] "POST / HTTP/1.1" 200 100000159 "-" "Python/3.11 aiohttp/3.14.0"
+12:37:49 [INFO] Raw results: /home/raullb/FL-Iroh/results/e1/e1_microbenchmark.csv (240 rows)
+12:37:49 [INFO] Summary: /home/raullb/FL-Iroh/results/e1/e1_summary.csv

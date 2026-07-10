@@ -1,0 +1,12 @@
+{
+  "job_id":      "6755_1",
+  "array_id":    "6755",
+  "task_id":     1,
+  "git_commit":  "fddcf6a",
+  "status":      "OK",
+  "start_epoch": 1780739840,
+  "end_epoch":   1780747199,
+  "elapsed_sec": 7359,
+  "ncpu":        16,
+  "hostname":    "cn001"
+}

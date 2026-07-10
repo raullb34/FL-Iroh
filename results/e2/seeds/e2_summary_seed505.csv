@@ -1,0 +1,2 @@
+config,partition,alpha,dataset,node_id,architecture,scenario,rounds_total,rounds_success,test_acc_final,test_acc_max,duration_mean_sec,pct_direct,pct_relay,bytes_to_aggregator,seed
+B_iid,iid,0.5,cifar10,server,B,iid,100,100,0.7498,0.759,44.54622227725573,0.0,0.0,38695500,505

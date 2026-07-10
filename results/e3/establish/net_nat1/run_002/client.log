@@ -1,0 +1,49 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/raul/FL-Iroh/experiments/e3_nat_traversal.py", line 360, in <module>
+    main()
+    ~~~~^^
+  File "/home/raul/FL-Iroh/experiments/e3_nat_traversal.py", line 356, in main
+    asyncio.run(main_async(args))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 712, in run_until_complete
+    self.run_forever()
+    ~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 683, in run_forever
+    self._run_once()
+    ~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 2042, in _run_once
+    handle._run()
+    ~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/asyncio/events.py", line 89, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raul/FL-Iroh/experiments/e3_nat_traversal.py", line 292, in main_async
+    await run_client(args.n_iter, scenario, args.server_endpoint, results_dir)
+  File "/home/raul/FL-Iroh/experiments/e3_nat_traversal.py", line 221, in run_client
+    import torch
+  File "/home/raul/FL-Iroh/.venv/lib/python3.13/site-packages/torch/__init__.py", line 443, in <module>
+    _load_global_deps()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/home/raul/FL-Iroh/.venv/lib/python3.13/site-packages/torch/__init__.py", line 394, in _load_global_deps
+    _preload_cuda_deps()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/raul/FL-Iroh/.venv/lib/python3.13/site-packages/torch/__init__.py", line 361, in _preload_cuda_deps
+    _preload_cuda_lib(lib_folder, lib_name)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raul/FL-Iroh/.venv/lib/python3.13/site-packages/torch/__init__.py", line 326, in _preload_cuda_lib
+    ctypes.CDLL(lib_path)
+    ~~~~~~~~~~~^^^^^^^^^^
+  File "/usr/lib/python3.13/ctypes/__init__.py", line 390, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 157, in _on_sigint
+    raise KeyboardInterrupt()
+KeyboardInterrupt

@@ -16,10 +16,18 @@ to locate the script and results for each experiment reported in the paper.
 | E1    | Transport throughput (HTTP/2 vs Iroh)    | `experiments/e1_microbenchmark.py`  | `results/e1/`    |
 | E2    | FL convergence (CIFAR-10, IID/Dirichlet) | `experiments/e2_centralized_fl.py`  | `results/e2*/`   |
 | E3    | NAT traversal (real PC↔RPi WAN)          | `experiments/e3_nat_traversal.py`   | `results/e3/`    |
-| E4    | Churn resilience                         | `experiments/e5_churn.py`           | `results/e5/`    |
+| E4    | Churn resilience                         | `experiments/e5_churn.py`           | `results/e5/` (multi-seed: `results/e5/final-experiment/seeds/`) |
 | E5    | CoAP discovery overhead                  | `experiments/e6_coap_overhead.py`   | `results/e6/`    |
 | E6    | Air-quality FL (AirMLP / Prophet FedGAM) | `experiments/e7_air_quality_fl.py`  | `results/e7/`    |
 | §4.8  | Flower-compatible parity harness (sim)   | `experiments/e8_flower_tailscale.py`| `results/e8/`    |
+
+Additional result sets:
+
+- `results/e3/establish/` — E3 repeated cold-start connection-establishment
+  campaign (150 independent attempts, 30 per scenario; per-run CSV + client log
+  + per-scenario `summary.csv`), produced by `scripts/e3_repeat_establish.sh`.
+- `results/e2_central/` — centralized (K=1) upper-bound baselines, multi-seed,
+  produced by `slurm/run_centralized_baselines.sh`.
 
 Models: `fl_coap_iroh/models/` — AgriMLP (7,734 params), AirMLP (1,987 params),
 SimpleCNN (94,762 params), ProphetWrapper (FedGAM).
@@ -36,7 +44,7 @@ Datasets:
 
 - **Crop Recommendation** (2,200 rows, 22 classes): download from
   [Kaggle: atharvaingle/crop-recommendation-dataset](https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset)
-  and place `Crop_recommendation.csv` under `data/crop/` (see
+  and place `Crop_recommendation.csv` under `data/` (see
   `fl_coap_iroh/data/partition.py`).
 - **Castilla y León air quality** (2011–2019, 10 monitoring zones): processed
   CSVs are included under `data/air-quailty/datasets/` (source: open-data
@@ -91,6 +99,9 @@ Each experiment writes CSV/JSON metrics plus a `.log`, and `.ok`/`.failed`
 sentinels under its results dir. `slurm/collect_results.py` aggregates them.
 Multi-seed summaries are written per seed (`*_summary_seed<S>.csv`).
 
+The per-run outputs backing every table in the paper are committed under
+`results/` (see `.gitignore` for the few excluded scratch patterns).
+
 ## Paper
 
 LaTeX sources under `paper/`:
@@ -101,5 +112,5 @@ LaTeX sources under `paper/`:
 
 ## License / citation
 
-Code: see `pyproject.toml`. If you use FL-Iroh, please cite the paper
-(reference forthcoming upon publication).
+Code is released under the MIT License (see `LICENSE`). If you use FL-Iroh,
+please cite the paper (reference forthcoming upon publication).

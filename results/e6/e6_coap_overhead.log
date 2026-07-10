@@ -1,0 +1,743 @@
+11:57:46 [INFO] E6: n_nodes=10 filter=none
+11:57:46 [INFO] CoAP server [node-0] listening on 0.0.0.0:20000
+11:57:46 [INFO] CoAP server [node-1] listening on 0.0.0.0:20001
+11:57:46 [INFO] CoAP server [node-2] listening on 0.0.0.0:20002
+11:57:46 [INFO] CoAP server [node-3] listening on 0.0.0.0:20003
+11:57:46 [INFO] CoAP server [node-4] listening on 0.0.0.0:20004
+11:57:46 [INFO] CoAP server [node-5] listening on 0.0.0.0:20005
+11:57:46 [INFO] CoAP server [node-6] listening on 0.0.0.0:20006
+11:57:46 [INFO] CoAP server [node-7] listening on 0.0.0.0:20007
+11:57:46 [INFO] CoAP server [node-8] listening on 0.0.0.0:20008
+11:57:46 [INFO] CoAP server [node-9] listening on 0.0.0.0:20009
+11:57:46 [INFO] CoAP server [node-0] stopped
+11:57:46 [INFO] CoAP server [node-1] stopped
+11:57:46 [INFO] CoAP server [node-2] stopped
+11:57:46 [INFO] CoAP server [node-3] stopped
+11:57:46 [INFO] CoAP server [node-4] stopped
+11:57:46 [INFO] CoAP server [node-5] stopped
+11:57:46 [INFO] CoAP server [node-6] stopped
+11:57:46 [INFO] CoAP server [node-7] stopped
+11:57:46 [INFO] CoAP server [node-8] stopped
+11:57:46 [INFO] CoAP server [node-9] stopped
+11:57:46 [INFO] E6: n_nodes=10 filter=semantic
+11:57:46 [INFO] CoAP server [node-0] listening on 0.0.0.0:20020
+11:57:46 [INFO] CoAP server [node-1] listening on 0.0.0.0:20021
+11:57:46 [INFO] CoAP server [node-2] listening on 0.0.0.0:20022
+11:57:46 [INFO] CoAP server [node-3] listening on 0.0.0.0:20023
+11:57:46 [INFO] CoAP server [node-4] listening on 0.0.0.0:20024
+11:57:46 [INFO] CoAP server [node-5] listening on 0.0.0.0:20025
+11:57:46 [INFO] CoAP server [node-6] listening on 0.0.0.0:20026
+11:57:46 [INFO] CoAP server [node-7] listening on 0.0.0.0:20027
+11:57:46 [INFO] CoAP server [node-8] listening on 0.0.0.0:20028
+11:57:46 [INFO] CoAP server [node-9] listening on 0.0.0.0:20029
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.7ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.4ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.0ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.7ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  26.4ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.0ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.4ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.3ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  24.2ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  22.8ms
+11:57:46 [INFO] Discovery: 0/10 nodes capable  23.5ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.4ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.1ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  24.0ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  35.2ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.4ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.3ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.9ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  22.9ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  24.5ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.2ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  24.1ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  22.8ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  24.8ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  22.9ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  24.5ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.4ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.3ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.6ms
+11:57:47 [INFO] Discovery: 0/10 nodes capable  23.1ms
+11:57:47 [INFO] CoAP server [node-0] stopped
+11:57:47 [INFO] CoAP server [node-1] stopped
+11:57:47 [INFO] CoAP server [node-2] stopped
+11:57:47 [INFO] CoAP server [node-3] stopped
+11:57:47 [INFO] CoAP server [node-4] stopped
+11:57:47 [INFO] CoAP server [node-5] stopped
+11:57:47 [INFO] CoAP server [node-6] stopped
+11:57:47 [INFO] CoAP server [node-7] stopped
+11:57:47 [INFO] CoAP server [node-8] stopped
+11:57:47 [INFO] CoAP server [node-9] stopped
+11:57:47 [INFO] E6: n_nodes=50 filter=none
+11:57:47 [INFO] CoAP server [node-0] listening on 0.0.0.0:20040
+11:57:47 [INFO] CoAP server [node-1] listening on 0.0.0.0:20041
+11:57:47 [INFO] CoAP server [node-2] listening on 0.0.0.0:20042
+11:57:47 [INFO] CoAP server [node-3] listening on 0.0.0.0:20043
+11:57:47 [INFO] CoAP server [node-4] listening on 0.0.0.0:20044
+11:57:47 [INFO] CoAP server [node-5] listening on 0.0.0.0:20045
+11:57:47 [INFO] CoAP server [node-6] listening on 0.0.0.0:20046
+11:57:47 [INFO] CoAP server [node-7] listening on 0.0.0.0:20047
+11:57:47 [INFO] CoAP server [node-8] listening on 0.0.0.0:20049
+11:57:47 [INFO] CoAP server [node-9] listening on 0.0.0.0:20050
+11:57:47 [INFO] CoAP server [node-10] listening on 0.0.0.0:20051
+11:57:47 [INFO] CoAP server [node-11] listening on 0.0.0.0:20052
+11:57:47 [INFO] CoAP server [node-12] listening on 0.0.0.0:20053
+11:57:47 [INFO] CoAP server [node-13] listening on 0.0.0.0:20054
+11:57:47 [INFO] CoAP server [node-14] listening on 0.0.0.0:20055
+11:57:47 [INFO] CoAP server [node-15] listening on 0.0.0.0:20056
+11:57:47 [INFO] CoAP server [node-16] listening on 0.0.0.0:20057
+11:57:47 [INFO] CoAP server [node-17] listening on 0.0.0.0:20058
+11:57:47 [INFO] CoAP server [node-18] listening on 0.0.0.0:20059
+11:57:47 [INFO] CoAP server [node-19] listening on 0.0.0.0:20060
+11:57:47 [INFO] CoAP server [node-20] listening on 0.0.0.0:20061
+11:57:47 [INFO] CoAP server [node-21] listening on 0.0.0.0:20062
+11:57:47 [INFO] CoAP server [node-22] listening on 0.0.0.0:20063
+11:57:47 [INFO] CoAP server [node-23] listening on 0.0.0.0:20064
+11:57:47 [INFO] CoAP server [node-24] listening on 0.0.0.0:20065
+11:57:47 [INFO] CoAP server [node-25] listening on 0.0.0.0:20066
+11:57:47 [INFO] CoAP server [node-26] listening on 0.0.0.0:20067
+11:57:47 [INFO] CoAP server [node-27] listening on 0.0.0.0:20068
+11:57:47 [INFO] CoAP server [node-28] listening on 0.0.0.0:20069
+11:57:47 [INFO] CoAP server [node-29] listening on 0.0.0.0:20070
+11:57:47 [INFO] CoAP server [node-30] listening on 0.0.0.0:20071
+11:57:47 [INFO] CoAP server [node-31] listening on 0.0.0.0:20072
+11:57:47 [INFO] CoAP server [node-32] listening on 0.0.0.0:20073
+11:57:47 [INFO] CoAP server [node-33] listening on 0.0.0.0:20074
+11:57:47 [INFO] CoAP server [node-34] listening on 0.0.0.0:20075
+11:57:47 [INFO] CoAP server [node-35] listening on 0.0.0.0:20076
+11:57:47 [INFO] CoAP server [node-36] listening on 0.0.0.0:20077
+11:57:47 [INFO] CoAP server [node-37] listening on 0.0.0.0:20078
+11:57:47 [INFO] CoAP server [node-38] listening on 0.0.0.0:20079
+11:57:47 [INFO] CoAP server [node-39] listening on 0.0.0.0:20080
+11:57:47 [INFO] CoAP server [node-40] listening on 0.0.0.0:20081
+11:57:47 [INFO] CoAP server [node-41] listening on 0.0.0.0:20082
+11:57:47 [INFO] CoAP server [node-42] listening on 0.0.0.0:20083
+11:57:47 [INFO] CoAP server [node-43] listening on 0.0.0.0:20084
+11:57:47 [INFO] CoAP server [node-44] listening on 0.0.0.0:20085
+11:57:47 [INFO] CoAP server [node-45] listening on 0.0.0.0:20086
+11:57:47 [INFO] CoAP server [node-46] listening on 0.0.0.0:20087
+11:57:47 [INFO] CoAP server [node-47] listening on 0.0.0.0:20088
+11:57:47 [INFO] CoAP server [node-48] listening on 0.0.0.0:20089
+11:57:47 [INFO] CoAP server [node-49] listening on 0.0.0.0:20090
+11:57:47 [INFO] CoAP server [node-0] stopped
+11:57:47 [INFO] CoAP server [node-1] stopped
+11:57:47 [INFO] CoAP server [node-2] stopped
+11:57:47 [INFO] CoAP server [node-3] stopped
+11:57:47 [INFO] CoAP server [node-4] stopped
+11:57:47 [INFO] CoAP server [node-5] stopped
+11:57:47 [INFO] CoAP server [node-6] stopped
+11:57:47 [INFO] CoAP server [node-7] stopped
+11:57:47 [INFO] CoAP server [node-8] stopped
+11:57:47 [INFO] CoAP server [node-9] stopped
+11:57:47 [INFO] CoAP server [node-10] stopped
+11:57:47 [INFO] CoAP server [node-11] stopped
+11:57:47 [INFO] CoAP server [node-12] stopped
+11:57:47 [INFO] CoAP server [node-13] stopped
+11:57:47 [INFO] CoAP server [node-14] stopped
+11:57:47 [INFO] CoAP server [node-15] stopped
+11:57:47 [INFO] CoAP server [node-16] stopped
+11:57:47 [INFO] CoAP server [node-17] stopped
+11:57:47 [INFO] CoAP server [node-18] stopped
+11:57:47 [INFO] CoAP server [node-19] stopped
+11:57:47 [INFO] CoAP server [node-20] stopped
+11:57:47 [INFO] CoAP server [node-21] stopped
+11:57:47 [INFO] CoAP server [node-22] stopped
+11:57:47 [INFO] CoAP server [node-23] stopped
+11:57:47 [INFO] CoAP server [node-24] stopped
+11:57:47 [INFO] CoAP server [node-25] stopped
+11:57:47 [INFO] CoAP server [node-26] stopped
+11:57:47 [INFO] CoAP server [node-27] stopped
+11:57:47 [INFO] CoAP server [node-28] stopped
+11:57:47 [INFO] CoAP server [node-29] stopped
+11:57:47 [INFO] CoAP server [node-30] stopped
+11:57:47 [INFO] CoAP server [node-31] stopped
+11:57:47 [INFO] CoAP server [node-32] stopped
+11:57:47 [INFO] CoAP server [node-33] stopped
+11:57:47 [INFO] CoAP server [node-34] stopped
+11:57:47 [INFO] CoAP server [node-35] stopped
+11:57:47 [INFO] CoAP server [node-36] stopped
+11:57:47 [INFO] CoAP server [node-37] stopped
+11:57:47 [INFO] CoAP server [node-38] stopped
+11:57:47 [INFO] CoAP server [node-39] stopped
+11:57:47 [INFO] CoAP server [node-40] stopped
+11:57:47 [INFO] CoAP server [node-41] stopped
+11:57:47 [INFO] CoAP server [node-42] stopped
+11:57:47 [INFO] CoAP server [node-43] stopped
+11:57:47 [INFO] CoAP server [node-44] stopped
+11:57:47 [INFO] CoAP server [node-45] stopped
+11:57:47 [INFO] CoAP server [node-46] stopped
+11:57:47 [INFO] CoAP server [node-47] stopped
+11:57:47 [INFO] CoAP server [node-48] stopped
+11:57:47 [INFO] CoAP server [node-49] stopped
+11:57:47 [INFO] E6: n_nodes=50 filter=semantic
+11:57:47 [INFO] CoAP server [node-0] listening on 0.0.0.0:20100
+11:57:47 [INFO] CoAP server [node-1] listening on 0.0.0.0:20101
+11:57:47 [INFO] CoAP server [node-2] listening on 0.0.0.0:20102
+11:57:47 [INFO] CoAP server [node-3] listening on 0.0.0.0:20103
+11:57:47 [INFO] CoAP server [node-4] listening on 0.0.0.0:20104
+11:57:47 [INFO] CoAP server [node-5] listening on 0.0.0.0:20105
+11:57:47 [INFO] CoAP server [node-6] listening on 0.0.0.0:20106
+11:57:47 [INFO] CoAP server [node-7] listening on 0.0.0.0:20107
+11:57:47 [INFO] CoAP server [node-8] listening on 0.0.0.0:20108
+11:57:47 [INFO] CoAP server [node-9] listening on 0.0.0.0:20109
+11:57:47 [INFO] CoAP server [node-10] listening on 0.0.0.0:20110
+11:57:47 [INFO] CoAP server [node-11] listening on 0.0.0.0:20111
+11:57:47 [INFO] CoAP server [node-12] listening on 0.0.0.0:20112
+11:57:47 [INFO] CoAP server [node-13] listening on 0.0.0.0:20113
+11:57:47 [INFO] CoAP server [node-14] listening on 0.0.0.0:20114
+11:57:47 [INFO] CoAP server [node-15] listening on 0.0.0.0:20115
+11:57:47 [INFO] CoAP server [node-16] listening on 0.0.0.0:20116
+11:57:47 [INFO] CoAP server [node-17] listening on 0.0.0.0:20117
+11:57:47 [INFO] CoAP server [node-18] listening on 0.0.0.0:20118
+11:57:47 [INFO] CoAP server [node-19] listening on 0.0.0.0:20119
+11:57:47 [INFO] CoAP server [node-20] listening on 0.0.0.0:20120
+11:57:47 [INFO] CoAP server [node-21] listening on 0.0.0.0:20121
+11:57:47 [INFO] CoAP server [node-22] listening on 0.0.0.0:20122
+11:57:47 [INFO] CoAP server [node-23] listening on 0.0.0.0:20123
+11:57:47 [INFO] CoAP server [node-24] listening on 0.0.0.0:20124
+11:57:47 [INFO] CoAP server [node-25] listening on 0.0.0.0:20125
+11:57:47 [INFO] CoAP server [node-26] listening on 0.0.0.0:20126
+11:57:47 [INFO] CoAP server [node-27] listening on 0.0.0.0:20127
+11:57:47 [INFO] CoAP server [node-28] listening on 0.0.0.0:20128
+11:57:47 [INFO] CoAP server [node-29] listening on 0.0.0.0:20129
+11:57:47 [INFO] CoAP server [node-30] listening on 0.0.0.0:20130
+11:57:47 [INFO] CoAP server [node-31] listening on 0.0.0.0:20131
+11:57:47 [INFO] CoAP server [node-32] listening on 0.0.0.0:20132
+11:57:47 [INFO] CoAP server [node-33] listening on 0.0.0.0:20133
+11:57:47 [INFO] CoAP server [node-34] listening on 0.0.0.0:20134
+11:57:47 [INFO] CoAP server [node-35] listening on 0.0.0.0:20135
+11:57:47 [INFO] CoAP server [node-36] listening on 0.0.0.0:20136
+11:57:47 [INFO] CoAP server [node-37] listening on 0.0.0.0:20137
+11:57:47 [INFO] CoAP server [node-38] listening on 0.0.0.0:20138
+11:57:47 [INFO] CoAP server [node-39] listening on 0.0.0.0:20139
+11:57:47 [INFO] CoAP server [node-40] listening on 0.0.0.0:20140
+11:57:47 [INFO] CoAP server [node-41] listening on 0.0.0.0:20141
+11:57:47 [INFO] CoAP server [node-42] listening on 0.0.0.0:20142
+11:57:47 [INFO] CoAP server [node-43] listening on 0.0.0.0:20143
+11:57:47 [INFO] CoAP server [node-44] listening on 0.0.0.0:20144
+11:57:47 [INFO] CoAP server [node-45] listening on 0.0.0.0:20145
+11:57:47 [INFO] CoAP server [node-46] listening on 0.0.0.0:20146
+11:57:47 [INFO] CoAP server [node-47] listening on 0.0.0.0:20147
+11:57:47 [INFO] CoAP server [node-48] listening on 0.0.0.0:20148
+11:57:47 [INFO] CoAP server [node-49] listening on 0.0.0.0:20149
+11:57:47 [INFO] Discovery: 0/50 nodes capable  130.4ms
+11:57:47 [INFO] Discovery: 0/50 nodes capable  129.4ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  127.5ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  129.0ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  128.7ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  127.5ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  156.6ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  129.6ms
+11:57:48 [INFO] Discovery: 0/50 nodes capable  132.1ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  129.9ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  127.6ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  129.0ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  127.9ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  127.7ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  128.5ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  125.3ms
+11:57:49 [INFO] Discovery: 0/50 nodes capable  127.5ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  125.9ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  162.8ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  131.0ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  129.8ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  129.0ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  128.8ms
+11:57:50 [INFO] Discovery: 0/50 nodes capable  133.9ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  128.6ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  127.9ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  127.3ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  126.7ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  126.6ms
+11:57:51 [INFO] Discovery: 0/50 nodes capable  127.1ms
+11:57:51 [INFO] CoAP server [node-0] stopped
+11:57:51 [INFO] CoAP server [node-1] stopped
+11:57:51 [INFO] CoAP server [node-2] stopped
+11:57:51 [INFO] CoAP server [node-3] stopped
+11:57:51 [INFO] CoAP server [node-4] stopped
+11:57:51 [INFO] CoAP server [node-5] stopped
+11:57:51 [INFO] CoAP server [node-6] stopped
+11:57:51 [INFO] CoAP server [node-7] stopped
+11:57:51 [INFO] CoAP server [node-8] stopped
+11:57:51 [INFO] CoAP server [node-9] stopped
+11:57:51 [INFO] CoAP server [node-10] stopped
+11:57:51 [INFO] CoAP server [node-11] stopped
+11:57:51 [INFO] CoAP server [node-12] stopped
+11:57:51 [INFO] CoAP server [node-13] stopped
+11:57:51 [INFO] CoAP server [node-14] stopped
+11:57:51 [INFO] CoAP server [node-15] stopped
+11:57:51 [INFO] CoAP server [node-16] stopped
+11:57:51 [INFO] CoAP server [node-17] stopped
+11:57:51 [INFO] CoAP server [node-18] stopped
+11:57:51 [INFO] CoAP server [node-19] stopped
+11:57:51 [INFO] CoAP server [node-20] stopped
+11:57:51 [INFO] CoAP server [node-21] stopped
+11:57:51 [INFO] CoAP server [node-22] stopped
+11:57:51 [INFO] CoAP server [node-23] stopped
+11:57:51 [INFO] CoAP server [node-24] stopped
+11:57:51 [INFO] CoAP server [node-25] stopped
+11:57:51 [INFO] CoAP server [node-26] stopped
+11:57:51 [INFO] CoAP server [node-27] stopped
+11:57:51 [INFO] CoAP server [node-28] stopped
+11:57:51 [INFO] CoAP server [node-29] stopped
+11:57:51 [INFO] CoAP server [node-30] stopped
+11:57:51 [INFO] CoAP server [node-31] stopped
+11:57:51 [INFO] CoAP server [node-32] stopped
+11:57:51 [INFO] CoAP server [node-33] stopped
+11:57:51 [INFO] CoAP server [node-34] stopped
+11:57:51 [INFO] CoAP server [node-35] stopped
+11:57:51 [INFO] CoAP server [node-36] stopped
+11:57:51 [INFO] CoAP server [node-37] stopped
+11:57:51 [INFO] CoAP server [node-38] stopped
+11:57:51 [INFO] CoAP server [node-39] stopped
+11:57:51 [INFO] CoAP server [node-40] stopped
+11:57:51 [INFO] CoAP server [node-41] stopped
+11:57:51 [INFO] CoAP server [node-42] stopped
+11:57:51 [INFO] CoAP server [node-43] stopped
+11:57:51 [INFO] CoAP server [node-44] stopped
+11:57:51 [INFO] CoAP server [node-45] stopped
+11:57:51 [INFO] CoAP server [node-46] stopped
+11:57:51 [INFO] CoAP server [node-47] stopped
+11:57:51 [INFO] CoAP server [node-48] stopped
+11:57:51 [INFO] CoAP server [node-49] stopped
+11:57:51 [INFO] E6: n_nodes=100 filter=none
+11:57:51 [INFO] CoAP server [node-0] listening on 0.0.0.0:20160
+11:57:51 [INFO] CoAP server [node-1] listening on 0.0.0.0:20161
+11:57:51 [INFO] CoAP server [node-2] listening on 0.0.0.0:20162
+11:57:51 [INFO] CoAP server [node-3] listening on 0.0.0.0:20163
+11:57:51 [INFO] CoAP server [node-4] listening on 0.0.0.0:20164
+11:57:51 [INFO] CoAP server [node-5] listening on 0.0.0.0:20165
+11:57:51 [INFO] CoAP server [node-6] listening on 0.0.0.0:20166
+11:57:51 [INFO] CoAP server [node-7] listening on 0.0.0.0:20167
+11:57:51 [INFO] CoAP server [node-8] listening on 0.0.0.0:20168
+11:57:51 [INFO] CoAP server [node-9] listening on 0.0.0.0:20169
+11:57:51 [INFO] CoAP server [node-10] listening on 0.0.0.0:20170
+11:57:51 [INFO] CoAP server [node-11] listening on 0.0.0.0:20171
+11:57:51 [INFO] CoAP server [node-12] listening on 0.0.0.0:20172
+11:57:51 [INFO] CoAP server [node-13] listening on 0.0.0.0:20173
+11:57:51 [INFO] CoAP server [node-14] listening on 0.0.0.0:20174
+11:57:51 [INFO] CoAP server [node-15] listening on 0.0.0.0:20175
+11:57:51 [INFO] CoAP server [node-16] listening on 0.0.0.0:20176
+11:57:51 [INFO] CoAP server [node-17] listening on 0.0.0.0:20177
+11:57:51 [INFO] CoAP server [node-18] listening on 0.0.0.0:20178
+11:57:51 [INFO] CoAP server [node-19] listening on 0.0.0.0:20179
+11:57:51 [INFO] CoAP server [node-20] listening on 0.0.0.0:20180
+11:57:51 [INFO] CoAP server [node-21] listening on 0.0.0.0:20181
+11:57:51 [INFO] CoAP server [node-22] listening on 0.0.0.0:20182
+11:57:51 [INFO] CoAP server [node-23] listening on 0.0.0.0:20183
+11:57:51 [INFO] CoAP server [node-24] listening on 0.0.0.0:20184
+11:57:51 [INFO] CoAP server [node-25] listening on 0.0.0.0:20185
+11:57:51 [INFO] CoAP server [node-26] listening on 0.0.0.0:20186
+11:57:51 [INFO] CoAP server [node-27] listening on 0.0.0.0:20187
+11:57:51 [INFO] CoAP server [node-28] listening on 0.0.0.0:20188
+11:57:51 [INFO] CoAP server [node-29] listening on 0.0.0.0:20189
+11:57:51 [INFO] CoAP server [node-30] listening on 0.0.0.0:20190
+11:57:51 [INFO] CoAP server [node-31] listening on 0.0.0.0:20191
+11:57:51 [INFO] CoAP server [node-32] listening on 0.0.0.0:20192
+11:57:51 [INFO] CoAP server [node-33] listening on 0.0.0.0:20193
+11:57:51 [INFO] CoAP server [node-34] listening on 0.0.0.0:20194
+11:57:51 [INFO] CoAP server [node-35] listening on 0.0.0.0:20195
+11:57:51 [INFO] CoAP server [node-36] listening on 0.0.0.0:20196
+11:57:51 [INFO] CoAP server [node-37] listening on 0.0.0.0:20197
+11:57:51 [INFO] CoAP server [node-38] listening on 0.0.0.0:20198
+11:57:51 [INFO] CoAP server [node-39] listening on 0.0.0.0:20199
+11:57:51 [INFO] CoAP server [node-40] listening on 0.0.0.0:20200
+11:57:51 [INFO] CoAP server [node-41] listening on 0.0.0.0:20201
+11:57:51 [INFO] CoAP server [node-42] listening on 0.0.0.0:20202
+11:57:51 [INFO] CoAP server [node-43] listening on 0.0.0.0:20203
+11:57:51 [INFO] CoAP server [node-44] listening on 0.0.0.0:20204
+11:57:51 [INFO] CoAP server [node-45] listening on 0.0.0.0:20205
+11:57:51 [INFO] CoAP server [node-46] listening on 0.0.0.0:20206
+11:57:51 [INFO] CoAP server [node-47] listening on 0.0.0.0:20207
+11:57:51 [INFO] CoAP server [node-48] listening on 0.0.0.0:20208
+11:57:51 [INFO] CoAP server [node-49] listening on 0.0.0.0:20209
+11:57:51 [INFO] CoAP server [node-50] listening on 0.0.0.0:20210
+11:57:51 [INFO] CoAP server [node-51] listening on 0.0.0.0:20211
+11:57:51 [INFO] CoAP server [node-52] listening on 0.0.0.0:20212
+11:57:51 [INFO] CoAP server [node-53] listening on 0.0.0.0:20213
+11:57:51 [INFO] CoAP server [node-54] listening on 0.0.0.0:20214
+11:57:51 [INFO] CoAP server [node-55] listening on 0.0.0.0:20215
+11:57:51 [INFO] CoAP server [node-56] listening on 0.0.0.0:20216
+11:57:51 [INFO] CoAP server [node-57] listening on 0.0.0.0:20217
+11:57:51 [INFO] CoAP server [node-58] listening on 0.0.0.0:20218
+11:57:51 [INFO] CoAP server [node-59] listening on 0.0.0.0:20219
+11:57:51 [INFO] CoAP server [node-60] listening on 0.0.0.0:20220
+11:57:51 [INFO] CoAP server [node-61] listening on 0.0.0.0:20221
+11:57:51 [INFO] CoAP server [node-62] listening on 0.0.0.0:20222
+11:57:51 [INFO] CoAP server [node-63] listening on 0.0.0.0:20223
+11:57:51 [INFO] CoAP server [node-64] listening on 0.0.0.0:20224
+11:57:51 [INFO] CoAP server [node-65] listening on 0.0.0.0:20225
+11:57:51 [INFO] CoAP server [node-66] listening on 0.0.0.0:20226
+11:57:51 [INFO] CoAP server [node-67] listening on 0.0.0.0:20227
+11:57:51 [INFO] CoAP server [node-68] listening on 0.0.0.0:20228
+11:57:51 [INFO] CoAP server [node-69] listening on 0.0.0.0:20229
+11:57:51 [INFO] CoAP server [node-70] listening on 0.0.0.0:20230
+11:57:51 [INFO] CoAP server [node-71] listening on 0.0.0.0:20231
+11:57:51 [INFO] CoAP server [node-72] listening on 0.0.0.0:20232
+11:57:51 [INFO] CoAP server [node-73] listening on 0.0.0.0:20233
+11:57:51 [INFO] CoAP server [node-74] listening on 0.0.0.0:20234
+11:57:51 [INFO] CoAP server [node-75] listening on 0.0.0.0:20235
+11:57:51 [INFO] CoAP server [node-76] listening on 0.0.0.0:20236
+11:57:51 [INFO] CoAP server [node-77] listening on 0.0.0.0:20237
+11:57:51 [INFO] CoAP server [node-78] listening on 0.0.0.0:20238
+11:57:51 [INFO] CoAP server [node-79] listening on 0.0.0.0:20239
+11:57:51 [INFO] CoAP server [node-80] listening on 0.0.0.0:20240
+11:57:51 [INFO] CoAP server [node-81] listening on 0.0.0.0:20241
+11:57:51 [INFO] CoAP server [node-82] listening on 0.0.0.0:20242
+11:57:51 [INFO] CoAP server [node-83] listening on 0.0.0.0:20243
+11:57:51 [INFO] CoAP server [node-84] listening on 0.0.0.0:20244
+11:57:51 [INFO] CoAP server [node-85] listening on 0.0.0.0:20245
+11:57:51 [INFO] CoAP server [node-86] listening on 0.0.0.0:20246
+11:57:51 [INFO] CoAP server [node-87] listening on 0.0.0.0:20247
+11:57:51 [INFO] CoAP server [node-88] listening on 0.0.0.0:20248
+11:57:51 [INFO] CoAP server [node-89] listening on 0.0.0.0:20249
+11:57:51 [INFO] CoAP server [node-90] listening on 0.0.0.0:20250
+11:57:51 [INFO] CoAP server [node-91] listening on 0.0.0.0:20251
+11:57:51 [INFO] CoAP server [node-92] listening on 0.0.0.0:20252
+11:57:51 [INFO] CoAP server [node-93] listening on 0.0.0.0:20253
+11:57:51 [INFO] CoAP server [node-94] listening on 0.0.0.0:20254
+11:57:51 [INFO] CoAP server [node-95] listening on 0.0.0.0:20255
+11:57:51 [INFO] CoAP server [node-96] listening on 0.0.0.0:20256
+11:57:51 [INFO] CoAP server [node-97] listening on 0.0.0.0:20257
+11:57:51 [INFO] CoAP server [node-98] listening on 0.0.0.0:20258
+11:57:51 [INFO] CoAP server [node-99] listening on 0.0.0.0:20259
+11:57:51 [INFO] CoAP server [node-0] stopped
+11:57:51 [INFO] CoAP server [node-1] stopped
+11:57:51 [INFO] CoAP server [node-2] stopped
+11:57:51 [INFO] CoAP server [node-3] stopped
+11:57:51 [INFO] CoAP server [node-4] stopped
+11:57:51 [INFO] CoAP server [node-5] stopped
+11:57:51 [INFO] CoAP server [node-6] stopped
+11:57:51 [INFO] CoAP server [node-7] stopped
+11:57:51 [INFO] CoAP server [node-8] stopped
+11:57:51 [INFO] CoAP server [node-9] stopped
+11:57:51 [INFO] CoAP server [node-10] stopped
+11:57:51 [INFO] CoAP server [node-11] stopped
+11:57:51 [INFO] CoAP server [node-12] stopped
+11:57:51 [INFO] CoAP server [node-13] stopped
+11:57:51 [INFO] CoAP server [node-14] stopped
+11:57:51 [INFO] CoAP server [node-15] stopped
+11:57:51 [INFO] CoAP server [node-16] stopped
+11:57:51 [INFO] CoAP server [node-17] stopped
+11:57:51 [INFO] CoAP server [node-18] stopped
+11:57:51 [INFO] CoAP server [node-19] stopped
+11:57:51 [INFO] CoAP server [node-20] stopped
+11:57:51 [INFO] CoAP server [node-21] stopped
+11:57:51 [INFO] CoAP server [node-22] stopped
+11:57:51 [INFO] CoAP server [node-23] stopped
+11:57:51 [INFO] CoAP server [node-24] stopped
+11:57:51 [INFO] CoAP server [node-25] stopped
+11:57:51 [INFO] CoAP server [node-26] stopped
+11:57:51 [INFO] CoAP server [node-27] stopped
+11:57:51 [INFO] CoAP server [node-28] stopped
+11:57:51 [INFO] CoAP server [node-29] stopped
+11:57:51 [INFO] CoAP server [node-30] stopped
+11:57:51 [INFO] CoAP server [node-31] stopped
+11:57:51 [INFO] CoAP server [node-32] stopped
+11:57:51 [INFO] CoAP server [node-33] stopped
+11:57:51 [INFO] CoAP server [node-34] stopped
+11:57:51 [INFO] CoAP server [node-35] stopped
+11:57:51 [INFO] CoAP server [node-36] stopped
+11:57:51 [INFO] CoAP server [node-37] stopped
+11:57:51 [INFO] CoAP server [node-38] stopped
+11:57:51 [INFO] CoAP server [node-39] stopped
+11:57:51 [INFO] CoAP server [node-40] stopped
+11:57:51 [INFO] CoAP server [node-41] stopped
+11:57:51 [INFO] CoAP server [node-42] stopped
+11:57:51 [INFO] CoAP server [node-43] stopped
+11:57:51 [INFO] CoAP server [node-44] stopped
+11:57:51 [INFO] CoAP server [node-45] stopped
+11:57:51 [INFO] CoAP server [node-46] stopped
+11:57:51 [INFO] CoAP server [node-47] stopped
+11:57:51 [INFO] CoAP server [node-48] stopped
+11:57:51 [INFO] CoAP server [node-49] stopped
+11:57:51 [INFO] CoAP server [node-50] stopped
+11:57:51 [INFO] CoAP server [node-51] stopped
+11:57:51 [INFO] CoAP server [node-52] stopped
+11:57:51 [INFO] CoAP server [node-53] stopped
+11:57:51 [INFO] CoAP server [node-54] stopped
+11:57:51 [INFO] CoAP server [node-55] stopped
+11:57:51 [INFO] CoAP server [node-56] stopped
+11:57:51 [INFO] CoAP server [node-57] stopped
+11:57:51 [INFO] CoAP server [node-58] stopped
+11:57:51 [INFO] CoAP server [node-59] stopped
+11:57:51 [INFO] CoAP server [node-60] stopped
+11:57:51 [INFO] CoAP server [node-61] stopped
+11:57:51 [INFO] CoAP server [node-62] stopped
+11:57:51 [INFO] CoAP server [node-63] stopped
+11:57:51 [INFO] CoAP server [node-64] stopped
+11:57:51 [INFO] CoAP server [node-65] stopped
+11:57:51 [INFO] CoAP server [node-66] stopped
+11:57:51 [INFO] CoAP server [node-67] stopped
+11:57:51 [INFO] CoAP server [node-68] stopped
+11:57:51 [INFO] CoAP server [node-69] stopped
+11:57:51 [INFO] CoAP server [node-70] stopped
+11:57:51 [INFO] CoAP server [node-71] stopped
+11:57:51 [INFO] CoAP server [node-72] stopped
+11:57:51 [INFO] CoAP server [node-73] stopped
+11:57:51 [INFO] CoAP server [node-74] stopped
+11:57:51 [INFO] CoAP server [node-75] stopped
+11:57:51 [INFO] CoAP server [node-76] stopped
+11:57:51 [INFO] CoAP server [node-77] stopped
+11:57:51 [INFO] CoAP server [node-78] stopped
+11:57:51 [INFO] CoAP server [node-79] stopped
+11:57:51 [INFO] CoAP server [node-80] stopped
+11:57:51 [INFO] CoAP server [node-81] stopped
+11:57:51 [INFO] CoAP server [node-82] stopped
+11:57:51 [INFO] CoAP server [node-83] stopped
+11:57:51 [INFO] CoAP server [node-84] stopped
+11:57:51 [INFO] CoAP server [node-85] stopped
+11:57:51 [INFO] CoAP server [node-86] stopped
+11:57:51 [INFO] CoAP server [node-87] stopped
+11:57:51 [INFO] CoAP server [node-88] stopped
+11:57:51 [INFO] CoAP server [node-89] stopped
+11:57:51 [INFO] CoAP server [node-90] stopped
+11:57:51 [INFO] CoAP server [node-91] stopped
+11:57:51 [INFO] CoAP server [node-92] stopped
+11:57:51 [INFO] CoAP server [node-93] stopped
+11:57:51 [INFO] CoAP server [node-94] stopped
+11:57:51 [INFO] CoAP server [node-95] stopped
+11:57:51 [INFO] CoAP server [node-96] stopped
+11:57:51 [INFO] CoAP server [node-97] stopped
+11:57:51 [INFO] CoAP server [node-98] stopped
+11:57:51 [INFO] CoAP server [node-99] stopped
+11:57:51 [INFO] E6: n_nodes=100 filter=semantic
+11:57:51 [INFO] CoAP server [node-0] listening on 0.0.0.0:20270
+11:57:51 [INFO] CoAP server [node-1] listening on 0.0.0.0:20271
+11:57:51 [INFO] CoAP server [node-2] listening on 0.0.0.0:20272
+11:57:51 [INFO] CoAP server [node-3] listening on 0.0.0.0:20273
+11:57:51 [INFO] CoAP server [node-4] listening on 0.0.0.0:20274
+11:57:51 [INFO] CoAP server [node-5] listening on 0.0.0.0:20275
+11:57:51 [INFO] CoAP server [node-6] listening on 0.0.0.0:20276
+11:57:51 [INFO] CoAP server [node-7] listening on 0.0.0.0:20277
+11:57:51 [INFO] CoAP server [node-8] listening on 0.0.0.0:20278
+11:57:51 [INFO] CoAP server [node-9] listening on 0.0.0.0:20279
+11:57:51 [INFO] CoAP server [node-10] listening on 0.0.0.0:20280
+11:57:51 [INFO] CoAP server [node-11] listening on 0.0.0.0:20281
+11:57:51 [INFO] CoAP server [node-12] listening on 0.0.0.0:20282
+11:57:52 [INFO] CoAP server [node-13] listening on 0.0.0.0:20283
+11:57:52 [INFO] CoAP server [node-14] listening on 0.0.0.0:20284
+11:57:52 [INFO] CoAP server [node-15] listening on 0.0.0.0:20285
+11:57:52 [INFO] CoAP server [node-16] listening on 0.0.0.0:20286
+11:57:52 [INFO] CoAP server [node-17] listening on 0.0.0.0:20287
+11:57:52 [INFO] CoAP server [node-18] listening on 0.0.0.0:20288
+11:57:52 [INFO] CoAP server [node-19] listening on 0.0.0.0:20289
+11:57:52 [INFO] CoAP server [node-20] listening on 0.0.0.0:20290
+11:57:52 [INFO] CoAP server [node-21] listening on 0.0.0.0:20291
+11:57:52 [INFO] CoAP server [node-22] listening on 0.0.0.0:20292
+11:57:52 [INFO] CoAP server [node-23] listening on 0.0.0.0:20293
+11:57:52 [INFO] CoAP server [node-24] listening on 0.0.0.0:20294
+11:57:52 [INFO] CoAP server [node-25] listening on 0.0.0.0:20295
+11:57:52 [INFO] CoAP server [node-26] listening on 0.0.0.0:20296
+11:57:52 [INFO] CoAP server [node-27] listening on 0.0.0.0:20297
+11:57:52 [INFO] CoAP server [node-28] listening on 0.0.0.0:20298
+11:57:52 [INFO] CoAP server [node-29] listening on 0.0.0.0:20299
+11:57:52 [INFO] CoAP server [node-30] listening on 0.0.0.0:20300
+11:57:52 [INFO] CoAP server [node-31] listening on 0.0.0.0:20301
+11:57:52 [INFO] CoAP server [node-32] listening on 0.0.0.0:20302
+11:57:52 [INFO] CoAP server [node-33] listening on 0.0.0.0:20303
+11:57:52 [INFO] CoAP server [node-34] listening on 0.0.0.0:20304
+11:57:52 [INFO] CoAP server [node-35] listening on 0.0.0.0:20305
+11:57:52 [INFO] CoAP server [node-36] listening on 0.0.0.0:20306
+11:57:52 [INFO] CoAP server [node-37] listening on 0.0.0.0:20307
+11:57:52 [INFO] CoAP server [node-38] listening on 0.0.0.0:20308
+11:57:52 [INFO] CoAP server [node-39] listening on 0.0.0.0:20309
+11:57:52 [INFO] CoAP server [node-40] listening on 0.0.0.0:20310
+11:57:52 [INFO] CoAP server [node-41] listening on 0.0.0.0:20311
+11:57:52 [INFO] CoAP server [node-42] listening on 0.0.0.0:20312
+11:57:52 [INFO] CoAP server [node-43] listening on 0.0.0.0:20313
+11:57:52 [INFO] CoAP server [node-44] listening on 0.0.0.0:20314
+11:57:52 [INFO] CoAP server [node-45] listening on 0.0.0.0:20315
+11:57:52 [INFO] CoAP server [node-46] listening on 0.0.0.0:20316
+11:57:52 [INFO] CoAP server [node-47] listening on 0.0.0.0:20317
+11:57:52 [INFO] CoAP server [node-48] listening on 0.0.0.0:20318
+11:57:52 [INFO] CoAP server [node-49] listening on 0.0.0.0:20319
+11:57:52 [INFO] CoAP server [node-50] listening on 0.0.0.0:20320
+11:57:52 [INFO] CoAP server [node-51] listening on 0.0.0.0:20321
+11:57:52 [INFO] CoAP server [node-52] listening on 0.0.0.0:20322
+11:57:52 [INFO] CoAP server [node-53] listening on 0.0.0.0:20323
+11:57:52 [INFO] CoAP server [node-54] listening on 0.0.0.0:20324
+11:57:52 [INFO] CoAP server [node-55] listening on 0.0.0.0:20325
+11:57:52 [INFO] CoAP server [node-56] listening on 0.0.0.0:20326
+11:57:52 [INFO] CoAP server [node-57] listening on 0.0.0.0:20327
+11:57:52 [INFO] CoAP server [node-58] listening on 0.0.0.0:20328
+11:57:52 [INFO] CoAP server [node-59] listening on 0.0.0.0:20329
+11:57:52 [INFO] CoAP server [node-60] listening on 0.0.0.0:20330
+11:57:52 [INFO] CoAP server [node-61] listening on 0.0.0.0:20331
+11:57:52 [INFO] CoAP server [node-62] listening on 0.0.0.0:20332
+11:57:52 [INFO] CoAP server [node-63] listening on 0.0.0.0:20333
+11:57:52 [INFO] CoAP server [node-64] listening on 0.0.0.0:20334
+11:57:52 [INFO] CoAP server [node-65] listening on 0.0.0.0:20335
+11:57:52 [INFO] CoAP server [node-66] listening on 0.0.0.0:20336
+11:57:52 [INFO] CoAP server [node-67] listening on 0.0.0.0:20337
+11:57:52 [INFO] CoAP server [node-68] listening on 0.0.0.0:20338
+11:57:52 [INFO] CoAP server [node-69] listening on 0.0.0.0:20339
+11:57:52 [INFO] CoAP server [node-70] listening on 0.0.0.0:20340
+11:57:52 [INFO] CoAP server [node-71] listening on 0.0.0.0:20341
+11:57:52 [INFO] CoAP server [node-72] listening on 0.0.0.0:20342
+11:57:52 [INFO] CoAP server [node-73] listening on 0.0.0.0:20343
+11:57:52 [INFO] CoAP server [node-74] listening on 0.0.0.0:20344
+11:57:52 [INFO] CoAP server [node-75] listening on 0.0.0.0:20345
+11:57:52 [INFO] CoAP server [node-76] listening on 0.0.0.0:20346
+11:57:52 [INFO] CoAP server [node-77] listening on 0.0.0.0:20347
+11:57:52 [INFO] CoAP server [node-78] listening on 0.0.0.0:20348
+11:57:52 [INFO] CoAP server [node-79] listening on 0.0.0.0:20349
+11:57:52 [INFO] CoAP server [node-80] listening on 0.0.0.0:20350
+11:57:52 [INFO] CoAP server [node-81] listening on 0.0.0.0:20351
+11:57:52 [INFO] CoAP server [node-82] listening on 0.0.0.0:20352
+11:57:52 [INFO] CoAP server [node-83] listening on 0.0.0.0:20353
+11:57:52 [INFO] CoAP server [node-84] listening on 0.0.0.0:20354
+11:57:52 [INFO] CoAP server [node-85] listening on 0.0.0.0:20355
+11:57:52 [INFO] CoAP server [node-86] listening on 0.0.0.0:20356
+11:57:52 [INFO] CoAP server [node-87] listening on 0.0.0.0:20357
+11:57:52 [INFO] CoAP server [node-88] listening on 0.0.0.0:20358
+11:57:52 [INFO] CoAP server [node-89] listening on 0.0.0.0:20359
+11:57:52 [INFO] CoAP server [node-90] listening on 0.0.0.0:20360
+11:57:52 [INFO] CoAP server [node-91] listening on 0.0.0.0:20361
+11:57:52 [INFO] CoAP server [node-92] listening on 0.0.0.0:20362
+11:57:52 [INFO] CoAP server [node-93] listening on 0.0.0.0:20363
+11:57:52 [INFO] CoAP server [node-94] listening on 0.0.0.0:20364
+11:57:52 [INFO] CoAP server [node-95] listening on 0.0.0.0:20365
+11:57:52 [INFO] CoAP server [node-96] listening on 0.0.0.0:20366
+11:57:52 [INFO] CoAP server [node-97] listening on 0.0.0.0:20367
+11:57:52 [INFO] CoAP server [node-98] listening on 0.0.0.0:20368
+11:57:52 [INFO] CoAP server [node-99] listening on 0.0.0.0:20369
+11:57:52 [INFO] Discovery: 0/100 nodes capable  261.2ms
+11:57:52 [INFO] Discovery: 0/100 nodes capable  260.7ms
+11:57:52 [INFO] Discovery: 0/100 nodes capable  268.0ms
+11:57:53 [INFO] Discovery: 0/100 nodes capable  313.0ms
+11:57:53 [INFO] Discovery: 0/100 nodes capable  265.2ms
+11:57:53 [INFO] Discovery: 0/100 nodes capable  265.6ms
+11:57:54 [INFO] Discovery: 0/100 nodes capable  269.9ms
+11:57:54 [INFO] Discovery: 0/100 nodes capable  265.2ms
+11:57:54 [INFO] Discovery: 0/100 nodes capable  265.4ms
+11:57:54 [INFO] Discovery: 0/100 nodes capable  328.4ms
+11:57:55 [INFO] Discovery: 0/100 nodes capable  266.3ms
+11:57:55 [INFO] Discovery: 0/100 nodes capable  268.0ms
+11:57:55 [INFO] Discovery: 0/100 nodes capable  263.1ms
+11:57:55 [INFO] Discovery: 0/100 nodes capable  266.6ms
+11:57:56 [INFO] Discovery: 0/100 nodes capable  265.6ms
+11:57:56 [INFO] Discovery: 0/100 nodes capable  339.7ms
+11:57:56 [INFO] Discovery: 0/100 nodes capable  271.0ms
+11:57:57 [INFO] Discovery: 0/100 nodes capable  270.7ms
+11:57:57 [INFO] Discovery: 0/100 nodes capable  271.0ms
+11:57:57 [INFO] Discovery: 0/100 nodes capable  265.7ms
+11:57:57 [INFO] Discovery: 0/100 nodes capable  264.6ms
+11:57:58 [INFO] Discovery: 0/100 nodes capable  344.1ms
+11:57:58 [INFO] Discovery: 0/100 nodes capable  266.9ms
+11:57:58 [INFO] Discovery: 0/100 nodes capable  267.3ms
+11:57:59 [INFO] Discovery: 0/100 nodes capable  265.2ms
+11:57:59 [INFO] Discovery: 0/100 nodes capable  266.2ms
+11:57:59 [INFO] Discovery: 0/100 nodes capable  266.3ms
+11:57:59 [INFO] Discovery: 0/100 nodes capable  266.3ms
+11:58:00 [INFO] Discovery: 0/100 nodes capable  374.9ms
+11:58:00 [INFO] Discovery: 0/100 nodes capable  267.8ms
+11:58:00 [INFO] CoAP server [node-0] stopped
+11:58:00 [INFO] CoAP server [node-1] stopped
+11:58:00 [INFO] CoAP server [node-2] stopped
+11:58:00 [INFO] CoAP server [node-3] stopped
+11:58:00 [INFO] CoAP server [node-4] stopped
+11:58:00 [INFO] CoAP server [node-5] stopped
+11:58:00 [INFO] CoAP server [node-6] stopped
+11:58:00 [INFO] CoAP server [node-7] stopped
+11:58:00 [INFO] CoAP server [node-8] stopped
+11:58:00 [INFO] CoAP server [node-9] stopped
+11:58:00 [INFO] CoAP server [node-10] stopped
+11:58:00 [INFO] CoAP server [node-11] stopped
+11:58:00 [INFO] CoAP server [node-12] stopped
+11:58:00 [INFO] CoAP server [node-13] stopped
+11:58:00 [INFO] CoAP server [node-14] stopped
+11:58:00 [INFO] CoAP server [node-15] stopped
+11:58:00 [INFO] CoAP server [node-16] stopped
+11:58:00 [INFO] CoAP server [node-17] stopped
+11:58:00 [INFO] CoAP server [node-18] stopped
+11:58:00 [INFO] CoAP server [node-19] stopped
+11:58:00 [INFO] CoAP server [node-20] stopped
+11:58:00 [INFO] CoAP server [node-21] stopped
+11:58:00 [INFO] CoAP server [node-22] stopped
+11:58:00 [INFO] CoAP server [node-23] stopped
+11:58:00 [INFO] CoAP server [node-24] stopped
+11:58:00 [INFO] CoAP server [node-25] stopped
+11:58:00 [INFO] CoAP server [node-26] stopped
+11:58:00 [INFO] CoAP server [node-27] stopped
+11:58:00 [INFO] CoAP server [node-28] stopped
+11:58:00 [INFO] CoAP server [node-29] stopped
+11:58:00 [INFO] CoAP server [node-30] stopped
+11:58:00 [INFO] CoAP server [node-31] stopped
+11:58:00 [INFO] CoAP server [node-32] stopped
+11:58:00 [INFO] CoAP server [node-33] stopped
+11:58:00 [INFO] CoAP server [node-34] stopped
+11:58:00 [INFO] CoAP server [node-35] stopped
+11:58:00 [INFO] CoAP server [node-36] stopped
+11:58:00 [INFO] CoAP server [node-37] stopped
+11:58:00 [INFO] CoAP server [node-38] stopped
+11:58:00 [INFO] CoAP server [node-39] stopped
+11:58:00 [INFO] CoAP server [node-40] stopped
+11:58:00 [INFO] CoAP server [node-41] stopped
+11:58:00 [INFO] CoAP server [node-42] stopped
+11:58:00 [INFO] CoAP server [node-43] stopped
+11:58:00 [INFO] CoAP server [node-44] stopped
+11:58:00 [INFO] CoAP server [node-45] stopped
+11:58:00 [INFO] CoAP server [node-46] stopped
+11:58:00 [INFO] CoAP server [node-47] stopped
+11:58:00 [INFO] CoAP server [node-48] stopped
+11:58:00 [INFO] CoAP server [node-49] stopped
+11:58:00 [INFO] CoAP server [node-50] stopped
+11:58:00 [INFO] CoAP server [node-51] stopped
+11:58:00 [INFO] CoAP server [node-52] stopped
+11:58:00 [INFO] CoAP server [node-53] stopped
+11:58:00 [INFO] CoAP server [node-54] stopped
+11:58:00 [INFO] CoAP server [node-55] stopped
+11:58:00 [INFO] CoAP server [node-56] stopped
+11:58:00 [INFO] CoAP server [node-57] stopped
+11:58:00 [INFO] CoAP server [node-58] stopped
+11:58:00 [INFO] CoAP server [node-59] stopped
+11:58:00 [INFO] CoAP server [node-60] stopped
+11:58:00 [INFO] CoAP server [node-61] stopped
+11:58:00 [INFO] CoAP server [node-62] stopped
+11:58:00 [INFO] CoAP server [node-63] stopped
+11:58:00 [INFO] CoAP server [node-64] stopped
+11:58:00 [INFO] CoAP server [node-65] stopped
+11:58:00 [INFO] CoAP server [node-66] stopped
+11:58:00 [INFO] CoAP server [node-67] stopped
+11:58:00 [INFO] CoAP server [node-68] stopped
+11:58:00 [INFO] CoAP server [node-69] stopped
+11:58:00 [INFO] CoAP server [node-70] stopped
+11:58:00 [INFO] CoAP server [node-71] stopped
+11:58:00 [INFO] CoAP server [node-72] stopped
+11:58:00 [INFO] CoAP server [node-73] stopped
+11:58:00 [INFO] CoAP server [node-74] stopped
+11:58:00 [INFO] CoAP server [node-75] stopped
+11:58:00 [INFO] CoAP server [node-76] stopped
+11:58:00 [INFO] CoAP server [node-77] stopped
+11:58:00 [INFO] CoAP server [node-78] stopped
+11:58:00 [INFO] CoAP server [node-79] stopped
+11:58:00 [INFO] CoAP server [node-80] stopped
+11:58:00 [INFO] CoAP server [node-81] stopped
+11:58:00 [INFO] CoAP server [node-82] stopped
+11:58:00 [INFO] CoAP server [node-83] stopped
+11:58:00 [INFO] CoAP server [node-84] stopped
+11:58:00 [INFO] CoAP server [node-85] stopped
+11:58:00 [INFO] CoAP server [node-86] stopped
+11:58:00 [INFO] CoAP server [node-87] stopped
+11:58:00 [INFO] CoAP server [node-88] stopped
+11:58:00 [INFO] CoAP server [node-89] stopped
+11:58:00 [INFO] CoAP server [node-90] stopped
+11:58:00 [INFO] CoAP server [node-91] stopped
+11:58:00 [INFO] CoAP server [node-92] stopped
+11:58:00 [INFO] CoAP server [node-93] stopped
+11:58:00 [INFO] CoAP server [node-94] stopped
+11:58:00 [INFO] CoAP server [node-95] stopped
+11:58:00 [INFO] CoAP server [node-96] stopped
+11:58:00 [INFO] CoAP server [node-97] stopped
+11:58:00 [INFO] CoAP server [node-98] stopped
+11:58:00 [INFO] CoAP server [node-99] stopped
+11:58:00 [INFO] Raw results: /home/raullb/FL-Iroh/results/e6/e6_coap_overhead.csv (180 rows)
+11:58:00 [INFO]   n= 10 filter=none     mean=1.6 ms  bytes=250
+11:58:00 [INFO]   n= 10 filter=semantic mean=24.0 ms  bytes=2500
+11:58:00 [INFO]   n= 50 filter=none     mean=1.9 ms  bytes=250
+11:58:00 [INFO]   n= 50 filter=semantic mean=130.7 ms  bytes=12500
+11:58:00 [INFO]   n=100 filter=none     mean=1.9 ms  bytes=250
+11:58:00 [INFO]   n=100 filter=semantic mean=278.7 ms  bytes=25000

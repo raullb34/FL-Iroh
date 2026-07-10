@@ -1,0 +1,3 @@
+config,model,partition,accuracy,rounds
+prophet_geographic,ProphetWrapper,geographic,0.560989010989011,10
+prophet_iid,ProphetWrapper,iid,0.5769863013698631,10
