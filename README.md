@@ -24,8 +24,13 @@ to locate the script and results for each experiment reported in the paper.
 Additional result sets:
 
 - `results/e3/establish/` — E3 repeated cold-start connection-establishment
-  campaign (150 independent attempts, 30 per scenario; per-run CSV + client log
+  campaign (150 attempts, 30 per scenario; per-run CSV + client log
   + per-scenario `summary.csv`), produced by `scripts/e3_repeat_establish.sh`.
+  **Note:** the `outcome` column in `summary.csv` records the client *process
+  exit status* (and may contain appended rows from repeated invocations); the
+  per-run client CSVs (`conn_type`/`conn_time_ms`/`success` fields) are the
+  ground truth for connection outcomes and are what the paper's Table E3-ext
+  is computed from.
 - `results/e2_central/` — centralized (K=1) upper-bound baselines, multi-seed,
   produced by `slurm/run_centralized_baselines.sh`.
 

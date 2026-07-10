@@ -47,7 +47,7 @@ data/
 results/* copy/
 results/B_*
 results/report_*.json
-results/server_endpoint.json
+**/server_endpoint.json
 
 # ── Docker ────────────────────────────────────────────────────────────────────
 .dockerignore
