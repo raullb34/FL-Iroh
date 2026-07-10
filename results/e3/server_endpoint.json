@@ -1,0 +1,10 @@
+{
+  "node_id": "c92444f44abd2bc4d7bf582f80d4062aada7ae4a133fe3baf583c62df1fbd5dd",
+  "addrs": [
+    "31.4.129.220:59199",
+    "172.17.0.1:55811",
+    "172.18.0.1:55811",
+    "192.168.197.140:55811"
+  ],
+  "relay_url": "https://euw1-1.relay.iroh.network./"
+}

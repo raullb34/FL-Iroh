@@ -1,0 +1,8 @@
+14:23:58 [INFO] Connecting to server node_id=6bdc24df5a7d38eb…
+14:24:01 [INFO] Iroh node started: c7cdf2757605c02f  addrs=['10.50.16.202:39859', '85.48.2.235:39859', '100.112.148.36:39859']
+14:24:31 [WARNING] _send_bytes connect attempt 1/3 failed (IrohError: ) — retrying in 5s
+14:25:06 [WARNING] _send_bytes connect attempt 2/3 failed (IrohError: ) — retrying in 10s
+14:25:18 [INFO] [conn-dbg] kind=MIXED addrs=[31.4.129.178:10341 lat=None pay=None ctrl=None | 172.17.0.1:47880 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.700421, control_msg=call me) | 172.18.0.1:47880 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.700421, control_msg=call me) | 192.168.197.140:47880 lat=None pay=None ctrl=LatencyAndControlMsg(latency=0:00:00.700421, control_msg=call me)]
+14:25:18 [INFO] send 1577B via direct in 76757ms (0.00 Mbit/s) to 6bdc24df5a7d38eb
+14:25:18 [INFO] [client] iter 1/1 — conn_type=direct  conn_time=76730.9ms
+14:25:21 [INFO]   net_nat2: direct=100% relay=0% unknown=0% failed=0%

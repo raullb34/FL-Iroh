@@ -1,0 +1,6 @@
+13:17:01 [INFO] Connecting to server node_id=f8c3e709f0c869bd…
+13:17:03 [INFO] Iroh node started: f3a116ef5b1ab1dc  addrs=['10.50.16.202:38641', '85.48.2.235:38641', '100.112.148.36:38641']
+13:17:33 [WARNING] _send_bytes connect attempt 1/3 failed (IrohError: ) — retrying in 5s
+13:18:08 [WARNING] _send_bytes connect attempt 2/3 failed (IrohError: ) — retrying in 10s
+13:18:48 [WARNING] [client] iter 0 failed: 
+13:18:48 [INFO]   net_cgnat: direct=0% relay=0% unknown=0% failed=100%

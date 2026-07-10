@@ -1,0 +1,2 @@
+scenario,total,pct_direct,pct_relay,pct_unknown,pct_failed
+net_lan,30,96.7,0.0,0.0,3.3

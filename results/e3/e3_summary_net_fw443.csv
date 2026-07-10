@@ -1,0 +1,2 @@
+scenario,total,pct_direct,pct_relay,pct_unknown,pct_failed
+net_fw443,30,26.7,73.3,0.0,0.0

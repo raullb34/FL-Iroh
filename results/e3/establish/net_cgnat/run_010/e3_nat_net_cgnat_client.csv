@@ -1,0 +1,2 @@
+scenario,iter,conn_type,conn_time_ms,duration_ms,active_addr,success
+net_cgnat,0,direct,415.956,459.643,31.4.129.218:19859,True

@@ -1,0 +1,2 @@
+scenario,iter,conn_type,conn_time_ms,duration_ms,active_addr,success
+net_lan,0,direct,343.875,369.281,31.4.129.220:59199,True

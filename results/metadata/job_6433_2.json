@@ -1,0 +1,12 @@
+{
+  "job_id":      "6433_2",
+  "array_id":    "6433",
+  "task_id":     2,
+  "git_commit":  "2e2119f",
+  "status":      "RUNNING",
+  "start_epoch": 1780190815,
+  "end_epoch":   1780190815,
+  "elapsed_sec": 0,
+  "ncpu":        16,
+  "hostname":    "cn001"
+}
