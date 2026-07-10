@@ -1,6 +1,14 @@
 # scenarios/net_fw443.yaml
 # Strict firewall — only port 443/TCP outbound allowed.
 # Iroh must relay via HTTPS/443. All UDP blocked.
+#
+# NOTE (paper E3): this file defines the *emulated* (Docker/netem) variant,
+# which blocks all UDP and therefore forces relay-only operation. The
+# physical net_fw443 runs reported in the paper used a firewall that
+# restricted outbound traffic to port 443 but permitted BOTH UDP/443 and
+# TCP/443, so direct QUIC hole-punching on UDP/443 remained possible.
+# In the physical campaigns the scenario name is a condition label recorded
+# in the CSVs; this yaml is not applied.
 name: net_fw443
 description: "Strict firewall — UDP blocked, only TCP:443 allowed (relay-only)"
 netem:

@@ -65,6 +65,9 @@ ROUNDS="${ROUNDS:-100}"
 
 echo "=== centralized upper bounds (K=1, R=${ROUNDS}, multi-seed) ==="
 
+# NOTE: the two datasets MUST use distinct results dirs — both would otherwise
+# write seeds/seed<S>/e2_B_iid_round_events.csv and clobber each other.
+
 # Crop Recommendation + AgriMLP
 python -m experiments.e2_centralized_fl \
     --rounds "${ROUNDS}" --n-clients 1 --dataset crop \
@@ -75,6 +78,6 @@ python -m experiments.e2_centralized_fl \
 python -m experiments.e2_centralized_fl \
     --rounds "${ROUNDS}" --n-clients 1 --dataset cifar10 \
     --partition iid --all-seeds \
-    --results-dir results/e2_central
+    --results-dir results/e2_central_cifar
 
 echo "=== done: $(date '+%F %T') ==="
