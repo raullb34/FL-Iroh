@@ -14,6 +14,7 @@
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
+\graphicspath{{../../../img/}}
 
 % Absorb minor overfull \hbox boxes in the narrow two-column measure
 \emergencystretch=3em
@@ -93,24 +94,8 @@ The \emph{hole-punching} technique~\cite{ford2005}, used by consumer P2P applica
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    node distance=0.5cm,
-    dev/.style={draw, rounded corners, fill=white, minimum width=1.4cm, minimum height=0.65cm, align=center, font=\scriptsize},
-    nat/.style={draw, ellipse, fill=gray!10, minimum width=1.3cm, minimum height=0.6cm, align=center, font=\tiny},
-    rly/.style={draw, rounded corners, fill=yellow!20, minimum width=1.3cm, minimum height=0.65cm, align=center, font=\scriptsize},
-    >=Stealth]
-  \node[dev, fill=green!10] (A) {IoT\\Device};
-  \node[nat, right=0.9cm of A] (NA) {NAT /\\CGNAT};
-  \node[rly, right=1.2cm of NA] (R) {DERP\\Relay};
-  \node[nat, right=1.2cm of R] (NB) {NAT /\\FW};
-  \node[dev, fill=blue!10, right=0.9cm of NB] (B) {FL\\Server};
-  \draw[->, thick, gray, dashed, bend left=45] (A) to
-    node[above, font=\tiny, align=center]{relay fallback\\(if direct fails)} (R);
-  \draw[->, thick, gray, dashed, bend left=45] (R) to (B);
-  \draw[<->, thick, green!55!black] ([yshift=-4pt]A.south) to[bend right=28]
-    node[below, font=\tiny, green!55!black, align=center]{direct QUIC hole-punch, E2E enc.\\98.3\% of WAN transfers (NAT/CGNAT/FW)} ([yshift=-4pt]B.south);
-\end{tikzpicture}
-\caption{NAT traversal in FL-Iroh. Direct QUIC hole-punching is attempted first and, in our WAN tests, succeeds even under CGNAT and port-443 firewalls (green, end-to-end encrypted). The DERP relay remains a guaranteed fallback (grey dashed), used only if a direct path cannot be formed; the application is unaware of which path is active.}
+\includegraphics[width=\columnwidth]{NAT-hole-punching.png}
+\caption{NAT hole-punching between two peers on private addresses. \textcircled{\scriptsize 1}~Both peers register with a public signaling/rendezvous server through their NATs; \textcircled{\scriptsize 2}~the server relays to each peer the other's public NAT mapping (address:port); \textcircled{\scriptsize 3}~simultaneous outbound packets open pinholes in both NATs and traffic then flows directly between the peers' public endpoints. In FL-Iroh the rendezvous role is played by the DERP relay, which additionally serves as an end-to-end-encrypted fallback path whenever a direct path cannot be formed; in our WAN tests the direct path carried 98.3\% of transfers even under CGNAT and a port-443-only firewall, and the application is unaware of which path is active.}
 \label{fig:holepunch}
 \end{figure}
 
@@ -181,27 +166,8 @@ FL-Iroh is structured as two planes (Fig.~\ref{fig:architecture}):
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    node distance=1.3cm and 1.0cm,
-    box/.style={draw, rounded corners, minimum width=2.2cm, minimum height=0.9cm, align=center, font=\footnotesize},
-    client/.style={draw, rounded corners, minimum width=1.8cm, minimum height=0.8cm, align=center, font=\scriptsize},
-    plane/.style={draw, dashed, rounded corners, fill=gray!5, inner sep=4pt},
-    >=Stealth
-]
-    \node[box, fill=blue!10] (srv) {FL Server\\(CoAP RD +\\Iroh node)};
-    \node[client, below left=1.4cm and 1.4cm of srv, fill=green!10] (c1) {Client $c_1$\\(Sensor A)};
-    \node[client, below=1.4cm of srv, fill=orange!10] (c2) {Client $c_2$\\(Sensor B)};
-    \node[client, below right=1.4cm and 1.4cm of srv, fill=red!10] (ck) {Client $c_K$\\(Sensor K)};
-    \node[box, above right=0.5cm and 0.2cm of srv, fill=yellow!10, minimum width=1.6cm, minimum height=0.7cm] (relay) {DERP\\Relay};
-    \draw[<->, blue, thick] (srv) -- node[left, font=\tiny, black] {CoAP/CBOR} (c1);
-    \draw[<->, blue, thick] (srv) -- (c2);
-    \draw[<->, blue, thick] (srv) -- node[right, font=\tiny, black] {CoAP/CBOR} (ck);
-    \draw[<->, red, thick, dashed] (srv) -- node[above, font=\tiny, black] {QUIC} (relay);
-    \draw[->, red, thick, dashed, bend left=15] (relay) to node[right, font=\tiny, black] {relay} (c1);
-    \draw[->, red, thick, dashed] (relay) -- (c2);
-    \draw[->, red, thick, dashed, bend right=15] (relay) to (ck);
-\end{tikzpicture}
-\caption{FL-Iroh architecture. CoAP handles service discovery and round control (blue). Iroh/QUIC carries tensor data with transparent relay fallback (red dashed) when direct hole-punch fails.}
+\includegraphics[width=\columnwidth]{FL-Iroh-arch.jpg}
+\caption{FL-Iroh architecture. The FL server (CoAP resource directory + Iroh node) coordinates $K$ sensor clients: solid blue arrows are the CoAP/CBOR control plane (registration, discovery, round signaling and application metadata), while dashed red arrows are the Iroh/QUIC relay path through the DERP relay, used transparently for tensor data whenever a direct hole-punched path cannot be formed.}
 \label{fig:architecture}
 \end{figure}
 
