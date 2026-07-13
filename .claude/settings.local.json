@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git add *)",
       "Bash(git commit -q -m 'figures: replace third figure \\(fig:agro\\) TikZ → physical-deploy.png in all three manuscripts *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git commit -q -m 'affiliations: add UNIR \\(International University of La Rioja\\) to Raúl López-Blanco and Ricardo S. Alonso *)"
     ]
   }
 }
