@@ -173,31 +173,8 @@ FL-Iroh is structured as two planes (Fig.~\ref{fig:architecture}):
 
 \begin{figure}[t]
 \centering
-\begin{tikzpicture}[
-    node distance=0.45cm and 0.35cm,
-    sensor/.style={draw, rounded corners, fill=green!10, minimum width=1.4cm, minimum height=0.55cm, align=center, font=\tiny},
-    edge/.style={draw, rounded corners, fill=orange!10, minimum width=1.5cm, minimum height=0.65cm, align=center, font=\scriptsize},
-    srv/.style={draw, rounded corners, fill=blue!10, minimum width=1.5cm, minimum height=0.65cm, align=center, font=\scriptsize},
-    rtr/.style={draw, ellipse, fill=gray!10, minimum width=1.2cm, minimum height=0.55cm, align=center, font=\tiny},
-    rly/.style={draw, rounded corners, fill=yellow!15, minimum width=1.2cm, minimum height=0.55cm, align=center, font=\tiny},
-    >=Stealth]
-  \node[sensor] (s1) {NPK\\Sensor};
-  \node[sensor, below=0.25cm of s1] (s2) {Weather\\Station};
-  \node[sensor, below=0.25cm of s2] (s3) {Crop\\Camera};
-  \node[edge, right=1.1cm of s2] (pi) {RPi 4B\\FL Client};
-  \node[rtr, right=1cm of pi] (nat) {NAT /\\CGNAT};
-  \node[rly, above right=0.3cm and 0.9cm of nat] (relay) {DERP\\Relay};
-  \node[srv, below right=0.3cm and 0.9cm of nat] (srv) {FL Server\\(HPC)};
-  \draw[->, gray, thin] (s1.east) -- (pi.north west);
-  \draw[->, gray, thin] (s2.east) -- (pi.west);
-  \draw[->, gray, thin] (s3.east) -- (pi.south west);
-  \draw[->, blue, thick] (pi) -- node[above, font=\tiny]{CoAP reg.} (nat);
-  \draw[->, blue!60, thick] (nat.north east) -- node[right, font=\tiny]{QUIC} (relay.south west);
-  \draw[->, blue!60, thick] (relay.south east) -- node[right, font=\tiny]{relay} (srv.north west);
-  \draw[<->, red!50, dashed, thick, bend right=30] (pi) to
-    node[below, font=\tiny]{FL model} (srv);
-\end{tikzpicture}
-\caption{FL-Iroh deployment in agricultural IoT. Field sensors feed the FL client (Raspberry Pi), which registers via CoAP and exchanges model parameters over Iroh/QUIC with automatic fallback to DERP relay under NAT/CGNAT.}
+\includegraphics[width=\columnwidth]{physical-deploy.png}
+\caption{Target deployment of FL-Iroh in agricultural IoT. Field sensors collect agronomic and meteorological measurements that remain within each farm and are processed by a local FL client behind NAT or CGNAT. The clients use CoAP/CBOR for registration, discovery, and round coordination, while global models and local updates are exchanged directly with the aggregation server over end-to-end-encrypted Iroh/QUIC connections. If a direct hole-punched path cannot be established, the encrypted traffic is transparently forwarded through the DERP relay.}
 \label{fig:agro}
 \end{figure}
 
