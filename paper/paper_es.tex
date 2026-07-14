@@ -558,12 +558,12 @@ En un despliegue real de datalogger agrícola, el ciclo de vida completo del mod
 
 Presentamos FL-Iroh, un sistema de aprendizaje federado transparente a NAT que combina el transporte P2P QUIC de Iroh con el descubrimiento de servicios CoAP/CoRE para despliegues de IoT agrícola y ambiental. Nuestra evaluación demuestra: (i)~el establecimiento de conexión a nivel de sesión en todos los escenarios probados (LAN, NAT de cono completo, NAT simétrico, CGNAT, cortafuegos de puerto~443), con un 98.3\% de las transferencias WAN llevadas por un camino directo con hole-punching y el relay cifrado nunca ejercitado, sobre un único par WAN real PC$\leftrightarrow$Raspberry~Pi (una campaña posterior de 150 intentos repetidos de establecimiento en frío estableció un camino directo en 145, 96.7\%, con 0\% de relay); (ii)~un 65.86\% de precisión en CIFAR-10 bajo datos IID con un IC ajustado de $\pm$0.2pp sobre $n{=}5$ semillas, degradándose monótonamente al 44.18\% bajo heterogeneidad No-IID severa ($\alpha{=}0.1$) manteniéndose por encima del 62\% para $\alpha{\geq}0.5$; (iii)~precisión estadísticamente plana (86--87\%, $n{=}5$ semillas) a través de un 0--50\% de rotación de clientes en la tarea de Recomendación de Cultivos bajo particionado IID, manteniéndose la convergencia---aunque ralentizada---cuando la rotación se combina con un sesgo de etiquetas no-IID severo; (iv)~señalización de ronda CoAP a escala de milisegundos, con descubrimiento semántico basado en capacidades escalando linealmente hasta 278~ms con 100 nodos; y (v)~transporte agnóstico al algoritmo que federa tanto una red neuronal como un GAM de Prophet sobre la misma infraestructura Iroh con solo un intercambio de agregador del lado del servidor---donde el Prophet federado supera claramente la línea base de persistencia a 7 días (57.9\% vs.\ 47.5\%), el AirMLP sin memoria no, y una ablación FedGAM-vs-FedAvg con el mismo modelo muestra que la regla de agregación no es el factor determinante. FL-Iroh habilita el aprendizaje colaborativo que preserva la privacidad para la agricultura de precisión y la monitorización ambiental de calidad del aire sin IP estáticas, superposiciones VPN ni demonios de sistema por nodo.
 
-El trabajo futuro incluye: clasificación de mapeo/filtrado según RFC~4787 de cada NAT y campañas de establecimiento de conexión multi-fabricante a mayor escala (pares de fabricantes de NAT adicionales y muchos pares simultáneos detrás del mismo CGNAT); medición del rendimiento WAN de camino directo y una comparación operativa en vivo de Flower-sobre-Tailscale sobre el mismo hardware; barridos de sensibilidad a pérdida de paquetes/latencia y mediciones de huella de energía/CPU en el cliente Raspberry Pi; evaluación con conjuntos de datos agronómicos más grandes y modelos de visión por computador de enfermedades de cultivos; integración de FedProx para mejorar la robustez No-IID; árboles con gradient boosting federados (XGBoost~\cite{xgboost2016}~+~agregación parcial) para datos tabulares de sensores; despliegue de relay DERP autoalojado; privacidad diferencial y agregación robusta (p.~ej., Krum~\cite{krum2017}); control de admisión de la federación basado en el node ID Iroh; FL asíncrono con almacenamiento en búfer local para desconexiones prolongadas~\cite{fedbuff2022}; y un entorno de ejecución de cliente en C/Rust para plataformas MCU Cortex-M.
+El trabajo futuro incluye: clasificación de mapeo/filtrado según RFC~4787 de cada NAT y campañas de establecimiento de conexión multi-fabricante a mayor escala (pares de fabricantes de NAT adicionales y muchos pares simultáneos detrás del mismo CGNAT); medición del rendimiento WAN de camino directo y una comparación operativa en vivo de Flower-sobre-Tailscale sobre el mismo hardware; barridos de sensibilidad a pérdida de paquetes/latencia y mediciones de huella de energía/CPU en el cliente Raspberry Pi; evaluación con conjuntos de datos agronómicos más grandes y modelos de visión por computador de enfermedades de cultivos; integración de FedProx para mejorar la robustez No-IID; árboles con gradient boosting federados para datos tabulares de sensores; despliegue de relay DERP autoalojado; privacidad diferencial y agregación robusta; control de admisión de la federación basado en el node ID Iroh; FL asíncrono con almacenamiento en búfer local para desconexiones prolongadas~\cite{fedbuff2022}; y un entorno de ejecución de cliente en C/Rust para plataformas MCU Cortex-M.
 
 % ---- Bloque final Elsevier ------------------------------------------------
 \section*{Declaración de contribución de autoría CRediT}
 % TODO(authors): adjust role assignments before submission.
-\textbf{Ra\'ul L\'opez-Blanco}: Conceptualización, Metodología, Software, Investigación, Curación de datos, Redacción -- borrador original. \textbf{Ricardo S.~Alonso}: Conceptualización, Metodología, Redacción -- revisión y edición, Supervisión. \textbf{Javier Prieto}: Redacción -- revisión y edición, Supervisión, Adquisición de financiación. \textbf{Tiago Pinto}: Redacción -- revisión y edición, Supervisión.
+\textbf{Ra\'ul L\'opez-Blanco}: Conceptualización, Metodología, Software, Investigación, Curación de datos, Redacción -- borrador original. \textbf{Ricardo S.~Alonso}: Conceptualización, Metodología, Redacción -- revisión y edición, Supervisión. \textbf{Tiago Pinto}: Redacción -- revisión y edición, Supervisión. \textbf{Javier Prieto}: Redacción -- revisión y edición, Supervisión, Adquisición de financiación.
 
 \section*{Declaración de intereses en competencia}
 Los autores declaran que no tienen intereses financieros en competencia ni relaciones personales conocidas que pudieran haber influido en el trabajo reportado en este artículo.
@@ -572,7 +572,7 @@ Los autores declaran que no tienen intereses financieros en competencia ni relac
 El código fuente de FL-Iroh, el arnés de experimentos, los resultados por ejecución que respaldan cada tabla y el conjunto de datos de calidad del aire procesado están disponibles en \url{https://github.com/raullb34/FL-Iroh}. El conjunto de datos de Recomendación de Cultivos está disponible públicamente en Kaggle~\cite{cropdataset}; los datos brutos de calidad del aire y meteorológicos están disponibles en los portales de datos abiertos de la Junta de Castilla y Le\'on~\cite{cyl2023airquality} y de AEMET~\cite{aemet2023}.
 
 \section*{Agradecimientos}
-% TODO(authors): add funding/project acknowledgements before submission.
+This work has been supported by the OSTARA project under the Partnership for Research and Innovation in the Mediterranean Area (PRIMA), the MICIU/AEI/10.13039/501100011033, and the European Union.
 
 % -----------------------------------------------------------------------
 \bibliographystyle{IEEEtran}
@@ -753,20 +753,10 @@ A.~Ingle,
 ``Crop recommendation dataset,''
 Kaggle, \url{https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset}, 2020 (accessed July 2026).
 
-\bibitem{krum2017}
-P.~Blanchard, E.~M. El~Mhamdi, R.~Guerraoui, and J.~Stainer,
-``Machine learning with adversaries: Byzantine tolerant gradient descent,''
-in \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2017.
-
 \bibitem{fedbuff2022}
 J.~Nguyen, K.~Malik, H.~Zhan, A.~Yousefpour, M.~Rabbat, M.~Malek, and D.~Huba,
 ``Federated learning with buffered asynchronous aggregation,''
 in \emph{Proc. Int. Conf. Artificial Intelligence and Statistics (AISTATS)}, 2022.
-
-\bibitem{xgboost2016}
-T.~Chen and C.~Guestrin,
-``XGBoost: A scalable tree boosting system,''
-in \emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining}, 2016, pp. 785--794.
 
 \bibitem{taylor2018prophet}
 S.~J. Taylor and B.~Letham,
