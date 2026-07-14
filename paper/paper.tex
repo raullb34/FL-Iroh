@@ -557,12 +557,12 @@ In a real agricultural datalogger deployment, the complete model lifecycle compr
 
 We presented FL-Iroh, a NAT-transparent federated learning system that combines Iroh QUIC P2P transport with CoAP/CoRE service discovery for agricultural and environmental IoT deployments. Our evaluation demonstrates: (i)~session-level connection establishment in every tested scenario (LAN, full-cone NAT, symmetric NAT, CGNAT, port-443 firewall), with 98.3\% of WAN transfers carried over a direct hole-punched path and the encrypted relay never exercised, on a single real PC$\leftrightarrow$Raspberry~Pi WAN pair (a follow-up campaign of 150 repeated cold-start attempts established a direct path in 145, 96.7\%, with 0\% relay); (ii)~65.86\% CIFAR-10 accuracy under IID data with a tight $\pm$0.2pp CI over $n{=}5$ seeds, degrading monotonically to 44.18\% under severe Non-IID heterogeneity ($\alpha{=}0.1$) while remaining above 62\% for $\alpha{\geq}0.5$; (iii)~statistically flat accuracy (86--87\%, $n{=}5$ seeds) across 0--50\% client churn on the Crop Recommendation task under IID partitioning, with convergence maintained---though slowed---when churn is combined with severe non-IID label skew; (iv)~millisecond-scale CoAP round signaling, with capability-based semantic discovery scaling linearly to 278~ms at 100 nodes; and (v)~algorithm-agnostic transport federating both a neural network and a Prophet GAM over the same Iroh infrastructure with only a server-side aggregator swap---where the federated Prophet clearly beats the 7-day persistence baseline (57.9\% vs.\ 47.5\%), the memoryless AirMLP does not, and a same-model FedGAM-vs-FedAvg ablation shows the aggregation rule is not the driver. FL-Iroh enables privacy-preserving collaborative learning for precision agriculture and environmental air-quality monitoring without static IPs, VPN overlays, or per-node system daemons.
 
-Future work includes: RFC~4787 mapping/filtering classification of each NAT and larger-scale, multi-vendor connection-establishment campaigns (additional NAT-vendor pairs and many simultaneous peers behind the same CGNAT); direct-path WAN throughput measurement and a live Flower-over-Tailscale operational comparison on the same hardware; packet-loss/latency sensitivity sweeps and energy/CPU footprint measurements on the Raspberry Pi client; evaluation with larger agronomy datasets and computer-vision crop disease models; integration of FedProx for improved Non-IID robustness; federated gradient-boosted trees (XGBoost~\cite{xgboost2016}~+~partial aggregation) for tabular sensor data; self-hosted DERP relay deployment; differential privacy and robust aggregation (e.g., Krum~\cite{krum2017}); federation admission control based on Iroh node ID; asynchronous FL with local buffering for prolonged disconnections~\cite{fedbuff2022}; and a C/Rust client runtime for Cortex-M MCU platforms.
+Future work includes: RFC~4787 mapping/filtering classification of each NAT and larger-scale, multi-vendor connection-establishment campaigns (additional NAT-vendor pairs and many simultaneous peers behind the same CGNAT); direct-path WAN throughput measurement and a live Flower-over-Tailscale operational comparison on the same hardware; packet-loss/latency sensitivity sweeps and energy/CPU footprint measurements on the Raspberry Pi client; evaluation with larger agronomy datasets and computer-vision crop disease models; integration of FedProx for improved Non-IID robustness; federated gradient-boosted trees for tabular sensor data; self-hosted DERP relay deployment; differential privacy and robust aggregation; federation admission control based on Iroh node ID; asynchronous FL with local buffering for prolonged disconnections~\cite{fedbuff2022}; and a C/Rust client runtime for Cortex-M MCU platforms.
 
 % ---- Elsevier back matter ------------------------------------------------
 \section*{CRediT authorship contribution statement}
 % TODO(authors): adjust role assignments before submission.
-\textbf{Ra\'ul L\'opez-Blanco}: Conceptualization, Methodology, Software, Investigation, Data curation, Writing -- original draft. \textbf{Ricardo S.~Alonso}: Conceptualization, Methodology, Writing -- review \& editing, Supervision. \textbf{Javier Prieto}: Writing -- review \& editing, Supervision, Funding acquisition. \textbf{Tiago Pinto}: Writing -- review \& editing, Supervision.
+\textbf{Ra\'ul L\'opez-Blanco}: Conceptualization, Methodology, Software, Investigation, Data curation, Writing -- original draft. \textbf{Ricardo S.~Alonso}: Conceptualization, Methodology, Writing -- review \& editing, Supervision. \textbf{Tiago Pinto}: Writing -- review \& editing, Supervision. \textbf{Javier Prieto}: Writing -- review \& editing, Supervision, Funding acquisition.
 
 \section*{Declaration of competing interest}
 The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
@@ -571,7 +571,7 @@ The authors declare that they have no known competing financial interests or per
 The source code of FL-Iroh, the experiment harness, the per-run results backing every table, and the processed air-quality dataset are available at \url{https://github.com/raullb34/FL-Iroh}. The Crop Recommendation dataset is publicly available on Kaggle~\cite{cropdataset}; the raw air-quality and meteorological data are available from the open-data portals of the Junta de Castilla y Le\'on~\cite{cyl2023airquality} and AEMET~\cite{aemet2023}.
 
 \section*{Acknowledgements}
-% TODO(authors): add funding/project acknowledgements before submission.
+This work has been supported by the OSTARA project under the Partnership for Research and Innovation in the Mediterranean Area (PRIMA), the MICIU/AEI/10.13039/501100011033, and the European Union.
 
 % -----------------------------------------------------------------------
 \bibliographystyle{IEEEtran}
@@ -752,20 +752,10 @@ A.~Ingle,
 ``Crop recommendation dataset,''
 Kaggle, \url{https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset}, 2020 (accessed July 2026).
 
-\bibitem{krum2017}
-P.~Blanchard, E.~M. El~Mhamdi, R.~Guerraoui, and J.~Stainer,
-``Machine learning with adversaries: Byzantine tolerant gradient descent,''
-in \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2017.
-
 \bibitem{fedbuff2022}
 J.~Nguyen, K.~Malik, H.~Zhan, A.~Yousefpour, M.~Rabbat, M.~Malek, and D.~Huba,
 ``Federated learning with buffered asynchronous aggregation,''
 in \emph{Proc. Int. Conf. Artificial Intelligence and Statistics (AISTATS)}, 2022.
-
-\bibitem{xgboost2016}
-T.~Chen and C.~Guestrin,
-``XGBoost: A scalable tree boosting system,''
-in \emph{Proc. 22nd ACM SIGKDD Int. Conf. Knowledge Discovery and Data Mining}, 2016, pp. 785--794.
 
 \bibitem{taylor2018prophet}
 S.~J. Taylor and B.~Letham,

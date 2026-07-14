@@ -4,7 +4,8 @@
       "Bash(git add *)",
       "Bash(git commit -q -m 'figures: replace third figure \\(fig:agro\\) TikZ → physical-deploy.png in all three manuscripts *)",
       "Bash(git push *)",
-      "Bash(git commit -q -m 'affiliations: add UNIR \\(International University of La Rioja\\) to Raúl López-Blanco and Ricardo S. Alonso *)"
+      "Bash(git commit -q -m 'affiliations: add UNIR \\(International University of La Rioja\\) to Raúl López-Blanco and Ricardo S. Alonso *)",
+      "Bash(git commit -q -m 'bibliography & authorship: remove krum2017/xgboost2016, reorder authors \\(Javier last\\), add OSTARA acknowledgement *)"
     ]
   }
 }
