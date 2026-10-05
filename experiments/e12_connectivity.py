@@ -15,6 +15,7 @@ network mid-run:
                        443) remains  (forced-relay condition, R1.2)
   unblock_udp          remove the rule → measures upgrade back to direct
   link_down:IFACE:SEC  take IFACE down for SEC seconds (real disconnection)
+  net_switch:CONN      `nmcli connection up CONN` (new IP + NAT mapping)
   mark:TEXT            just log a marker (e.g. before a manual Wi-Fi→4G switch)
 
 Events that change firewall/links need root (run with sudo).  A manual event
@@ -166,6 +167,15 @@ class Campaign:
             await asyncio.sleep(secs)
             subprocess.run(["ip", "link", "set", iface, "up"], check=True)
             self.mark("link_up", iface)
+        elif kind == "net_switch":
+            # Switch to another saved NetworkManager connection (new IP and NAT
+            # mapping), e.g. 4G hotspot → office Wi-Fi.
+            name = ":".join(rest)
+            self.mark("net_switch", name)
+            r = subprocess.run(["nmcli", "connection", "up", name],
+                               capture_output=True, text=True, timeout=120)
+            self.mark("net_switch_done" if r.returncode == 0 else "net_switch_error",
+                      (r.stdout or r.stderr).strip()[:100])
         elif kind == "mark":
             self.mark("mark", ":".join(rest))
         else:
