@@ -27,10 +27,10 @@ setup() {
         echo "== creating $VENV (first run only) =="
         "$PY" -m venv "$VENV"
         "$VENV/bin/pip" install -q --upgrade pip
-        # CPU-only torch wheel on x86_64 (smaller); aarch64 (RPi) uses the default index
-        if [[ "$(uname -m)" == "x86_64" ]]; then
-            "$VENV/bin/pip" install -q torch --index-url https://download.pytorch.org/whl/cpu
-        fi
+        # Always the CPU-only torch wheel.  On aarch64 the default PyPI wheel is a
+        # CUDA/NVPL build for ARMv8.2+ servers and dies with "Illegal instruction"
+        # in BatchNorm backward on Raspberry Pi (Cortex-A53/A72, ARMv8.0).
+        "$VENV/bin/pip" install -q torch --index-url https://download.pytorch.org/whl/cpu
         "$VENV/bin/pip" install -q -e ".[edge]"
     fi
 }
