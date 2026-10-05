@@ -1,0 +1,7 @@
+{
+  "accepted": 30,
+  "rejected": 30,
+  "authorised_latency_ms_open": {},
+  "authorised_latency_ms_enforced": {},
+  "unauthorised_time_to_close_ms": {}
+}

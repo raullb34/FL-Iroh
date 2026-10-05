@@ -1,0 +1,12 @@
+{
+  "node_id_iroh": "70738f558ecdb74aeed3dc23c150d83a2af55bc18b05e297387c6fafdec2f13c",
+  "addrs": [
+    "95.61.190.90:55259",
+    "172.17.0.1:60533",
+    "172.18.0.1:60533",
+    "192.168.197.140:60533"
+  ],
+  "relay_url": "https://euw1-1.relay.iroh.network./",
+  "direct_capable": true,
+  "last_seen": 1791234304.738871
+}

@@ -1,0 +1,70 @@
+2026-10-05 23:05:04,022 [INFO] Loaded allow-list with 1 NodeId(s) from keys/allow.txt
+2026-10-05 23:05:04,739 [INFO] Iroh node started: 70738f558ecdb74a  addrs=['95.61.190.90:55259', '172.17.0.1:60533', '172.18.0.1:60533', '192.168.197.140:60533']
+2026-10-05 23:05:04,750 [INFO] server endpoint → results/e9_wan/server_ep.json
+2026-10-05 23:05:13,254 [INFO] recv 65536B via mixed in 1835ms
+2026-10-05 23:05:17,808 [INFO] recv 65536B via mixed in 1697ms
+2026-10-05 23:05:23,425 [INFO] recv 65536B via mixed in 1213ms
+2026-10-05 23:05:26,206 [INFO] recv 65536B via mixed in 1201ms
+2026-10-05 23:05:30,324 [INFO] recv 65536B via mixed in 1225ms
+2026-10-05 23:05:33,043 [INFO] recv 65536B via mixed in 1128ms
+2026-10-05 23:05:37,535 [INFO] recv 65536B via mixed in 1571ms
+2026-10-05 23:05:40,040 [INFO] recv 65536B via mixed in 1061ms
+2026-10-05 23:05:44,527 [INFO] recv 65536B via mixed in 2819ms
+2026-10-05 23:05:48,143 [INFO] recv 65536B via mixed in 1201ms
+2026-10-05 23:05:50,503 [INFO] recv 65536B via mixed in 726ms
+2026-10-05 23:05:54,910 [INFO] recv 65536B via mixed in 1641ms
+2026-10-05 23:05:58,411 [INFO] recv 65536B via mixed in 1111ms
+2026-10-05 23:06:00,787 [INFO] recv 65536B via mixed in 739ms
+2026-10-05 23:06:04,880 [INFO] recv 65536B via mixed in 1149ms
+2026-10-05 23:06:09,044 [INFO] recv 65536B via mixed in 2505ms
+2026-10-05 23:06:12,788 [INFO] recv 65536B via mixed in 637ms
+2026-10-05 23:06:17,109 [INFO] recv 65536B via mixed in 1881ms
+2026-10-05 23:06:20,739 [INFO] recv 65536B via mixed in 1064ms
+2026-10-05 23:06:24,698 [INFO] recv 65536B via mixed in 2306ms
+2026-10-05 23:06:27,538 [INFO] recv 65536B via mixed in 1193ms
+2026-10-05 23:06:31,686 [INFO] recv 65536B via mixed in 2456ms
+2026-10-05 23:06:35,801 [INFO] recv 65536B via mixed in 1244ms
+2026-10-05 23:06:39,659 [INFO] recv 65536B via mixed in 999ms
+2026-10-05 23:06:44,294 [INFO] recv 65536B via mixed in 2963ms
+2026-10-05 23:06:46,786 [INFO] recv 65536B via mixed in 826ms
+2026-10-05 23:06:50,816 [INFO] recv 65536B via mixed in 1263ms
+2026-10-05 23:06:55,472 [INFO] recv 65536B via mixed in 1817ms
+2026-10-05 23:06:59,354 [INFO] recv 65536B via mixed in 1022ms
+2026-10-05 23:07:03,862 [INFO] recv 65536B via mixed in 2110ms
+2026-10-05 23:07:09,204 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:09,542 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:09,839 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:10,168 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:10,465 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:10,800 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:11,099 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:11,422 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:11,759 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:12,105 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:12,435 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:12,742 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:13,071 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:13,404 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:13,734 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:14,066 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:14,382 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:14,670 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:15,016 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:15,333 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:15,656 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:15,950 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:16,290 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:16,639 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:16,946 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:17,276 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:17,605 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:17,921 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:18,247 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:07:18,583 [WARNING] Rejected unauthorised peer 3d071a853243d05b on iroh:fl-update/1
+2026-10-05 23:20:09,892 [INFO] E9 summary: {
+  "accepted": 30,
+  "rejected": 30,
+  "authorised_latency_ms_open": {},
+  "authorised_latency_ms_enforced": {},
+  "unauthorised_time_to_close_ms": {}
+}

@@ -1,0 +1,40 @@
+{
+  "label": "pc-casa-to-oficina",
+  "transfers": 60,
+  "normal": {
+    "n": 60,
+    "ok": 60,
+    "direct": 60,
+    "direct_via_overlay": 0,
+    "mixed": 0,
+    "relay": 0,
+    "retried": 0,
+    "transfer_ms_median": 266.3,
+    "goodput_mbps_median": 1.97
+  },
+  "udp_blocked": {
+    "n": 0,
+    "ok": 0,
+    "direct": 0,
+    "direct_via_overlay": 0,
+    "mixed": 0,
+    "relay": 0,
+    "retried": 0,
+    "transfer_ms_median": null,
+    "goodput_mbps_median": null
+  },
+  "events": [
+    {
+      "t": 0.057,
+      "wall": 1791233975.0811653,
+      "event": "overlay_guard",
+      "detail": "on",
+      "transfers_until_next_event": 60,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 1.41,
+      "s_to_first_direct": 1.41,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    }
+  ]
+}
