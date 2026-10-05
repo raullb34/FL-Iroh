@@ -12,6 +12,8 @@ ALPN protocols used:
   fl-model/1   — global model distribution (server → client)
   fl-update/1  — local gradient upload (client → server)
   fl-sync/1    — P2P sync in decentralised topology
+  fl-ctrl/1    — control messages (e.g. client registration) addressed by
+                 NodeId, so the control plane also traverses NAT
 
 Wire format (over each QUIC stream):
   [4 bytes big-endian uint32: payload_len][payload_bytes][32 bytes: SHA-256]
@@ -38,6 +40,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import io
+import json
 import logging
 import os
 import struct
@@ -48,6 +51,7 @@ from typing import Optional
 # NOTE: torch is imported lazily inside send_tensors / receive_tensors so that
 # nodes which only need the raw-byte transport (e.g. the E3 NAT-traversal
 # server) can run on hosts where torch is unavailable or broken.
+from fl_coap_iroh.transport.admission import AllowList, load_or_create_secret_key
 from fl_coap_iroh.types import ConnType, IrohEndpoint, TransferEvent
 
 log = logging.getLogger(__name__)
@@ -58,6 +62,7 @@ log = logging.getLogger(__name__)
 ALPN_FL_MODEL  = b"fl-model/1"
 ALPN_FL_UPDATE = b"fl-update/1"
 ALPN_FL_SYNC   = b"fl-sync/1"
+ALPN_FL_CTRL   = b"fl-ctrl/1"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -67,6 +72,8 @@ _HASH_SUFFIX_BYTES  = 32          # SHA-256
 _OVERHEAD_BYTES     = _LEN_PREFIX_BYTES + _HASH_SUFFIX_BYTES
 MAX_PAYLOAD_BYTES   = 512 * 1024 * 1024   # 512 MB safety cap
 DIRECT_TIMEOUT_SEC  = 5.0         # seconds before relay fallback is attempted
+ADMISSION_DENIED_CODE = 403       # QUIC application close code for rejected peers
+STREAM_ACK_TIMEOUT_SEC = 120.0    # max wait for the peer to read a sent stream
 
 
 # ---------------------------------------------------------------------------
@@ -81,6 +88,7 @@ class TransferStats:
     conn_time_ms    : float    = 0.0
     transfer_duration_ms: float= 0.0
     active_addr     : str      = ""       # socket addr of direct path (audit)
+    peer_node_id    : str      = ""       # authenticated NodeId of the remote peer
 
     @property
     def throughput_mbps(self) -> float:
@@ -106,7 +114,7 @@ class _MockTransport:
     def __init__(self, node_id: str, bandwidth_mbps: float = 100.0) -> None:
         self._node_id     = node_id
         self._bandwidth   = bandwidth_mbps
-        self._queue: asyncio.Queue[bytes] = asyncio.Queue()
+        self._queues: dict[bytes, asyncio.Queue[tuple[str, bytes]]] = {}
         _MockTransport._registry[node_id] = self
 
     def endpoint_info(self) -> IrohEndpoint:
@@ -117,15 +125,21 @@ class _MockTransport:
             direct_capable = True,
         )
 
-    async def send(self, peer_iroh_id: str, payload: bytes) -> TransferStats:
+    def _q(self, alpn: bytes) -> "asyncio.Queue[tuple[str, bytes]]":
+        if alpn not in self._queues:
+            self._queues[alpn] = asyncio.Queue()
+        return self._queues[alpn]
+
+    async def send(self, peer_iroh_id: str, payload: bytes, alpn: bytes) -> TransferStats:
         peer_key = peer_iroh_id.removeprefix("mock-")
         peer = _MockTransport._registry.get(peer_key)
         if peer is None:
             raise RuntimeError(f"Mock peer not found: {peer_iroh_id!r}")
         delay_sec = (len(payload) * 8) / (self._bandwidth * 1_000_000)
         await asyncio.sleep(delay_sec)
-        await peer._queue.put(payload)
+        await peer._q(alpn).put((f"mock-{self._node_id}", payload))
         return TransferStats(
+            peer_node_id       = peer_iroh_id,
             bytes_payload      = len(payload),
             bytes_on_wire      = len(payload) + _OVERHEAD_BYTES,
             conn_type          = ConnType.DIRECT,
@@ -133,9 +147,10 @@ class _MockTransport:
             transfer_duration_ms = delay_sec * 1000,
         )
 
-    async def receive(self, timeout: float = 60.0) -> tuple[bytes, TransferStats]:
-        payload = await asyncio.wait_for(self._queue.get(), timeout=timeout)
+    async def receive(self, alpn: bytes, timeout: float = 60.0) -> tuple[bytes, TransferStats]:
+        sender, payload = await asyncio.wait_for(self._q(alpn).get(), timeout=timeout)
         return payload, TransferStats(
+            peer_node_id       = sender,
             bytes_payload      = len(payload),
             bytes_on_wire      = len(payload) + _OVERHEAD_BYTES,
             conn_type          = ConnType.DIRECT,
@@ -166,49 +181,33 @@ class _AcceptedTransfer:
     recv_start_ms    : float      # monotonic ms when accept() was called
     recv_done_ms     : float      # monotonic ms when last byte was read
     active_addr      : str = ""   # socket addr of direct path (audit)
+    peer_node_id     : str = ""   # authenticated NodeId (from the QUIC handshake)
 
 
 class _IrohAcceptQueue:
     """Collects pre-read _AcceptedTransfer objects (from the ProtocolHandler
-    callback) and exposes them to async consumers via an asyncio.Queue.
+    callback) and exposes them to async consumers, with one asyncio.Queue per
+    ALPN so that concurrent consumers of different ALPNs (e.g. the server's
+    control loop and its update receiver) never hold each other's transfers.
 
     All iroh API calls (accept_uni, read_exact) happen inside the handler so
     no Connection object crosses the thread boundary.
     """
 
     def __init__(self) -> None:
-        self._queue: asyncio.Queue[_AcceptedTransfer] = asyncio.Queue()
+        self._queues: dict[bytes, asyncio.Queue[_AcceptedTransfer]] = {}
+
+    def _q(self, alpn: bytes) -> "asyncio.Queue[_AcceptedTransfer]":
+        if alpn not in self._queues:
+            self._queues[alpn] = asyncio.Queue()
+        return self._queues[alpn]
 
     async def enqueue(self, transfer: "_AcceptedTransfer") -> None:
-        await self._queue.put(transfer)
+        await self._q(transfer.alpn).put(transfer)
 
     async def get_for_alpn(self, alpn: bytes, timeout: float) -> "_AcceptedTransfer":
-        """Return the next transfer whose ALPN matches *alpn*.
-
-        Transfers with a different ALPN are put back so they can be consumed
-        by another caller waiting for that ALPN.
-        """
-        loop = asyncio.get_event_loop()
-        deadline = loop.time() + timeout
-        deferred: list[_AcceptedTransfer] = []
-        try:
-            while True:
-                remaining = deadline - loop.time()
-                if remaining <= 0:
-                    raise asyncio.TimeoutError()
-                transfer = await asyncio.wait_for(
-                    self._queue.get(), timeout=remaining
-                )
-                if transfer.alpn == alpn:
-                    return transfer
-                log.warning(
-                    "Queued ALPN %r while waiting for %r — re-queuing",
-                    transfer.alpn, alpn,
-                )
-                deferred.append(transfer)
-        finally:
-            for item in deferred:
-                self._queue.put_nowait(item)
+        """Return the next transfer received on *alpn*."""
+        return await asyncio.wait_for(self._q(alpn).get(), timeout=timeout)
 
 
 def _make_iroh_adapters(
@@ -233,6 +232,16 @@ def _make_iroh_adapters(
         """Run on main asyncio event loop: read stream and put transfer in queue."""
         t_start = time.monotonic() * 1000
         try:
+            # Admission control: the remote NodeId is authenticated by the QUIC
+            # handshake, so it can be checked before reading any payload.
+            peer_id = conn.remote_node_id()  # type: ignore[attr-defined]
+            if asyncio.iscoroutine(peer_id):
+                peer_id = await peer_id
+            peer_id = str(peer_id)
+            if not node_ref.allowlist.check(peer_id, f"iroh:{alpn.decode()}"):
+                conn.close(ADMISSION_DENIED_CODE, b"not authorized")  # type: ignore[attr-defined]
+                return
+
             recv_stream = await conn.accept_uni()  # type: ignore[attr-defined]
 
             raw_len = await recv_stream.read_exact(_LEN_PREFIX_BYTES)
@@ -256,6 +265,7 @@ def _make_iroh_adapters(
                 recv_start_ms = t_start,
                 recv_done_ms  = t_done,
                 active_addr   = active_addr,
+                peer_node_id  = peer_id,
             ))
             log.debug(
                 "iroh recv [%r]: %dB conn_type=%s addr=%s in %.0fms",
@@ -323,8 +333,14 @@ class IrohTransportNode:
         node_id: str,
         relay_url: Optional[str] = None,
         mock_bandwidth_mbps: float = 100.0,
+        secret_key_file: Optional[str] = None,
+        allowlist: Optional[AllowList] = None,
     ) -> None:
         self._node_id          = node_id
+        # Persistent identity: without a stored secret key every start yields a
+        # fresh NodeId, which makes NodeId-based admission control impossible.
+        self._secret_key_file  = secret_key_file or os.environ.get("FL_SECRET_KEY_FILE")
+        self.allowlist         = allowlist if allowlist is not None else AllowList.from_env()
         self._relay_url        = relay_url
         self._mock_bandwidth   = mock_bandwidth_mbps
         self._iroh_node        = None        # iroh.Iroh instance (or None in mock)
@@ -340,7 +356,6 @@ class IrohTransportNode:
 
     async def start(self) -> IrohEndpoint:
         """Initialise the transport and return endpoint descriptor."""
-        import os
         if os.environ.get("FL_MOCK_IROH", "0") == "1":
             log.info("FL_MOCK_IROH=1 — forcing mock transport (iroh bypassed)")
             self._mock_mode = True
@@ -365,9 +380,15 @@ class IrohTransportNode:
             # Build shared accept queue and register per-ALPN handlers.
             # Adapter classes must be defined after iroh is imported (uniffi requirement).
             self._accept_queue = _IrohAcceptQueue()
-            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC], _main_loop, self)
+            creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC, ALPN_FL_CTRL], _main_loop, self)
 
-            options = iroh.NodeOptions(protocols=creators)
+            if self._secret_key_file:
+                options = iroh.NodeOptions(
+                    protocols=creators,
+                    secret_key=load_or_create_secret_key(self._secret_key_file),
+                )
+            else:
+                options = iroh.NodeOptions(protocols=creators)
 
             self._iroh_node = await iroh.Iroh.memory_with_options(options)
             net = self._iroh_node.net()
@@ -437,6 +458,21 @@ class IrohTransportNode:
         return tensors, stats
 
     # ------------------------------------------------------------------
+    # Control messages (JSON, torch-free)
+    # ------------------------------------------------------------------
+
+    async def send_control(self, peer_ep: IrohEndpoint, message: dict) -> TransferStats:
+        """Send a small JSON control message to *peer_ep* on ALPN fl-ctrl/1."""
+        payload = json.dumps(message).encode()
+        return await self._send_bytes(peer_ep, payload, 0, ALPN_FL_CTRL)
+
+    async def receive_control(self, timeout: float = 3600.0) -> tuple[dict, TransferStats]:
+        """Receive one control message; ``stats.peer_node_id`` is the
+        authenticated sender (from the QUIC handshake)."""
+        payload, stats = await self._receive_bytes(ALPN_FL_CTRL, timeout)
+        return json.loads(payload.decode()), stats
+
+    # ------------------------------------------------------------------
     # Low-level byte transfer
     # ------------------------------------------------------------------
 
@@ -448,7 +484,7 @@ class IrohTransportNode:
         alpn     : bytes,
     ) -> TransferStats:
         if self._mock_mode:
-            return await self._mock.send(peer_ep.node_id_iroh, payload)  # type: ignore[union-attr]
+            return await self._mock.send(peer_ep.node_id_iroh, payload, alpn)  # type: ignore[union-attr]
 
         try:
             import iroh  # type: ignore[import]
@@ -468,12 +504,13 @@ class IrohTransportNode:
         # (e.g., remote node not yet fully initialised when the first round begins).
         t_conn0  = time.monotonic()
         endpoint = self._iroh_node.node().endpoint()
-        max_attempts = 3
+        max_attempts = int(os.environ.get("FL_CONNECT_ATTEMPTS", 3))
+        connect_timeout = float(os.environ.get("FL_CONNECT_TIMEOUT_S", DIRECT_TIMEOUT_SEC + 30))
         for attempt in range(1, max_attempts + 1):
             try:
                 connection = await asyncio.wait_for(
                     endpoint.connect(node_addr, alpn),
-                    timeout=DIRECT_TIMEOUT_SEC + 30,
+                    timeout=connect_timeout,
                 )
                 break
             except Exception as exc:
@@ -492,8 +529,18 @@ class IrohTransportNode:
         frame = struct.pack(">I", len(payload)) + payload + sha
 
         send_stream = await connection.open_uni()
-        await send_stream.write(frame)
+        # write() may accept only part of the buffer; write_all() does not.
+        await send_stream.write_all(frame)
         await send_stream.finish()
+        # Wait until the peer has read the stream to completion (or stopped it)
+        # before the Connection can be dropped: dropping it right after
+        # finish() closes the connection and may discard in-flight data.
+        try:
+            await asyncio.wait_for(send_stream.stopped(), timeout=STREAM_ACK_TIMEOUT_SEC)
+        except asyncio.TimeoutError:
+            log.warning("peer did not acknowledge stream within %.0fs", STREAM_ACK_TIMEOUT_SEC)
+        except Exception as exc:  # noqa: BLE001 — e.g. connection closed by an admission check
+            raise ConnectionError(f"stream not acknowledged: {type(exc).__name__}: {exc}") from exc
 
         # Capture the transfer end time *before* path classification so the
         # measured throughput (E1) is not polluted by the remote_info settle
@@ -514,6 +561,7 @@ class IrohTransportNode:
             conn_time_ms         = conn_time_ms,
             transfer_duration_ms = transfer_ms,
             active_addr          = active_addr,
+            peer_node_id         = peer_ep.node_id_iroh,
         )
         log.info(
             "send %dB via %s in %.0fms (%.2f Mbit/s) to %s",
@@ -524,7 +572,7 @@ class IrohTransportNode:
 
     async def _receive_bytes(self, alpn: bytes, timeout: float) -> tuple[bytes, TransferStats]:
         if self._mock_mode:
-            return await self._mock.receive(timeout)  # type: ignore[union-attr]
+            return await self._mock.receive(alpn, timeout)  # type: ignore[union-attr]
 
         try:
             import iroh  # type: ignore[import]
@@ -555,6 +603,7 @@ class IrohTransportNode:
             conn_time_ms         = wait_ms,
             transfer_duration_ms = transfer_ms,
             active_addr          = transfer.active_addr,
+            peer_node_id         = transfer.peer_node_id,
         )
         log.info(
             "recv %dB via %s in %.0fms",
@@ -681,10 +730,16 @@ async def _classify_remote_conn(
     and a direct hole-punch may only appear a few hundred ms — or seconds —
     after the connection opens.  We therefore *poll* ``remote_info`` until a
     definitive classification stabilises or a settle window elapses:
-      * ``DIRECT`` / ``MIXED``  -> return immediately (best achievable path).
-      * ``RELAY``               -> remember, but keep polling so a later
-                                   hole-punch upgrade is not missed.
-      * ``None`` / error        -> keep polling until the deadline.
+      * ``DIRECT``          -> return immediately (confirmed direct path).
+      * ``MIXED`` / ``RELAY`` -> remember, but keep polling so a later
+                               upgrade to a confirmed direct path is not missed.
+      * ``None`` / error    -> keep polling until the deadline.
+
+    ``MIXED`` is reported separately and is *not* counted as direct: in iroh
+    it means the relay is still carrying traffic while a direct candidate
+    address is being validated.  (Folding MIXED into DIRECT, as an earlier
+    version of this function did, labels relay-carried transfers as direct —
+    e.g. with all UDP blocked the path is reported MIXED, not RELAY.)
 
     The settle window is read from ``$FL_CONN_CLASSIFY_SETTLE_S`` (seconds) when
     *settle_timeout_s* is not given, defaulting to 1.0 s for the FL data plane.
@@ -765,15 +820,15 @@ async def _classify_remote_conn(
                     pass
             return ConnType.DIRECT, addr
         if kind == "MIXED":
-            # A direct path exists alongside relay; count as direct but keep the
-            # address so overlay (Tailscale) paths can be audited out.
+            # Relay carrying traffic while a direct candidate is validated;
+            # keep polling for a confirmed DIRECT until the settle deadline.
             addr = _active_wire_addr(info)
             if not addr:
                 try:
                     addr = str(ct_obj.as_mixed())
                 except Exception:  # noqa: BLE001
                     pass
-            return ConnType.DIRECT, addr
+            last = (ConnType.MIXED, addr)
         if kind == "RELAY":
             last = (ConnType.RELAY, "")
 

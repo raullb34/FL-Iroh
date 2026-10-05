@@ -1,0 +1,18 @@
+{
+  "condition": "loss_5",
+  "netem": "loss 5%",
+  "fl_wall_s": 241.8,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 1.961,
+  "round_s_max": 73.882,
+  "test_acc_final": 0.4658803706823926,
+  "macro_f1": 0.3915830698487534,
+  "balanced_accuracy": 0.42164107346275337,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 35.0,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 148.4,
+  "xfer_10000kB_ok": "10/10",
+  "xfer_10000kB_ms_median": 1661.7
+}

@@ -1,0 +1,35 @@
+=== baseline: none ===
+qdisc noqueue 0: root refcnt 2 
+2026-09-28 22:30:35,512 [INFO] E11 baseline: {"condition": "baseline", "netem": "none", "fl_wall_s": 283.5, "rounds_ok": 20, "rounds": 20, "round_s_median": 1.842, "round_s_max": 2.623, "test_acc_final": 0.4700926705981466, "macro_f1": 0.3878739341441401, "balanced_accuracy": 0.42004504274943305, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 23.5, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 122.2, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 1224.7}
+=== delay_25: delay 25ms 2.5ms distribution normal ===
+qdisc netem 8003: root refcnt 2 limit 10000 delay 25ms  2.5ms
+2026-09-28 22:40:32,594 [INFO] E11 delay_25: {"condition": "delay_25", "netem": "delay 25ms 2.5ms distribution normal", "fl_wall_s": 289.1, "rounds_ok": 20, "rounds": 20, "round_s_median": 2.019, "round_s_max": 2.711, "test_acc_final": 0.465599550688009, "macro_f1": 0.3903729970929229, "balanced_accuracy": 0.4234798566654831, "xfer_100kB_ok": "7/10", "xfer_100kB_ms_median": 495.4, "xfer_1000kB_ok": "8/10", "xfer_1000kB_ms_median": 2995.0, "xfer_10000kB_ok": "9/10", "xfer_10000kB_ms_median": 24458.0}
+=== delay_50: delay 50ms 5ms distribution normal ===
+qdisc netem 8004: root refcnt 2 limit 10000 delay 50ms  5ms
+2026-09-28 22:57:50,668 [INFO] E11 delay_50: {"condition": "delay_50", "netem": "delay 50ms 5ms distribution normal", "fl_wall_s": 414.2, "rounds_ok": 20, "rounds": 20, "round_s_median": 2.65, "round_s_max": 152.784, "test_acc_final": 0.4703734905925302, "macro_f1": 0.3931247506157753, "balanced_accuracy": 0.4272890700741572, "xfer_100kB_ok": "9/10", "xfer_100kB_ms_median": 1155.9, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 6360.1, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 49133.2}
+=== delay_100: delay 100ms 10ms distribution normal ===
+qdisc netem 8005: root refcnt 2 limit 10000 delay 100ms  10ms
+2026-09-28 23:23:15,290 [INFO] E11 delay_100: {"condition": "delay_100", "netem": "delay 100ms 10ms distribution normal", "fl_wall_s": 310.0, "rounds_ok": 20, "rounds": 20, "round_s_median": 2.905, "round_s_max": 96.677, "test_acc_final": 0.4647570907048582, "macro_f1": 0.39461141645111053, "balanced_accuracy": 0.4214084411231969, "xfer_100kB_ok": "8/10", "xfer_100kB_ms_median": 2687.5, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 12347.1, "xfer_10000kB_ok": "9/10", "xfer_10000kB_ms_median": 96344.2}
+=== delay_250: delay 250ms 25ms distribution normal ===
+qdisc netem 8006: root refcnt 2 limit 10000 delay 250ms  25ms
+2026-09-29 00:48:29,946 [INFO] E11 delay_250: {"condition": "delay_250", "netem": "delay 250ms 25ms distribution normal", "fl_wall_s": 353.3, "rounds_ok": 20, "rounds": 20, "round_s_median": 6.458, "round_s_max": 87.725, "test_acc_final": 0.46082561078348777, "macro_f1": 0.384398118951186, "balanced_accuracy": 0.428649631554131, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 5606.8, "xfer_1000kB_ok": "8/10", "xfer_1000kB_ms_median": 23925.9, "xfer_10000kB_ok": "0/10", "xfer_10000kB_ms_median": null}
+=== loss_1: loss 1% ===
+qdisc netem 8007: root refcnt 2 limit 10000 loss 1%
+2026-09-29 00:53:20,900 [INFO] E11 loss_1: {"condition": "loss_1", "netem": "loss 1%", "fl_wall_s": 251.0, "rounds_ok": 20, "rounds": 20, "round_s_median": 1.701, "round_s_max": 90.978, "test_acc_final": 0.467003650659927, "macro_f1": 0.3906135260762271, "balanced_accuracy": 0.4242834071839709, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 43.8, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 144.6, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 1251.9}
+=== loss_5: loss 5% ===
+qdisc netem 8008: root refcnt 2 limit 10000 loss 5%
+2026-09-29 00:58:12,360 [INFO] E11 loss_5: {"condition": "loss_5", "netem": "loss 5%", "fl_wall_s": 241.8, "rounds_ok": 20, "rounds": 20, "round_s_median": 1.961, "round_s_max": 73.882, "test_acc_final": 0.4658803706823926, "macro_f1": 0.3915830698487534, "balanced_accuracy": 0.42164107346275337, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 35.0, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 148.4, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 1661.7}
+=== loss_10: loss 10% ===
+qdisc netem 8009: root refcnt 2 limit 10000 loss 10%
+2026-09-29 01:04:14,291 [INFO] E11 loss_10: {"condition": "loss_10", "netem": "loss 10%", "fl_wall_s": 292.2, "rounds_ok": 20, "rounds": 20, "round_s_median": 3.861, "round_s_max": 79.185, "test_acc_final": 0.4703734905925302, "macro_f1": 0.3766806448418971, "balanced_accuracy": 0.4203329543399243, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 71.4, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 320.2, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 2790.8}
+=== loss_20: loss 20% ===
+qdisc netem 800a: root refcnt 2 limit 10000 loss 20%
+2026-09-29 07:43:11,409 [INFO] E11 loss_20: {"condition": "loss_20", "netem": "loss 20%", "fl_wall_s": 457.9, "rounds_ok": 20, "rounds": 20, "round_s_median": 7.412, "round_s_max": 106.745, "test_acc_final": 0.4664420106711598, "macro_f1": 0.38312365176609814, "balanced_accuracy": 0.4184341217506189, "xfer_100kB_ok": "9/10", "xfer_100kB_ms_median": 1389.3, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 1497.5, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 11183.1}
+=== rate_10mbit: delay 10ms rate 10mbit ===
+qdisc netem 800b: root refcnt 2 limit 10000 delay 10ms rate 10Mbit
+2026-09-29 07:48:31,865 [INFO] E11 rate_10mbit: {"condition": "rate_10mbit", "netem": "delay 10ms rate 10mbit", "fl_wall_s": 180.1, "rounds_ok": 20, "rounds": 20, "round_s_median": 2.629, "round_s_max": 49.403, "test_acc_final": 0.4692502106149958, "macro_f1": 0.3881531133523599, "balanced_accuracy": 0.4249156590348397, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 220.1, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 1140.6, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 9999.6}
+=== rate_2mbit: delay 10ms rate 2mbit ===
+qdisc netem 800c: root refcnt 2 limit 10000 delay 10ms rate 2Mbit
+2026-09-29 08:00:27,698 [INFO] E11 rate_2mbit: {"condition": "rate_2mbit", "netem": "delay 10ms rate 2mbit", "fl_wall_s": 173.4, "rounds_ok": 20, "rounds": 20, "round_s_median": 3.242, "round_s_max": 39.381, "test_acc_final": 0.4706543105869138, "macro_f1": 0.40149265017216756, "balanced_accuracy": 0.4242585767271431, "xfer_100kB_ok": "10/10", "xfer_100kB_ms_median": 593.6, "xfer_1000kB_ok": "10/10", "xfer_1000kB_ms_median": 4522.5, "xfer_10000kB_ok": "10/10", "xfer_10000kB_ms_median": 43912.9}
+=== rate_512kbit: delay 10ms rate 512kbit ===
+qdisc netem 800d: root refcnt 2 limit 10000 delay 10ms rate 512Kbit

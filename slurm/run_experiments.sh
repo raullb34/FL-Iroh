@@ -168,7 +168,7 @@ case "${TASK_ID}" in
         ;;
 
     1)  # E2 — FL convergence, IID data partition
-        export FL_MOCK_IROH=1   # mock transport: asyncio.Queue bypasses iroh/Tokio threading
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e2_iid" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -176,7 +176,7 @@ case "${TASK_ID}" in
         ;;
 
     2)  # E2 — FL convergence, non-IID Dirichlet α=0.1 (high heterogeneity)
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e2_noniid_01" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -184,7 +184,7 @@ case "${TASK_ID}" in
         ;;
 
     3)  # E2 — FL convergence, non-IID Dirichlet α=0.5 then α=1.0
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e2_noniid_05" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -197,7 +197,7 @@ case "${TASK_ID}" in
         ;;
 
     4)  # E5 — Churn resilience (0 / 10 / 30 / 50 % per-round churn)
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e5_churn" "e5" \
             "experiments.e5_churn" \
             --rounds 100 --n-clients 10 --dataset cifar10 \
@@ -221,7 +221,7 @@ case "${TASK_ID}" in
         ;;
 
     6)  # E2 — FL convergence with Crop Recommendation dataset (all partitions)
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e2_crop_iid" "e2" \
             "experiments.e2_centralized_fl" \
             --rounds 100 --n-clients 10 --dataset crop \
@@ -244,7 +244,7 @@ case "${TASK_ID}" in
         ;;
 
     7)  # E5 — Churn resilience with Crop Recommendation dataset
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e5_crop_churn" "e5" \
             "experiments.e5_churn" \
             --rounds 100 --n-clients 10 --dataset crop \
@@ -252,7 +252,7 @@ case "${TASK_ID}" in
         ;;
 
     8)  # E7 — Air quality FL: 7-day-ahead ICA forecasting (outdoor, CyL stations)
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         # Neural models (AirMLP tabular + AirLSTM sequential) + FedAvg
         run_exp "e7_neural" "e7" \
             "experiments.e7_air_quality_fl" \
@@ -276,7 +276,7 @@ case "${TASK_ID}" in
         # and training loop.  --mode sim runs the in-process Flower simulation
         # (rounds, final acc, payload bytes/round, wall time/round).  The 8-axis
         # operational comparison table is always written to results/e8/.
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         run_exp "e8_flower_iid" "e8" \
             "experiments.e8_flower_tailscale" \
             --mode sim --dataset crop --partition iid \
@@ -310,7 +310,7 @@ case "${TASK_ID}" in
     10) # Multi-seed replication for confidence intervals (F2)
         # Each multi-seed sweep writes to its OWN results dir so the per-seed
         # summary files (e{2,7}_summary_seed<S>.csv) never collide.
-        export FL_MOCK_IROH=1
+        export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
         # E2 IID, 5 seeds → results/e2_iid/seeds/
         run_exp "e2_iid_seeds" "e2_iid" \
             "experiments.e2_centralized_fl" \

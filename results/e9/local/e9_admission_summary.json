@@ -1,0 +1,21 @@
+{
+  "n": 30,
+  "unauthorised_payloads_accepted": 0,
+  "unauthorised_rejections_logged": 30,
+  "spoofed_registration_rejected": true,
+  "authorised_latency_ms_open": {
+    "median": 10.97,
+    "p95": 17.63,
+    "n": 30
+  },
+  "authorised_latency_ms_enforced": {
+    "median": 11.12,
+    "p95": 12.72,
+    "n": 30
+  },
+  "unauthorised_time_to_close_ms": {
+    "median": 10.05,
+    "p95": 12.41,
+    "n": 30
+  }
+}

@@ -19,7 +19,6 @@ dependencies = [
     "iroh>=0.35.0",
     # Machine learning
     "torch>=2.2.0",
-    "torchvision>=0.17.0",
     "numpy>=1.26.0",
     "scikit-learn>=1.4.0",
     # Data models
@@ -35,7 +34,6 @@ dependencies = [
     "rich>=13.7.0",
     "tqdm>=4.66.0",
     "pandas>=2.2.0",
-    "prophet>=1.1.5",
 ]
 
 [project.optional-dependencies]
@@ -51,6 +49,18 @@ baselines = [
     "flwr>=1.7.0",
     "psutil>=5.9.0",
 ]
+vision = [
+    # CIFAR-10 / MNIST experiments (E1-E2); not needed on tabular IoT clients
+    "torchvision>=0.17.0",
+]
+prophet = [
+    # E7 Prophet/FedGAM configurations
+    "prophet>=1.1.5",
+]
+edge = [
+    # Resource monitoring on constrained clients (CPU / RSS / power, E10)
+    "psutil>=5.9.0",
+]
 notebooks = [
     "jupyter>=1.0.0",
     "matplotlib>=3.8.0",
@@ -63,6 +73,7 @@ fl-node    = "fl_coap_iroh.cli:node_cli"
 fl-server  = "fl_coap_iroh.cli:server_cli"
 fl-bench   = "fl_coap_iroh.cli:benchmark_cli"
 fl-discover = "fl_coap_iroh.cli:discover_cli"
+fl-keygen   = "fl_coap_iroh.cli:keygen_cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["fl_coap_iroh"]

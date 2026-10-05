@@ -106,3 +106,8 @@ slurm*.err
 *.nav
 *.snm
 *.vrb
+
+# ── Revision: node identities and edge client venv (never commit keys) ───────
+keys/
+*.key
+.venv-edge/

@@ -1,0 +1,207 @@
+2026-09-28 18:36:50,012 [INFO] RD n=10: 10/10 registered in 46 ms
+2026-09-28 18:36:58,356 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 18:36:58,363 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 18:36:58,368 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 18:36:58,371 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 18:36:58,382 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 18:36:58,385 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 18:36:58,389 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 18:36:58,392 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 18:36:58,395 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 18:36:58,397 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 18:37:03,657 [INFO] RD n=100: 100/100 registered in 131 ms
+2026-09-28 18:37:14,793 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 18:37:14,794 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 18:37:14,796 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 18:37:14,798 [INFO] {"design": "probe", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 96.81, "p95_ms": 107.72, "bytes_median": 58307, "n": 10}
+2026-09-28 18:37:14,800 [INFO] {"design": "probe", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 63.06, "p95_ms": 72.41, "bytes_median": 46180, "n": 10}
+2026-09-28 18:37:14,802 [INFO] {"design": "probe", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 57.03, "p95_ms": 67.0, "bytes_median": 45927, "n": 10}
+2026-09-28 18:37:14,805 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 18:37:14,806 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 18:37:14,809 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 18:37:14,812 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 18:37:14,815 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 18:37:14,817 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 18:37:14,818 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 13.64, "p95_ms": 22.52, "bytes_median": 13720, "n": 30}
+2026-09-28 18:37:14,821 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": true, "matches": 50, "median_ms": 11.94, "p95_ms": 14.01, "bytes_median": 13928, "n": 30}
+2026-09-28 18:37:14,822 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 1.65, "p95_ms": 2.0, "bytes_median": 568, "n": 30}
+2026-09-28 18:37:14,824 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": true, "matches": 2, "median_ms": 1.38, "p95_ms": 1.91, "bytes_median": 584, "n": 30}
+2026-09-28 18:37:14,826 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 1.54, "p95_ms": 2.25, "bytes_median": 336, "n": 30}
+2026-09-28 18:37:14,830 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": true, "matches": 1, "median_ms": 1.46, "p95_ms": 2.16, "bytes_median": 352, "n": 30}
+2026-09-28 18:37:14,832 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 18:37:14,834 [INFO] {"design": "rd-register", "n_nodes": 100, "query": "storm", "paged": false, "matches": 100, "median_ms": 60.3, "p95_ms": 86.74, "bytes_median": 378, "n": 100, "storm_total_ms": 130.6}
+2026-09-28 18:37:21,738 [INFO] RD n=500: 500/500 registered in 387 ms
+2026-09-28 18:37:46,847 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 18:37:46,850 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 18:37:46,856 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 18:37:46,864 [INFO] {"design": "probe", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 96.81, "p95_ms": 107.72, "bytes_median": 58307, "n": 10}
+2026-09-28 18:37:46,872 [INFO] {"design": "probe", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 63.06, "p95_ms": 72.41, "bytes_median": 46180, "n": 10}
+2026-09-28 18:37:46,879 [INFO] {"design": "probe", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 57.03, "p95_ms": 67.0, "bytes_median": 45927, "n": 10}
+2026-09-28 18:37:46,884 [INFO] {"design": "probe", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 574.42, "p95_ms": 787.9, "bytes_median": 291839, "n": 10}
+2026-09-28 18:37:46,888 [INFO] {"design": "probe", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 374.92, "p95_ms": 416.12, "bytes_median": 234084, "n": 10}
+2026-09-28 18:37:46,892 [INFO] {"design": "probe", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 335.65, "p95_ms": 359.8, "bytes_median": 229517, "n": 10}
+2026-09-28 18:37:46,895 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 18:37:46,897 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 18:37:46,899 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 18:37:46,900 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 18:37:46,902 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 18:37:46,903 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 18:37:46,904 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 13.64, "p95_ms": 22.52, "bytes_median": 13720, "n": 30}
+2026-09-28 18:37:46,906 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": true, "matches": 50, "median_ms": 11.94, "p95_ms": 14.01, "bytes_median": 13928, "n": 30}
+2026-09-28 18:37:46,907 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 1.65, "p95_ms": 2.0, "bytes_median": 568, "n": 30}
+2026-09-28 18:37:46,908 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": true, "matches": 2, "median_ms": 1.38, "p95_ms": 1.91, "bytes_median": 584, "n": 30}
+2026-09-28 18:37:46,909 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 1.54, "p95_ms": 2.25, "bytes_median": 336, "n": 30}
+2026-09-28 18:37:46,910 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": true, "matches": 1, "median_ms": 1.46, "p95_ms": 2.16, "bytes_median": 352, "n": 30}
+2026-09-28 18:37:46,912 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 44.05, "p95_ms": 56.55, "bytes_median": 68857, "n": 30}
+2026-09-28 18:37:46,913 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": true, "matches": 50, "median_ms": 8.92, "p95_ms": 11.26, "bytes_median": 13928, "n": 30}
+2026-09-28 18:37:46,915 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 5.61, "p95_ms": 11.52, "bytes_median": 6078, "n": 30}
+2026-09-28 18:37:46,917 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": true, "matches": 22, "median_ms": 4.87, "p95_ms": 12.67, "bytes_median": 6174, "n": 30}
+2026-09-28 18:37:46,918 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 0.97, "p95_ms": 1.18, "bytes_median": 1203, "n": 30}
+2026-09-28 18:37:46,919 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": true, "matches": 4, "median_ms": 0.89, "p95_ms": 1.2, "bytes_median": 1235, "n": 30}
+2026-09-28 18:37:46,921 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 18:37:46,922 [INFO] {"design": "rd-register", "n_nodes": 100, "query": "storm", "paged": false, "matches": 100, "median_ms": 60.3, "p95_ms": 86.74, "bytes_median": 378, "n": 100, "storm_total_ms": 130.6}
+2026-09-28 18:37:46,925 [INFO] {"design": "rd-register", "n_nodes": 500, "query": "storm", "paged": false, "matches": 500, "median_ms": 44.81, "p95_ms": 79.76, "bytes_median": 381, "n": 500, "storm_total_ms": 387.1}
+2026-09-28 18:37:53,315 [INFO] RD n=1000: 1000/1000 registered in 695 ms
+2026-09-28 18:38:33,282 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 18:38:33,287 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 18:38:33,291 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 18:38:33,295 [INFO] {"design": "probe", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 96.81, "p95_ms": 107.72, "bytes_median": 58307, "n": 10}
+2026-09-28 18:38:33,299 [INFO] {"design": "probe", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 63.06, "p95_ms": 72.41, "bytes_median": 46180, "n": 10}
+2026-09-28 18:38:33,302 [INFO] {"design": "probe", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 57.03, "p95_ms": 67.0, "bytes_median": 45927, "n": 10}
+2026-09-28 18:38:33,306 [INFO] {"design": "probe", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 574.42, "p95_ms": 787.9, "bytes_median": 291839, "n": 10}
+2026-09-28 18:38:33,309 [INFO] {"design": "probe", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 374.92, "p95_ms": 416.12, "bytes_median": 234084, "n": 10}
+2026-09-28 18:38:33,312 [INFO] {"design": "probe", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 335.65, "p95_ms": 359.8, "bytes_median": 229517, "n": 10}
+2026-09-28 18:38:33,315 [INFO] {"design": "probe", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 977.99, "p95_ms": 1025.95, "bytes_median": 583649, "n": 10}
+2026-09-28 18:38:33,317 [INFO] {"design": "probe", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 748.25, "p95_ms": 920.94, "bytes_median": 467899, "n": 10}
+2026-09-28 18:38:33,320 [INFO] {"design": "probe", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 795.93, "p95_ms": 909.29, "bytes_median": 459790, "n": 10}
+2026-09-28 18:38:33,323 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 18:38:33,325 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 18:38:33,328 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 18:38:33,330 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 18:38:33,332 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 18:38:33,333 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 18:38:33,334 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 13.64, "p95_ms": 22.52, "bytes_median": 13720, "n": 30}
+2026-09-28 18:38:33,335 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": true, "matches": 50, "median_ms": 11.94, "p95_ms": 14.01, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:33,336 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 1.65, "p95_ms": 2.0, "bytes_median": 568, "n": 30}
+2026-09-28 18:38:33,338 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": true, "matches": 2, "median_ms": 1.38, "p95_ms": 1.91, "bytes_median": 584, "n": 30}
+2026-09-28 18:38:33,340 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 1.54, "p95_ms": 2.25, "bytes_median": 336, "n": 30}
+2026-09-28 18:38:33,343 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": true, "matches": 1, "median_ms": 1.46, "p95_ms": 2.16, "bytes_median": 352, "n": 30}
+2026-09-28 18:38:33,345 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 44.05, "p95_ms": 56.55, "bytes_median": 68857, "n": 30}
+2026-09-28 18:38:33,346 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": true, "matches": 50, "median_ms": 8.92, "p95_ms": 11.26, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:33,348 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 5.61, "p95_ms": 11.52, "bytes_median": 6078, "n": 30}
+2026-09-28 18:38:33,349 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": true, "matches": 22, "median_ms": 4.87, "p95_ms": 12.67, "bytes_median": 6174, "n": 30}
+2026-09-28 18:38:33,350 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 0.97, "p95_ms": 1.18, "bytes_median": 1203, "n": 30}
+2026-09-28 18:38:33,351 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": true, "matches": 4, "median_ms": 0.89, "p95_ms": 1.2, "bytes_median": 1235, "n": 30}
+2026-09-28 18:38:33,352 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 92.84, "p95_ms": 142.36, "bytes_median": 137519, "n": 30}
+2026-09-28 18:38:33,356 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 10.57, "p95_ms": 14.0, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:33,359 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 8.47, "p95_ms": 11.62, "bytes_median": 11819, "n": 30}
+2026-09-28 18:38:33,361 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": true, "matches": 43, "median_ms": 8.85, "p95_ms": 11.64, "bytes_median": 11995, "n": 30}
+2026-09-28 18:38:33,363 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 3.13, "p95_ms": 4.65, "bytes_median": 3156, "n": 30}
+2026-09-28 18:38:33,365 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": true, "matches": 11, "median_ms": 2.69, "p95_ms": 4.12, "bytes_median": 3204, "n": 30}
+2026-09-28 18:38:33,366 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 18:38:33,367 [INFO] {"design": "rd-register", "n_nodes": 100, "query": "storm", "paged": false, "matches": 100, "median_ms": 60.3, "p95_ms": 86.74, "bytes_median": 378, "n": 100, "storm_total_ms": 130.6}
+2026-09-28 18:38:33,368 [INFO] {"design": "rd-register", "n_nodes": 500, "query": "storm", "paged": false, "matches": 500, "median_ms": 44.81, "p95_ms": 79.76, "bytes_median": 381, "n": 500, "storm_total_ms": 387.1}
+2026-09-28 18:38:33,369 [INFO] {"design": "rd-register", "n_nodes": 1000, "query": "storm", "paged": false, "matches": 1000, "median_ms": 42.16, "p95_ms": 55.09, "bytes_median": 380, "n": 1000, "storm_total_ms": 695.0}
+2026-09-28 18:38:41,335 [INFO] RD n=2000: 2000/2000 registered in 1642 ms
+2026-09-28 18:38:49,790 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 18:38:49,795 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 18:38:49,798 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 18:38:49,802 [INFO] {"design": "probe", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 96.81, "p95_ms": 107.72, "bytes_median": 58307, "n": 10}
+2026-09-28 18:38:49,805 [INFO] {"design": "probe", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 63.06, "p95_ms": 72.41, "bytes_median": 46180, "n": 10}
+2026-09-28 18:38:49,809 [INFO] {"design": "probe", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 57.03, "p95_ms": 67.0, "bytes_median": 45927, "n": 10}
+2026-09-28 18:38:49,813 [INFO] {"design": "probe", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 574.42, "p95_ms": 787.9, "bytes_median": 291839, "n": 10}
+2026-09-28 18:38:49,815 [INFO] {"design": "probe", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 374.92, "p95_ms": 416.12, "bytes_median": 234084, "n": 10}
+2026-09-28 18:38:49,817 [INFO] {"design": "probe", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 335.65, "p95_ms": 359.8, "bytes_median": 229517, "n": 10}
+2026-09-28 18:38:49,818 [INFO] {"design": "probe", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 977.99, "p95_ms": 1025.95, "bytes_median": 583649, "n": 10}
+2026-09-28 18:38:49,820 [INFO] {"design": "probe", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 748.25, "p95_ms": 920.94, "bytes_median": 467899, "n": 10}
+2026-09-28 18:38:49,821 [INFO] {"design": "probe", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 795.93, "p95_ms": 909.29, "bytes_median": 459790, "n": 10}
+2026-09-28 18:38:49,823 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 18:38:49,826 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 18:38:49,830 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 18:38:49,832 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 18:38:49,834 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 18:38:49,836 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 18:38:49,839 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 13.64, "p95_ms": 22.52, "bytes_median": 13720, "n": 30}
+2026-09-28 18:38:49,841 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": true, "matches": 50, "median_ms": 11.94, "p95_ms": 14.01, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:49,843 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 1.65, "p95_ms": 2.0, "bytes_median": 568, "n": 30}
+2026-09-28 18:38:49,846 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": true, "matches": 2, "median_ms": 1.38, "p95_ms": 1.91, "bytes_median": 584, "n": 30}
+2026-09-28 18:38:49,848 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 1.54, "p95_ms": 2.25, "bytes_median": 336, "n": 30}
+2026-09-28 18:38:49,850 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": true, "matches": 1, "median_ms": 1.46, "p95_ms": 2.16, "bytes_median": 352, "n": 30}
+2026-09-28 18:38:49,851 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 44.05, "p95_ms": 56.55, "bytes_median": 68857, "n": 30}
+2026-09-28 18:38:49,853 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": true, "matches": 50, "median_ms": 8.92, "p95_ms": 11.26, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:49,854 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 5.61, "p95_ms": 11.52, "bytes_median": 6078, "n": 30}
+2026-09-28 18:38:49,857 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": true, "matches": 22, "median_ms": 4.87, "p95_ms": 12.67, "bytes_median": 6174, "n": 30}
+2026-09-28 18:38:49,859 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 0.97, "p95_ms": 1.18, "bytes_median": 1203, "n": 30}
+2026-09-28 18:38:49,861 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": true, "matches": 4, "median_ms": 0.89, "p95_ms": 1.2, "bytes_median": 1235, "n": 30}
+2026-09-28 18:38:49,863 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 92.84, "p95_ms": 142.36, "bytes_median": 137519, "n": 30}
+2026-09-28 18:38:49,864 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 10.57, "p95_ms": 14.0, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:49,866 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 8.47, "p95_ms": 11.62, "bytes_median": 11819, "n": 30}
+2026-09-28 18:38:49,869 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": true, "matches": 43, "median_ms": 8.85, "p95_ms": 11.64, "bytes_median": 11995, "n": 30}
+2026-09-28 18:38:49,872 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 3.13, "p95_ms": 4.65, "bytes_median": 3156, "n": 30}
+2026-09-28 18:38:49,875 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": true, "matches": 11, "median_ms": 2.69, "p95_ms": 4.12, "bytes_median": 3204, "n": 30}
+2026-09-28 18:38:49,877 [INFO] {"design": "rd", "n_nodes": 2000, "query": "1tag", "paged": false, "matches": 1000, "median_ms": 184.24, "p95_ms": 337.58, "bytes_median": 275743, "n": 30}
+2026-09-28 18:38:49,881 [INFO] {"design": "rd", "n_nodes": 2000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 9.93, "p95_ms": 16.63, "bytes_median": 13928, "n": 30}
+2026-09-28 18:38:49,882 [INFO] {"design": "rd", "n_nodes": 2000, "query": "2tag", "paged": false, "matches": 89, "median_ms": 15.48, "p95_ms": 17.3, "bytes_median": 24539, "n": 30}
+2026-09-28 18:38:49,884 [INFO] {"design": "rd", "n_nodes": 2000, "query": "2tag", "paged": true, "matches": 50, "median_ms": 9.5, "p95_ms": 10.72, "bytes_median": 13958, "n": 30}
+2026-09-28 18:38:49,887 [INFO] {"design": "rd", "n_nodes": 2000, "query": "3tag", "paged": false, "matches": 24, "median_ms": 9.29, "p95_ms": 18.56, "bytes_median": 6943, "n": 30}
+2026-09-28 18:38:49,891 [INFO] {"design": "rd", "n_nodes": 2000, "query": "3tag", "paged": true, "matches": 24, "median_ms": 6.37, "p95_ms": 9.11, "bytes_median": 7055, "n": 30}
+2026-09-28 18:38:49,894 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 18:38:49,897 [INFO] {"design": "rd-register", "n_nodes": 100, "query": "storm", "paged": false, "matches": 100, "median_ms": 60.3, "p95_ms": 86.74, "bytes_median": 378, "n": 100, "storm_total_ms": 130.6}
+2026-09-28 18:38:49,900 [INFO] {"design": "rd-register", "n_nodes": 500, "query": "storm", "paged": false, "matches": 500, "median_ms": 44.81, "p95_ms": 79.76, "bytes_median": 381, "n": 500, "storm_total_ms": 387.1}
+2026-09-28 18:38:49,904 [INFO] {"design": "rd-register", "n_nodes": 1000, "query": "storm", "paged": false, "matches": 1000, "median_ms": 42.16, "p95_ms": 55.09, "bytes_median": 380, "n": 1000, "storm_total_ms": 695.0}
+2026-09-28 18:38:49,907 [INFO] {"design": "rd-register", "n_nodes": 2000, "query": "storm", "paged": false, "matches": 2000, "median_ms": 46.0, "p95_ms": 85.31, "bytes_median": 381, "n": 2000, "storm_total_ms": 1641.9}
+2026-09-28 22:23:21,332 [INFO] RD n=5000: 5000/5000 registered in 18173 ms
+2026-09-28 22:23:53,259 [INFO] {"design": "probe", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 16.28, "p95_ms": 40.32, "bytes_median": 5803, "n": 10}
+2026-09-28 22:23:53,261 [INFO] {"design": "probe", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 12.39, "p95_ms": 16.09, "bytes_median": 4544, "n": 10}
+2026-09-28 22:23:53,263 [INFO] {"design": "probe", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 17.63, "p95_ms": 28.67, "bytes_median": 4544, "n": 10}
+2026-09-28 22:23:53,265 [INFO] {"design": "probe", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 96.81, "p95_ms": 107.72, "bytes_median": 58307, "n": 10}
+2026-09-28 22:23:53,267 [INFO] {"design": "probe", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 63.06, "p95_ms": 72.41, "bytes_median": 46180, "n": 10}
+2026-09-28 22:23:53,269 [INFO] {"design": "probe", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 57.03, "p95_ms": 67.0, "bytes_median": 45927, "n": 10}
+2026-09-28 22:23:53,271 [INFO] {"design": "probe", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 574.42, "p95_ms": 787.9, "bytes_median": 291839, "n": 10}
+2026-09-28 22:23:53,273 [INFO] {"design": "probe", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 374.92, "p95_ms": 416.12, "bytes_median": 234084, "n": 10}
+2026-09-28 22:23:53,274 [INFO] {"design": "probe", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 335.65, "p95_ms": 359.8, "bytes_median": 229517, "n": 10}
+2026-09-28 22:23:53,276 [INFO] {"design": "probe", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 977.99, "p95_ms": 1025.95, "bytes_median": 583649, "n": 10}
+2026-09-28 22:23:53,277 [INFO] {"design": "probe", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 748.25, "p95_ms": 920.94, "bytes_median": 467899, "n": 10}
+2026-09-28 22:23:53,278 [INFO] {"design": "probe", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 795.93, "p95_ms": 909.29, "bytes_median": 459790, "n": 10}
+2026-09-28 22:23:53,280 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": false, "matches": 5, "median_ms": 1.92, "p95_ms": 7.21, "bytes_median": 1406, "n": 30}
+2026-09-28 22:23:53,281 [INFO] {"design": "rd", "n_nodes": 10, "query": "1tag", "paged": true, "matches": 5, "median_ms": 1.69, "p95_ms": 2.58, "bytes_median": 1438, "n": 30}
+2026-09-28 22:23:53,283 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": false, "matches": 0, "median_ms": 0.68, "p95_ms": 0.92, "bytes_median": 60, "n": 30}
+2026-09-28 22:23:53,283 [INFO] {"design": "rd", "n_nodes": 10, "query": "2tag", "paged": true, "matches": 0, "median_ms": 0.7, "p95_ms": 1.01, "bytes_median": 76, "n": 30}
+2026-09-28 22:23:53,285 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": false, "matches": 0, "median_ms": 0.69, "p95_ms": 1.34, "bytes_median": 75, "n": 30}
+2026-09-28 22:23:53,286 [INFO] {"design": "rd", "n_nodes": 10, "query": "3tag", "paged": true, "matches": 0, "median_ms": 0.68, "p95_ms": 1.07, "bytes_median": 91, "n": 30}
+2026-09-28 22:23:53,289 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": false, "matches": 50, "median_ms": 13.64, "p95_ms": 22.52, "bytes_median": 13720, "n": 30}
+2026-09-28 22:23:53,290 [INFO] {"design": "rd", "n_nodes": 100, "query": "1tag", "paged": true, "matches": 50, "median_ms": 11.94, "p95_ms": 14.01, "bytes_median": 13928, "n": 30}
+2026-09-28 22:23:53,292 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": false, "matches": 2, "median_ms": 1.65, "p95_ms": 2.0, "bytes_median": 568, "n": 30}
+2026-09-28 22:23:53,293 [INFO] {"design": "rd", "n_nodes": 100, "query": "2tag", "paged": true, "matches": 2, "median_ms": 1.38, "p95_ms": 1.91, "bytes_median": 584, "n": 30}
+2026-09-28 22:23:53,294 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": false, "matches": 1, "median_ms": 1.54, "p95_ms": 2.25, "bytes_median": 336, "n": 30}
+2026-09-28 22:23:53,295 [INFO] {"design": "rd", "n_nodes": 100, "query": "3tag", "paged": true, "matches": 1, "median_ms": 1.46, "p95_ms": 2.16, "bytes_median": 352, "n": 30}
+2026-09-28 22:23:53,297 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": false, "matches": 250, "median_ms": 44.05, "p95_ms": 56.55, "bytes_median": 68857, "n": 30}
+2026-09-28 22:23:53,298 [INFO] {"design": "rd", "n_nodes": 500, "query": "1tag", "paged": true, "matches": 50, "median_ms": 8.92, "p95_ms": 11.26, "bytes_median": 13928, "n": 30}
+2026-09-28 22:23:53,299 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": false, "matches": 22, "median_ms": 5.61, "p95_ms": 11.52, "bytes_median": 6078, "n": 30}
+2026-09-28 22:23:53,300 [INFO] {"design": "rd", "n_nodes": 500, "query": "2tag", "paged": true, "matches": 22, "median_ms": 4.87, "p95_ms": 12.67, "bytes_median": 6174, "n": 30}
+2026-09-28 22:23:53,301 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": false, "matches": 4, "median_ms": 0.97, "p95_ms": 1.18, "bytes_median": 1203, "n": 30}
+2026-09-28 22:23:53,302 [INFO] {"design": "rd", "n_nodes": 500, "query": "3tag", "paged": true, "matches": 4, "median_ms": 0.89, "p95_ms": 1.2, "bytes_median": 1235, "n": 30}
+2026-09-28 22:23:53,303 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": false, "matches": 500, "median_ms": 92.84, "p95_ms": 142.36, "bytes_median": 137519, "n": 30}
+2026-09-28 22:23:53,305 [INFO] {"design": "rd", "n_nodes": 1000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 10.57, "p95_ms": 14.0, "bytes_median": 13928, "n": 30}
+2026-09-28 22:23:53,306 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": false, "matches": 43, "median_ms": 8.47, "p95_ms": 11.62, "bytes_median": 11819, "n": 30}
+2026-09-28 22:23:53,308 [INFO] {"design": "rd", "n_nodes": 1000, "query": "2tag", "paged": true, "matches": 43, "median_ms": 8.85, "p95_ms": 11.64, "bytes_median": 11995, "n": 30}
+2026-09-28 22:23:53,309 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": false, "matches": 11, "median_ms": 3.13, "p95_ms": 4.65, "bytes_median": 3156, "n": 30}
+2026-09-28 22:23:53,310 [INFO] {"design": "rd", "n_nodes": 1000, "query": "3tag", "paged": true, "matches": 11, "median_ms": 2.69, "p95_ms": 4.12, "bytes_median": 3204, "n": 30}
+2026-09-28 22:23:53,312 [INFO] {"design": "rd", "n_nodes": 2000, "query": "1tag", "paged": false, "matches": 1000, "median_ms": 184.24, "p95_ms": 337.58, "bytes_median": 275743, "n": 30}
+2026-09-28 22:23:53,314 [INFO] {"design": "rd", "n_nodes": 2000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 9.93, "p95_ms": 16.63, "bytes_median": 13928, "n": 30}
+2026-09-28 22:23:53,315 [INFO] {"design": "rd", "n_nodes": 2000, "query": "2tag", "paged": false, "matches": 89, "median_ms": 15.48, "p95_ms": 17.3, "bytes_median": 24539, "n": 30}
+2026-09-28 22:23:53,317 [INFO] {"design": "rd", "n_nodes": 2000, "query": "2tag", "paged": true, "matches": 50, "median_ms": 9.5, "p95_ms": 10.72, "bytes_median": 13958, "n": 30}
+2026-09-28 22:23:53,319 [INFO] {"design": "rd", "n_nodes": 2000, "query": "3tag", "paged": false, "matches": 24, "median_ms": 9.29, "p95_ms": 18.56, "bytes_median": 6943, "n": 30}
+2026-09-28 22:23:53,323 [INFO] {"design": "rd", "n_nodes": 2000, "query": "3tag", "paged": true, "matches": 24, "median_ms": 6.37, "p95_ms": 9.11, "bytes_median": 7055, "n": 30}
+2026-09-28 22:23:53,325 [INFO] {"design": "rd", "n_nodes": 5000, "query": "1tag", "paged": false, "matches": 2500, "median_ms": 873.73, "p95_ms": 1209.64, "bytes_median": 692651, "n": 30}
+2026-09-28 22:23:53,328 [INFO] {"design": "rd", "n_nodes": 5000, "query": "1tag", "paged": true, "matches": 50, "median_ms": 21.56, "p95_ms": 32.4, "bytes_median": 13954, "n": 30}
+2026-09-28 22:23:53,331 [INFO] {"design": "rd", "n_nodes": 5000, "query": "2tag", "paged": false, "matches": 222, "median_ms": 66.79, "p95_ms": 91.71, "bytes_median": 61633, "n": 30}
+2026-09-28 22:23:53,335 [INFO] {"design": "rd", "n_nodes": 5000, "query": "2tag", "paged": true, "matches": 50, "median_ms": 15.87, "p95_ms": 25.15, "bytes_median": 13984, "n": 30}
+2026-09-28 22:23:53,338 [INFO] {"design": "rd", "n_nodes": 5000, "query": "3tag", "paged": false, "matches": 68, "median_ms": 18.94, "p95_ms": 37.03, "bytes_median": 19626, "n": 30}
+2026-09-28 22:23:53,340 [INFO] {"design": "rd", "n_nodes": 5000, "query": "3tag", "paged": true, "matches": 50, "median_ms": 20.44, "p95_ms": 40.06, "bytes_median": 14719, "n": 30}
+2026-09-28 22:23:53,342 [INFO] {"design": "rd-register", "n_nodes": 10, "query": "storm", "paged": false, "matches": 10, "median_ms": 39.92, "p95_ms": 40.58, "bytes_median": 375, "n": 10, "storm_total_ms": 46.0}
+2026-09-28 22:23:53,344 [INFO] {"design": "rd-register", "n_nodes": 100, "query": "storm", "paged": false, "matches": 100, "median_ms": 60.3, "p95_ms": 86.74, "bytes_median": 378, "n": 100, "storm_total_ms": 130.6}
+2026-09-28 22:23:53,345 [INFO] {"design": "rd-register", "n_nodes": 500, "query": "storm", "paged": false, "matches": 500, "median_ms": 44.81, "p95_ms": 79.76, "bytes_median": 381, "n": 500, "storm_total_ms": 387.1}
+2026-09-28 22:23:53,347 [INFO] {"design": "rd-register", "n_nodes": 1000, "query": "storm", "paged": false, "matches": 1000, "median_ms": 42.16, "p95_ms": 55.09, "bytes_median": 380, "n": 1000, "storm_total_ms": 695.0}
+2026-09-28 22:23:53,349 [INFO] {"design": "rd-register", "n_nodes": 2000, "query": "storm", "paged": false, "matches": 2000, "median_ms": 46.0, "p95_ms": 85.31, "bytes_median": 381, "n": 2000, "storm_total_ms": 1641.9}
+2026-09-28 22:23:53,352 [INFO] {"design": "rd-register", "n_nodes": 5000, "query": "storm", "paged": false, "matches": 5000, "median_ms": 220.19, "p95_ms": 328.9, "bytes_median": 383, "n": 5000, "storm_total_ms": 18172.6}

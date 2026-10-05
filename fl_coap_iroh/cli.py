@@ -39,6 +39,23 @@ def _load_scenario(scenario_file: str) -> dict:
         return yaml.safe_load(f) or {}
 
 
+def _make_model(dataset: str):
+    """Model matching *dataset*; the tabular ones are sized for Raspberry Pi clients."""
+    if dataset == "crop":
+        from fl_coap_iroh.models.agri_mlp import AgriMLP
+        return AgriMLP()
+    if dataset == "air_quality":
+        from fl_coap_iroh.models.air_mlp import AirMLP
+        return AirMLP()
+    from fl_coap_iroh.models.cnn import SimpleCNN
+    return SimpleCNN() if dataset == "cifar10" else SimpleCNN(in_channels=1)
+
+
+_FEATURE_DIM = {"cifar10": [32, 32, 3], "mnist": [28, 28, 1], "fmnist": [28, 28, 1],
+                "crop": [7], "air_quality": [6]}
+_N_CLASSES = {"crop": 22, "air_quality": 3}
+
+
 # ---------------------------------------------------------------------------
 # fl-server
 # ---------------------------------------------------------------------------
@@ -57,6 +74,12 @@ def _load_scenario(scenario_file: str) -> dict:
 @click.option("--scenario",       default=lambda: os.environ.get("FL_SCENARIO", "net_lan"))
 @click.option("--architecture",   default=lambda: os.environ.get("FL_ARCHITECTURE", "B"))
 @click.option("--seed",           default=lambda: int(os.environ.get("FL_SEED", 42)),         type=int)
+@click.option("--secret-key-file",default=lambda: os.environ.get("FL_SECRET_KEY_FILE", ""),
+              help="Persistent node key (stable NodeId across restarts)")
+@click.option("--allowlist-file", default=lambda: os.environ.get("FL_ALLOWLIST_FILE", ""),
+              help="File of admitted client NodeIds (one per line); unset = open federation")
+@click.option("--wait-clients-s", default=120.0, type=float,
+              help="Seconds to wait for --min-clients registrations before starting")
 @click.option("--data-dir",       default="./data")
 @click.option("--results-dir",    default="./results")
 @click.option("--log-level",      default="INFO")
@@ -69,12 +92,13 @@ def server_cli(**kw: object) -> None:
 async def _run_server(
     node_id, coap_port, rounds, dataset, partition, alpha,
     min_clients, local_epochs, lr, relay_url, scenario, architecture,
-    seed, data_dir, results_dir, log_level,
+    seed, secret_key_file, allowlist_file, wait_clients_s, data_dir, results_dir, log_level,
 ) -> None:
     import torch
     from fl_coap_iroh.data.partition import load_dataset
     from fl_coap_iroh.fl.server import FLServer
     from fl_coap_iroh.models.cnn import SimpleCNN
+    from fl_coap_iroh.transport.admission import AllowList
     from fl_coap_iroh.types import (
         AvailabilityInfo, ComputeCapabilities, EnergyState,
         NodeCapabilities, NodeRole, NodeStatus, TrainingPolicy,
@@ -83,7 +107,7 @@ async def _run_server(
     torch.manual_seed(seed)
 
     _, test_ds = load_dataset(dataset, data_dir)
-    model = SimpleCNN() if dataset == "cifar10" else SimpleCNN(in_channels=1)
+    model = _make_model(dataset)
 
     caps = NodeCapabilities(
         node_id      = node_id,
@@ -108,6 +132,8 @@ async def _run_server(
         relay_url    = relay_url or None,
         scenario     = scenario,
         architecture = architecture,
+        allowlist    = AllowList.from_file(allowlist_file) if allowlist_file else AllowList(),
+        secret_key_file = secret_key_file or None,
     )
     server.metrics = __import__(
         "fl_coap_iroh.metrics.collector", fromlist=["MetricsCollector"]
@@ -121,10 +147,10 @@ async def _run_server(
     ep_file.parent.mkdir(parents=True, exist_ok=True)
     ep_file.write_text(json.dumps(server_ep.model_dump(), indent=2))
 
-    # Wait until at least min_clients have registered (up to 120 s)
+    # Wait until at least min_clients have registered
     min_needed = server.policy.min_clients
-    deadline = asyncio.get_event_loop().time() + 120
-    log.info("Waiting for %d clients to register (timeout 120 s)…", min_needed)
+    deadline = asyncio.get_event_loop().time() + wait_clients_s
+    log.info("Waiting for %d clients to register (timeout %.0f s)…", min_needed, wait_clients_s)
     while len(server._clients) < min_needed:
         if asyncio.get_event_loop().time() > deadline:
             log.warning("Timeout waiting for clients — proceeding with %d", len(server._clients))
@@ -134,6 +160,11 @@ async def _run_server(
 
     await server.run_rounds(n_rounds=rounds)
     await server.stop()
+
+    if server.allowlist.rejections:
+        from fl_coap_iroh.metrics.collector import _write_csv
+        _write_csv(Path(results_dir) / f"{architecture}_{scenario}_rejections.csv",
+                   [r.__dict__ for r in server.allowlist.rejections])
 
     exported = server.metrics.export_csv()
     log.info("Results: %s", {k: str(v) for k, v in exported.items()})
@@ -160,6 +191,11 @@ async def _run_server(
 @click.option("--scenario",        default=lambda: os.environ.get("FL_SCENARIO", "net_lan"))
 @click.option("--architecture",    default=lambda: os.environ.get("FL_ARCHITECTURE", "B"))
 @click.option("--seed",            default=lambda: int(os.environ.get("FL_SEED", 42)), type=int)
+@click.option("--secret-key-file", default=lambda: os.environ.get("FL_SECRET_KEY_FILE", ""),
+              help="Persistent node key (stable NodeId across restarts)")
+@click.option("--server-endpoint-file", default=lambda: os.environ.get("FL_SERVER_ENDPOINT_FILE", ""),
+              help="Server endpoint JSON (NodeId + relay); register over Iroh instead of CoAP, "
+                   "so the server may sit behind NAT")
 @click.option("--data-dir",        default="./data")
 @click.option("--results-dir",     default="./results")
 @click.option("--log-level",       default="INFO")
@@ -172,7 +208,7 @@ def node_cli(**kw: object) -> None:
 async def _run_client(
     node_id, coap_port, server_host, server_coap_port, partition_idx,
     n_clients, dataset, partition, alpha, rounds, relay_url, scenario,
-    architecture, seed, data_dir, results_dir, log_level,
+    architecture, seed, secret_key_file, server_endpoint_file, data_dir, results_dir, log_level,
 ) -> None:
     import torch
     from fl_coap_iroh.coap.client import FLCoapClient
@@ -190,7 +226,7 @@ async def _run_client(
     partitions = partition_dataset(train_ds, n_clients, partition, alpha, seed)
     my_partition = partitions[partition_idx % len(partitions)]
 
-    model = SimpleCNN() if dataset == "cifar10" else SimpleCNN(in_channels=1)
+    model = _make_model(dataset)
 
     caps = NodeCapabilities(
         node_id      = node_id,
@@ -202,10 +238,10 @@ async def _run_client(
         dataset_id   = f"{node_id}-{dataset}-{partition_idx}",
         dataset_name = dataset,
         samples      = len(my_partition),
-        classes      = list(range(10)),
+        classes      = list(range(_N_CLASSES.get(dataset, 10))),
         iid          = (partition == "iid"),
-        distribution = "iid" if partition == "iid" else f"dirichlet-alpha-{alpha}",
-        feature_dim  = [32, 32, 3] if dataset == "cifar10" else [28, 28, 1],
+        distribution = partition if partition != "dirichlet" else f"dirichlet-alpha-{alpha}",
+        feature_dim  = _FEATURE_DIM.get(dataset, []),
     )
 
     client = FLClient(
@@ -219,6 +255,7 @@ async def _run_client(
         relay_url          = relay_url or None,
         scenario           = scenario,
         architecture       = architecture,
+        secret_key_file    = secret_key_file or None,
     )
     client.metrics = __import__(
         "fl_coap_iroh.metrics.collector", fromlist=["MetricsCollector"]
@@ -226,27 +263,67 @@ async def _run_client(
 
     await client.start()
 
-    # Discover server endpoint via CoAP, then register this client with server
-    log.info("Discovering server endpoint at %s:%d…", server_host, server_coap_port)
-    async with FLCoapClient(server_host, server_coap_port) as coap_cl:
-        server_ep = await coap_cl.get_iroh_endpoint()
+    if server_endpoint_file:
+        # WAN / NAT mode: the server is addressed by NodeId, registration is
+        # carried over Iroh (fl-ctrl/1) and authenticated by the QUIC handshake.
+        from fl_coap_iroh.types import IrohEndpoint
+        server_ep = IrohEndpoint(**json.loads(Path(server_endpoint_file).read_text()))
         client.set_server_endpoint(server_ep)
-        log.info("Server Iroh endpoint: %s", server_ep.node_id_iroh[:16])
-        # Register this client's iroh endpoint with the server
-        client_ep = client.iroh_endpoint
-        if client_ep is not None:
-            await coap_cl.register_with_server(node_id, client_ep)
-            log.info("Registered with server as %s", node_id)
+        await client.register_via_iroh()
+        log.info("Registered over Iroh with server %s", server_ep.node_id_iroh[:16])
+    else:
+        # LAN mode: discover the server endpoint via CoAP, then register
+        log.info("Discovering server endpoint at %s:%d…", server_host, server_coap_port)
+        async with FLCoapClient(server_host, server_coap_port) as coap_cl:
+            server_ep = await coap_cl.get_iroh_endpoint()
+            client.set_server_endpoint(server_ep)
+            log.info("Server Iroh endpoint: %s", server_ep.node_id_iroh[:16])
+            # Register this client's iroh endpoint with the server
+            client_ep = client.iroh_endpoint
+            if client_ep is not None:
+                await coap_cl.register_with_server(node_id, client_ep)
+                log.info("Registered with server as %s", node_id)
 
+    # A client that missed rounds (e.g. while disconnected) keeps participating
+    # in later ones; it stops once the server sends no model for the idle timeout.
+    client._receive_timeout = float(os.environ.get("FL_CLIENT_IDLE_TIMEOUT_S", 1800))
     for r in range(1, rounds + 1):
         try:
             await client.run_round(r)
+        except asyncio.TimeoutError:
+            log.info("No model received for %.0fs — federation finished", client._receive_timeout)
+            break
         except Exception as exc:
             log.error("Round %d failed: %s", r, exc)
 
     await client.stop()
     exported = client.metrics.export_csv()
+    if client.resources is not None:
+        exported.update(client.resources.export_csv(
+            Path(results_dir) / f"{architecture}_{scenario}_{node_id}"))
     log.info("Results: %s", {k: str(v) for k, v in exported.items()})
+
+
+# ---------------------------------------------------------------------------
+# fl-keygen
+# ---------------------------------------------------------------------------
+
+@click.command("fl-keygen")
+@click.argument("key_file")
+def keygen_cli(key_file: str) -> None:
+    """Create (or reuse) a persistent node key and print its NodeId.
+
+    Add the printed NodeId to the server's allow-list file to admit this node."""
+    _setup_logging("WARNING")
+
+    async def _show() -> None:
+        from fl_coap_iroh.transport.iroh_node import IrohTransportNode
+        node = IrohTransportNode("keygen", secret_key_file=key_file)
+        ep = await node.start()
+        await node.stop()
+        click.echo(ep.node_id_iroh)
+
+    asyncio.run(_show())
 
 
 # ---------------------------------------------------------------------------

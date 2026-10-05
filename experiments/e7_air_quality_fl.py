@@ -40,6 +40,8 @@ from pathlib import Path
 import torch
 import yaml
 
+from fl_coap_iroh.metrics.classification import classification_report, flat, save_report
+
 log = logging.getLogger("e7_air_quality_fl")
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -236,8 +238,13 @@ async def run_airmlp(
 
     server.metrics.export_csv(tag=f"e7_{label}")
     summary = server.metrics.summary()
-    log.info("%s %s done: %s", model_name, label, summary)
-    return {"config": label, "model": model_name, "partition": partition, **summary}
+    # Imbalance-aware metrics of the final global model (R1.12)
+    y_true, y_pred = server.last_eval
+    report = classification_report(y_true, y_pred, N_CLASSES)
+    save_report(report, y_true, y_pred, results_dir / f"e7_{label}")
+    log.info("%s %s done: %s  macro-F1=%.4f  bal-acc=%.4f", model_name, label, summary,
+             report["macro_f1"], report["balanced_accuracy"])
+    return {"config": label, "model": model_name, "partition": partition, **summary, **flat(report)}
 
 
 # ---------------------------------------------------------------------------
@@ -443,29 +450,32 @@ async def run_prophet(
         aggregated_sd = aggregate_fn(updates)
         global_model.load_state_dict(aggregated_sd)
 
-        # Evaluate on test set (each client predicts on its own province test split)
-        total_correct = 0
-        total_samples = 0
+        # Evaluate on test set.  Personalised evaluation: each client's model
+        # (local trend + federated seasonality for FedGAM; retrained from the
+        # full global state for FedAvg) predicts its own province test split.
+        from fl_coap_iroh.models.prophet_wrapper import _no2_to_ica
+        y_true: list[int] = []
+        y_pred: list[int] = []
         for i, (pw, cd) in enumerate(zip(clients_pw, client_data)):
             if not cd["test_dates"]:
                 continue
-            preds = pw.predict_ica(cd["test_dates"], cd["test_vel"])
-            # ICA labels from raw NO2
-            from fl_coap_iroh.models.prophet_wrapper import _no2_to_ica
-            true_labels = [_no2_to_ica(v) for v in cd["test_no2"]]
-            correct = sum(p == t for p, t in zip(preds, true_labels))
-            total_correct += correct
-            total_samples += len(true_labels)
+            y_pred += [int(p) for p in pw.predict_ica(cd["test_dates"], cd["test_vel"])]
+            y_true += [_no2_to_ica(v) for v in cd["test_no2"]]
 
-        accuracy = total_correct / total_samples if total_samples > 0 else 0.0
+        report = classification_report(y_true, y_pred, N_CLASSES) if y_true else None
+        accuracy = report["accuracy"] if report else 0.0
         round_accuracies.append(accuracy)
-        log.info("Round %d — test accuracy: %.3f  (%d samples)", r, accuracy, total_samples)
-        metrics_rows.append({"round": r, "accuracy": accuracy, "samples": total_samples})
+        log.info("Round %d — test accuracy: %.3f  macro-F1: %.3f  (%d samples)", r, accuracy,
+                 report["macro_f1"] if report else 0.0, len(y_true))
+        metrics_rows.append({"round": r, "samples": len(y_true), **(flat(report) if report else {})})
+
+    if report is not None:
+        save_report(report, y_true, y_pred, results_dir / f"e7_{label}")
 
     # Save round metrics
     metrics_path = results_dir / f"e7_{label}_fl_metrics.csv"
     with open(metrics_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["round", "accuracy", "samples"])
+        writer = csv.DictWriter(f, fieldnames=list(metrics_rows[0]))
         writer.writeheader()
         writer.writerows(metrics_rows)
     log.info("ProphetWrapper %s %s done. Final acc=%.3f  Saved: %s",
@@ -480,6 +490,7 @@ async def run_prophet(
         "max_train_years": max_train_years if max_train_years is not None else "all",
         "accuracy"   : final_acc,
         "rounds"     : rounds,
+        **(flat(report) if report is not None else {}),
     }
 
 
@@ -521,7 +532,7 @@ def _write_summary(summary_rows: list[dict], summary_path: Path) -> None:
     if not summary_rows:
         return
     import csv
-    fieldnames = list(summary_rows[0].keys())
+    fieldnames = list(dict.fromkeys(k for row in summary_rows for k in row))
     with open(summary_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()

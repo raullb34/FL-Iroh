@@ -153,7 +153,8 @@ class MetricsCollector:
 
         total_t = len(self._transfers)
         n_direct = sum(1 for t in self._transfers if t["conn_type"] == ConnType.DIRECT.value)
-        n_relay  = sum(1 for t in self._transfers if t["conn_type"] == ConnType.RELAY.value)
+        n_relay  = sum(1 for t in self._transfers
+                       if t["conn_type"] in (ConnType.RELAY.value, ConnType.MIXED.value))
 
         return {
             "node_id"            : self.node_id,

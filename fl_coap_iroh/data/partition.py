@@ -33,7 +33,6 @@ from typing import Optional
 import numpy as np
 import torch
 from torch.utils.data import Dataset, Subset, TensorDataset
-from torchvision import datasets, transforms
 
 log = logging.getLogger(__name__)
 
@@ -65,6 +64,7 @@ def _load_with_retry(loader_fn, max_attempts: int = 3, delay_sec: float = 3.0):
 
 def load_cifar10(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
     """Return (train_dataset, test_dataset) with standard CIFAR-10 transforms."""
+    from torchvision import datasets, transforms  # image datasets only
     _mean = (0.4914, 0.4822, 0.4465)
     _std  = (0.2023, 0.1994, 0.2010)
     train_tf = transforms.Compose([
@@ -87,6 +87,7 @@ def load_cifar10(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
 
 
 def load_mnist(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
+    from torchvision import datasets, transforms  # image datasets only
     tf = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,)),
@@ -101,6 +102,7 @@ def load_mnist(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
 
 
 def load_fmnist(data_dir: str = "./data") -> tuple[Dataset, Dataset]:
+    from torchvision import datasets, transforms  # image datasets only
     tf = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.2860,), (0.3530,)),

@@ -1,0 +1,91 @@
+close_reason,closed_ms,connect_ms,enforce,error,iter,latency_ms,test
+,,,False,,0,25.185,authorised
+,,,False,,1,17.626,authorised
+,,,False,,2,10.352,authorised
+,,,False,,3,16.722,authorised
+,,,False,,4,9.549,authorised
+,,,False,,5,10.195,authorised
+,,,False,,6,9.806,authorised
+,,,False,,7,16.669,authorised
+,,,False,,8,12.324,authorised
+,,,False,,9,9.573,authorised
+,,,False,,10,9.903,authorised
+,,,False,,11,10.747,authorised
+,,,False,,12,10.553,authorised
+,,,False,,13,10.119,authorised
+,,,False,,14,11.263,authorised
+,,,False,,15,10.497,authorised
+,,,False,,16,9.667,authorised
+,,,False,,17,9.61,authorised
+,,,False,,18,9.696,authorised
+,,,False,,19,10.316,authorised
+,,,False,,20,10.122,authorised
+,,,False,,21,11.192,authorised
+,,,False,,22,14.251,authorised
+,,,False,,23,12.581,authorised
+,,,False,,24,12.143,authorised
+,,,False,,25,11.222,authorised
+,,,False,,26,11.559,authorised
+,,,False,,27,11.271,authorised
+,,,False,,28,13.847,authorised
+,,,False,,29,18.08,authorised
+,,,True,,0,10.775,authorised
+,,,True,,1,10.719,authorised
+,,,True,,2,10.639,authorised
+,,,True,,3,12.725,authorised
+,,,True,,4,11.122,authorised
+,,,True,,5,11.251,authorised
+,,,True,,6,10.367,authorised
+,,,True,,7,11.362,authorised
+,,,True,,8,12.249,authorised
+,,,True,,9,17.942,authorised
+,,,True,,10,11.752,authorised
+,,,True,,11,10.445,authorised
+,,,True,,12,10.181,authorised
+,,,True,,13,10.41,authorised
+,,,True,,14,10.864,authorised
+,,,True,,15,10.182,authorised
+,,,True,,16,9.76,authorised
+,,,True,,17,9.957,authorised
+,,,True,,18,12.011,authorised
+,,,True,,19,12.467,authorised
+,,,True,,20,11.512,authorised
+,,,True,,21,10.342,authorised
+,,,True,,22,10.412,authorised
+,,,True,,23,11.784,authorised
+,,,True,,24,18.576,authorised
+,,,True,,25,11.21,authorised
+,,,True,,26,11.299,authorised
+,,,True,,27,11.126,authorised
+,,,True,,28,11.478,authorised
+,,,True,,29,10.72,authorised
+closed by peer: not authorized (code 403),12.405697998474352,1.522033999208361,True,,0,,unauthorised
+closed by peer: not authorized (code 403),10.14595900051063,1.300340998568572,True,IrohError,1,,unauthorised
+closed by peer: not authorized (code 403),9.959035000065342,1.2113990014768206,True,,2,,unauthorised
+closed by peer: not authorized (code 403),10.222122000413947,0.8337090039276518,True,,3,,unauthorised
+closed by peer: not authorized (code 403),10.514874004002195,1.7592560034245253,True,,4,,unauthorised
+closed by peer: not authorized (code 403),9.626398998079821,0.9197209947160445,True,,5,,unauthorised
+closed by peer: not authorized (code 403),9.161165995465126,0.7326970007852651,True,,6,,unauthorised
+closed by peer: not authorized (code 403),9.957117996236775,0.6776829977752641,True,,7,,unauthorised
+closed by peer: not authorized (code 403),10.914097001659684,0.7291680012713186,True,,8,,unauthorised
+closed by peer: not authorized (code 403),9.152029997494537,0.9402829964528792,True,,9,,unauthorised
+closed by peer: not authorized (code 403),9.14934100001119,0.8125359963742085,True,IrohError,10,,unauthorised
+closed by peer: not authorized (code 403),9.245185006875545,0.855697006045375,True,,11,,unauthorised
+closed by peer: not authorized (code 403),9.235903999069706,0.8407779969274998,True,,12,,unauthorised
+closed by peer: not authorized (code 403),9.198861000186298,0.7047520048217848,True,,13,,unauthorised
+closed by peer: not authorized (code 403),9.296162003010977,0.8274620049633086,True,,14,,unauthorised
+closed by peer: not authorized (code 403),8.776112998020835,0.6816519962740131,True,,15,,unauthorised
+closed by peer: not authorized (code 403),9.99779099947773,0.6469990039477125,True,,16,,unauthorised
+closed by peer: not authorized (code 403),9.763771005964372,1.1665670026559383,True,IrohError,17,,unauthorised
+closed by peer: not authorized (code 403),10.103287000674754,1.1445359996287152,True,,18,,unauthorised
+closed by peer: not authorized (code 403),15.477891000045929,0.8940550033003092,True,,19,,unauthorised
+closed by peer: not authorized (code 403),17.590830000699498,2.891766998800449,True,IrohError,20,,unauthorised
+closed by peer: not authorized (code 403),11.650838001514785,1.5820940025150776,True,IrohError,21,,unauthorised
+closed by peer: not authorized (code 403),11.574422002013307,1.884224999230355,True,,22,,unauthorised
+closed by peer: not authorized (code 403),9.724675001052674,0.9872879963950254,True,IrohError,23,,unauthorised
+closed by peer: not authorized (code 403),11.210689001018181,2.056803001323715,True,,24,,unauthorised
+closed by peer: not authorized (code 403),11.080730000685435,1.7383470039931126,True,,25,,unauthorised
+closed by peer: not authorized (code 403),10.843847005162388,1.275013004487846,True,,26,,unauthorised
+closed by peer: not authorized (code 403),10.203617996012326,1.2304729971219786,True,,27,,unauthorised
+closed by peer: not authorized (code 403),10.895250001340173,2.1103199978824705,True,,28,,unauthorised
+closed by peer: not authorized (code 403),9.858559002168477,1.1491019977256656,True,,29,,unauthorised

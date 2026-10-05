@@ -137,6 +137,55 @@ class FLCoapClient:
             "iroh_endpoint": iroh_endpoint.model_dump(),
         })
 
+    async def request_raw(self, code, path: str, payload: bytes = b"",
+                          query: tuple[str, ...] = (), content_format: Optional[int] = None,
+                          accept: Optional[int] = None) -> tuple[aiocoap.Message, int]:
+        """Send one request; return (response, bytes on the wire both ways).
+
+        Wire bytes are the encoded CoAP messages (header + options + payload),
+        summed over every block when block-wise transfer is used."""
+        assert self._ctx is not None
+        req = aiocoap.Message(code=code, uri=f"{self._base}{path}", payload=payload)
+        if query:
+            req.opt.uri_query = query
+        if content_format is not None:
+            req.opt.content_format = content_format
+        if accept is not None:
+            req.opt.accept = accept
+        resp = await asyncio.wait_for(self._ctx.request(req).response, timeout=REQUEST_TIMEOUT * 6)
+        if not resp.code.is_successful():
+            raise RuntimeError(f"CoAP {code} {path} => {resp.code}")
+        req_bytes = len(req.encode()) if hasattr(req, "encode") else len(payload)
+        n_blocks = max(1, -(-len(resp.payload) // 1024)) if len(resp.payload) > 1024 else 1
+        # Each block response repeats the header/options (~ len(encode()) - payload)
+        overhead = _encoded_len(resp) - len(resp.payload)
+        resp_bytes = len(resp.payload) + overhead * n_blocks
+        return resp, req_bytes * n_blocks + resp_bytes
+
+    async def rd_register(self, entry: dict) -> int:
+        """POST /rd — register this node in the aggregator's Resource Directory."""
+        _, nbytes = await self.request_raw(
+            aiocoap.POST, "/rd", json.dumps(entry, default=str).encode(), content_format=50)
+        return nbytes
+
+    async def rd_lookup(self, tags: list[str] = (), role: Optional[str] = None,
+                        min_energy: float = 0.0, count: Optional[int] = None,
+                        page: int = 0, cbor: bool = True) -> tuple[list[dict], int]:
+        """GET /rd-lookup/ep with server-side filtering; returns (hits, wire bytes)."""
+        q = [f"min_energy={min_energy}"]
+        if tags:
+            q.append("tag=" + ",".join(tags))
+        if role:
+            q.append(f"role={role}")
+        if count is not None:
+            q += [f"count={count}", f"page={page}"]
+        resp, nbytes = await self.request_raw(
+            aiocoap.GET, "/rd-lookup/ep", query=tuple(q), accept=60 if cbor else 50)
+        if resp.opt.content_format == 60:
+            import cbor2
+            return cbor2.loads(resp.payload), nbytes
+        return json.loads(resp.payload.decode()), nbytes
+
     async def get_core_link_format(self) -> tuple[str, int, float]:
         """
         GET /.well-known/core.
@@ -213,3 +262,56 @@ class FLCoapClient:
             len(results), len(hosts), discovery_ms,
         )
         return results, discovery_ms
+
+
+async def probe_nodes(
+    targets: list[tuple[str, int]],
+    required_tags: list[str] = (),
+    min_energy_pct: float = 0.0,
+    max_concurrent: int = 20,
+) -> tuple[list[tuple[str, int, IrohEndpoint]], float, int]:
+    """Client-side discovery by probing every node (no Resource Directory).
+
+    Each target gets GET /fl/capabilities and, if it passes the semantic
+    filter, GET /iroh/endpoint.  All probes share one client context.
+    Returns (matches, discovery_ms, wire_bytes)."""
+    ctx = await aiocoap.Context.create_client_context()
+    sem = asyncio.Semaphore(max_concurrent)
+    want = set(required_tags)
+    total = 0
+    t0 = time.monotonic()
+
+    async def one(host: str, port: int):
+        nonlocal total
+        async with sem:
+            c = FLCoapClient(host, port)
+            c._ctx = ctx
+            try:
+                resp, n = await c.request_raw(aiocoap.GET, "/fl/capabilities")
+                total += n
+                caps = NodeCapabilities(**json.loads(resp.payload.decode()))
+                if not want.issubset(caps.tags) or caps.energy.level_pct < min_energy_pct \
+                        or caps.availability.status == NodeStatus.UNAVAILABLE:
+                    return None
+                resp, n = await c.request_raw(aiocoap.GET, "/iroh/endpoint")
+                total += n
+                return host, port, IrohEndpoint(**json.loads(resp.payload.decode()))
+            except Exception as exc:  # noqa: BLE001
+                log.debug("probe %s:%d failed: %s", host, port, exc)
+                return None
+
+    try:
+        raw = await asyncio.gather(*(one(h, p) for h, p in targets))
+    finally:
+        await ctx.shutdown()
+    return [r for r in raw if r is not None], (time.monotonic() - t0) * 1000, total
+
+
+def _encoded_len(msg: aiocoap.Message) -> int:
+    """Encoded CoAP message length (header + token + options + payload)."""
+    try:
+        return len(msg.encode())
+    except Exception:  # noqa: BLE001 — e.g. unset message id on a received copy
+        # option value + 1-byte delta/length header (+1 extended byte, conservatively)
+        opts = sum(len(o.encode()) + 2 for o in msg.opt.option_list())
+        return 4 + len(msg.token) + opts + (1 + len(msg.payload) if msg.payload else 0)

@@ -28,6 +28,9 @@ from fl_coap_iroh.coap.resources import (
     IrohEndpointResource,
     MetricsResource,
     ModelResource,
+    RDLookupResource,
+    RDRegistrationResource,
+    ResourceDirectory,
     PolicyResource,
     RoundResource,
     UpdateResource,
@@ -65,6 +68,7 @@ class FLCoapServer:
         dataset_descriptor: DatasetDescriptor,
         coap_host: str = "0.0.0.0",
         coap_port: int = 5683,
+        enable_rd: bool = False,
     ) -> None:
         self.node_id    = node_id
         self.coap_host  = coap_host
@@ -80,6 +84,8 @@ class FLCoapServer:
         self._r_round          = RoundResource()
         self._r_iroh_endpoint  = IrohEndpointResource()
         self._r_registration   = ClientRegistrationResource()
+        # Resource Directory (aggregator only): O(1)-request discovery
+        self.rd = ResourceDirectory() if enable_rd else None
 
         self._context: Optional[aiocoap.Context] = None
 
@@ -100,6 +106,9 @@ class FLCoapServer:
         root.add_resource(["fl", "round"],          self._r_round)
         root.add_resource(["iroh", "endpoint"],     self._r_iroh_endpoint)
         root.add_resource(["fl", "register"],       self._r_registration)
+        if self.rd is not None:
+            root.add_resource(["rd"],                RDRegistrationResource(self.rd))
+            root.add_resource(["rd-lookup", "ep"],   RDLookupResource(self.rd))
 
         # Auto-generated /.well-known/core (CoRE Link Format)
         root.add_resource(
@@ -146,6 +155,8 @@ class FLCoapServer:
     def set_registration_callback(self, callback) -> None:
         """Set callback(client_id, IrohEndpoint) invoked when a client POSTs to /fl/register."""
         self._r_registration.on_register = callback
+        if self.rd is not None:
+            self.rd.on_register = callback
 
     # ------------------------------------------------------------------
     # Read-only accessors

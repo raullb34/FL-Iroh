@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Any, Optional
 
 import aiocoap
@@ -48,10 +49,8 @@ CT_CBOR = 60
 
 def _accept_ct(request: aiocoap.Message) -> int:
     """Extract Accept content-format from a CoAP request (default JSON)."""
-    for opt in request.opt.option_list():
-        if opt.number == aiocoap.numbers.optionnumbers.OptionNumber.ACCEPT:
-            return int.from_bytes(opt.value, "big")
-    return CT_JSON
+    accept = request.opt.accept
+    return int(accept) if accept is not None else CT_JSON
 
 
 def _encode(data: Any, ct: int = CT_JSON) -> tuple[bytes, int]:
@@ -326,10 +325,101 @@ class ClientRegistrationResource(resource.Resource):
             data = _decode(request.payload, ct)
             client_id = data.get("node_id") or data.get("client_id", "unknown")
             ep = IrohEndpoint(**data["iroh_endpoint"])
-            if self.on_register is not None:
-                self.on_register(client_id, ep)
+            if self.on_register is not None and self.on_register(client_id, ep) is False:
+                return aiocoap.Message(code=aiocoap.FORBIDDEN, payload=b"not authorized")
             log.info("Client registered: %s  iroh=%s", client_id, ep.node_id_iroh[:16])
             return aiocoap.Message(code=aiocoap.CREATED)
         except Exception as exc:
             log.error("POST /fl/register failed: %s", exc)
             return aiocoap.Message(code=aiocoap.BAD_REQUEST)
+
+
+# ---------------------------------------------------------------------------
+# Resource Directory  (RFC 9176-style: /rd registration, /rd-lookup/ep lookup)
+# ---------------------------------------------------------------------------
+
+class ResourceDirectory:
+    """In-memory directory of federation nodes, hosted by the aggregator.
+
+    Nodes register once (POST /rd) instead of being probed one by one, so a
+    discovery query costs a single request/response whose size depends on the
+    number of *matching* nodes, and filtering (tags, role, energy, status)
+    runs server-side.  Entries expire after their lifetime (``lt``, seconds).
+    """
+
+    def __init__(self) -> None:
+        self.entries: dict[str, dict] = {}   # node_id -> registration
+        self.on_register = None              # Optional[Callable[[str, IrohEndpoint], bool]]
+
+    def register(self, entry: dict) -> None:
+        entry["expires"] = time.time() + float(entry.get("lt", 90000))
+        entry["tags"] = sorted(set(entry.get("tags", [])))
+        self.entries[entry["node_id"]] = entry
+
+    def lookup(self, tags: list[str], role: Optional[str], min_energy: float,
+               page: int, count: Optional[int]) -> list[dict]:
+        now = time.time()
+        want = set(tags)
+        hits = [
+            {"node_id": e["node_id"], "tags": e["tags"], "role": e.get("role"),
+             "energy": e.get("energy"), "iroh_endpoint": e["iroh_endpoint"]}
+            for e in self.entries.values()
+            if e["expires"] > now
+            and want.issubset(e["tags"])
+            and (role is None or e.get("role") == role)
+            and float(e.get("energy", 100.0)) >= min_energy
+            and e.get("status") != "unavailable"
+        ]
+        if count is not None:
+            hits = hits[page * count:(page + 1) * count]
+        return hits
+
+
+def _query(request: aiocoap.Message) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for q in request.opt.uri_query:
+        k, _, v = q.partition("=")
+        out[k] = v
+    return out
+
+
+class RDRegistrationResource(resource.Resource):
+    """POST /rd — register (or refresh) a node entry.
+
+    Payload: {node_id, role, energy, status, tags: [...], lt, iroh_endpoint}.
+    """
+
+    def __init__(self, rd: ResourceDirectory) -> None:
+        super().__init__()
+        self._rd = rd
+
+    async def render_post(self, request: aiocoap.Message) -> aiocoap.Message:
+        try:
+            data = _decode(request.payload, request.opt.content_format or CT_JSON)
+            ep = IrohEndpoint(**data["iroh_endpoint"])
+            if self._rd.on_register is not None and self._rd.on_register(data["node_id"], ep) is False:
+                return aiocoap.Message(code=aiocoap.FORBIDDEN, payload=b"not authorized")
+            self._rd.register(data)
+            msg = aiocoap.Message(code=aiocoap.CREATED)
+            msg.opt.location_path = ("rd", data["node_id"])
+            return msg
+        except Exception as exc:
+            log.error("POST /rd failed: %s", exc)
+            return aiocoap.Message(code=aiocoap.BAD_REQUEST)
+
+
+class RDLookupResource(resource.Resource):
+    """GET /rd-lookup/ep?tag=a,b&role=client&min_energy=20&page=0&count=50"""
+
+    def __init__(self, rd: ResourceDirectory) -> None:
+        super().__init__()
+        self._rd = rd
+
+    async def render_get(self, request: aiocoap.Message) -> aiocoap.Message:
+        q = _query(request)
+        tags = [t for t in q.get("tag", "").split(",") if t]
+        count = int(q["count"]) if "count" in q else None
+        hits = self._rd.lookup(tags, q.get("role"), float(q.get("min_energy", 0)),
+                               int(q.get("page", 0)), count)
+        payload, ct_out = _encode(hits, _accept_ct(request))
+        return aiocoap.Message(payload=payload, content_format=ct_out)

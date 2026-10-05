@@ -59,7 +59,7 @@ NCPU="${SLURM_CPUS_PER_TASK:-16}"
 export OMP_NUM_THREADS="${NCPU}" MKL_NUM_THREADS="${NCPU}"
 export OPENBLAS_NUM_THREADS="${NCPU}" NUMEXPR_NUM_THREADS="${NCPU}"
 export FL_TORCH_THREADS="${NCPU}"
-export FL_MOCK_IROH=1
+export FL_MOCK_IROH="${FL_MOCK_IROH:-0}"  # real Iroh over loopback (revision); set 1 for the in-process mock
 
 ROUNDS="${ROUNDS:-100}"
 

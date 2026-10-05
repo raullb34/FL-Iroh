@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import csv
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Optional
@@ -405,12 +406,21 @@ def run_server(args, seeds: dict, results_dir: Path) -> None:
     log.info("    Remote clients connect with: --server-address <this-node tailscale ip>:%s",
              args.server_address.rsplit(":", 1)[-1])
     t0 = time.perf_counter()
-    fl.server.start_server(
+    history = fl.server.start_server(
         server_address=args.server_address,
         config=fl.server.ServerConfig(num_rounds=args.rounds),
         strategy=strategy,
     )
     wall = time.perf_counter() - t0
+    accs = (getattr(history, "metrics_centralized", {}) or {}).get("test_acc", [])
+    final_acc = accs[-1][1] if accs else ""
+    rounds_csv = results_dir / "e8_flower_live_rounds.csv"
+    with rounds_csv.open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["round", "duration_sec", "test_acc"])
+        acc_by_round = dict(accs)
+        for i, d in enumerate(round_times, start=1):
+            w.writerow([i, round(d, 4), acc_by_round.get(i, "")])
 
     model = _make_model(args.dataset)
     row = {
@@ -421,7 +431,7 @@ def run_server(args, seeds: dict, results_dir: Path) -> None:
         "alpha": args.alpha if args.partition != "iid" else "",
         "n_clients": args.n_clients,
         "rounds": args.rounds,
-        "test_acc_final": "",  # filled from server log / strategy history if desired
+        "test_acc_final": round(final_acc, 4) if final_acc != "" else "",
         "payload_bytes_per_round": _payload_bytes_per_round(model, args.n_clients),
         "wall_time_per_round_s": round(sum(round_times) / max(len(round_times), 1), 4),
         "wall_time_total_s": round(wall, 2),
@@ -449,6 +459,21 @@ def run_client(args, seeds: dict) -> None:
     )
     client = _build_client(args.dataset, parts[args.client_id], test_ds)
 
+    # CPU / RSS / energy of the Flower client *and* the Tailscale daemon, for a
+    # like-for-like comparison with an FL-Iroh client (FL_RESOURCE_MONITOR=1).
+    from fl_coap_iroh.metrics.resources import maybe_monitor
+    os.environ.setdefault("FL_MONITOR_PROCS", "tailscaled")
+    mon = maybe_monitor()
+    if mon is not None:
+        _fit = client.fit
+        counter = {"r": 0}
+
+        def fit(parameters, config):
+            counter["r"] += 1
+            with mon.phase("fit", counter["r"]):
+                return _fit(parameters, config)
+        client.fit = fit
+
     log.info("=== E8 Flower CLIENT %d connecting to %s ===", args.client_id, args.server_address)
     start = getattr(fl.client, "start_client", None)
     if start is not None:
@@ -458,6 +483,9 @@ def run_client(args, seeds: dict) -> None:
         )
     else:  # very old flwr
         fl.client.start_numpy_client(server_address=args.server_address, client=client)
+    if mon is not None:
+        mon.stop()
+        mon.export_csv(Path(args.results_dir) / f"e8_flower_client{args.client_id}")
 
 
 # --------------------------------------------------------------------------- #

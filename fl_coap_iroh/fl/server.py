@@ -26,6 +26,7 @@ from torch.utils.data import DataLoader, Dataset
 from fl_coap_iroh.coap.server import FLCoapServer
 from fl_coap_iroh.fl.fedavg import fedavg_aggregate
 from fl_coap_iroh.metrics.collector import MetricsCollector
+from fl_coap_iroh.transport.admission import AllowList, Rejection
 from fl_coap_iroh.transport.iroh_node import (
     ALPN_FL_MODEL,
     ALPN_FL_UPDATE,
@@ -78,6 +79,8 @@ class FLServer:
         scenario     : str           = "net_lan",
         architecture : str           = "B",
         aggregator_fn: Optional[Callable] = None,
+        allowlist    : Optional[AllowList] = None,
+        secret_key_file: Optional[str] = None,
     ) -> None:
         self.node_id      = node_id
         self.model        = model
@@ -104,13 +107,19 @@ class FLServer:
         self._coap.set_policy(policy)
 
         # Iroh transport (data plane)
-        self._transport = IrohTransportNode(node_id=node_id, relay_url=relay_url)
+        self._transport = IrohTransportNode(
+            node_id=node_id, relay_url=relay_url,
+            secret_key_file=secret_key_file, allowlist=allowlist,
+        )
+        self.allowlist  = self._transport.allowlist
         self.metrics    = MetricsCollector(
             node_id=node_id, scenario=scenario, architecture=architecture
         )
 
         self._clients: dict[str, IrohEndpoint] = {}
         self._round_results: list[dict] = []
+        # (y_true, y_pred) of the latest global-model evaluation
+        self.last_eval: tuple[list[int], list[int]] = ([], [])
 
     # ------------------------------------------------------------------
     # Lifecycle
@@ -122,10 +131,47 @@ class FLServer:
         self._coap.update_iroh_endpoint(ep)
         self._coap.set_registration_callback(self.register_client)
         await self._coap.start()
+        self._control_task = asyncio.create_task(self._control_loop())
         log.info("FLServer %s started (mock=%s)", self.node_id, self._transport.mock_mode)
         return ep
 
+    async def _control_loop(self) -> None:
+        """Serve registrations sent over Iroh (ALPN fl-ctrl/1).
+
+        Unlike CoAP registration, this path is reachable through NAT (it is
+        addressed by NodeId) and authenticated: the registered endpoint must
+        belong to the QUIC peer that sent it."""
+        while True:
+            try:
+                msg, stats = await self._transport.receive_control()
+            except asyncio.TimeoutError:
+                continue
+            except asyncio.CancelledError:
+                return
+            except Exception as exc:
+                log.warning("control message error: %s", exc)
+                continue
+            if msg.get("type") != "register":
+                log.warning("unknown control message type %r", msg.get("type"))
+                continue
+            try:
+                ep = IrohEndpoint(**msg["iroh_endpoint"])
+            except Exception as exc:
+                log.warning("bad registration payload: %s", exc)
+                continue
+            if ep.node_id_iroh != stats.peer_node_id:
+                self.allowlist.rejections.append(Rejection(
+                    time.time(), stats.peer_node_id, "iroh:fl-ctrl/1",
+                    "endpoint NodeId does not match authenticated peer",
+                ))
+                log.warning("registration NodeId mismatch from %s", stats.peer_node_id[:16])
+                continue
+            self.register_client(str(msg.get("client_id", ep.node_id_iroh[:16])), ep)
+
     async def stop(self) -> None:
+        task = getattr(self, "_control_task", None)
+        if task is not None:
+            task.cancel()
         await self._transport.stop()
         await self._coap.stop()
 
@@ -133,9 +179,19 @@ class FLServer:
     # Client registration
     # ------------------------------------------------------------------
 
-    def register_client(self, client_id: str, ep: IrohEndpoint) -> None:
+    def register_client(self, client_id: str, ep: IrohEndpoint) -> bool:
+        """Admit *client_id* if its NodeId is allow-listed; return whether admitted.
+
+        The CoAP registration itself is unauthenticated, but registering an
+        allow-listed NodeId one does not own gains nothing: model transfers are
+        addressed to that NodeId and updates are only accepted from QUIC peers
+        that proved possession of the matching Ed25519 key.
+        """
+        if not self.allowlist.check(ep.node_id_iroh, "coap:/fl/register"):
+            return False
         self._clients[client_id] = ep
         log.info("Registered client %s  iroh=%s", client_id, ep.node_id_iroh[:16])
+        return True
 
     def unregister_client(self, client_id: str) -> None:
         self._clients.pop(client_id, None)
@@ -205,31 +261,11 @@ class FLServer:
                 f"Only {len(active_clients)} sends succeeded (need {self.policy.min_clients})"
             )
 
-        # --- Receive updates (concurrent, with per-round timeout) ---
+        # --- Receive updates (bound to the selected clients, per-round timeout) ---
         log.info("Round %d — waiting for %d updates…", r, len(active_clients))
-        recv_coros = [
-            self._transport.receive_tensors(ALPN_FL_UPDATE, timeout=ROUND_TIMEOUT_SEC)
-            for _ in active_clients
-        ]
-        recv_results = await asyncio.gather(*recv_coros, return_exceptions=True)
-
-        updates: list[tuple[dict, float]] = []
-        bytes_recv = 0
-        bytes_direct = 0
-        bytes_relay  = 0
-        for res in recv_results:
-            if isinstance(res, Exception):
-                log.warning("Update receive failed: %s", res)
-                continue
-            params, stats = res
-            # Use equal weighting (sample counts are not available server-side here;
-            # extend by sending sample count in a header for weighted FedAvg)
-            updates.append((params, 1.0))
-            bytes_recv += stats.bytes_on_wire
-            if stats.conn_type.value == "direct":
-                bytes_direct += stats.bytes_on_wire
-            else:
-                bytes_relay  += stats.bytes_on_wire
+        updates, bytes_recv, bytes_direct, bytes_relay, discarded = await self._collect_updates(
+            {self._clients[cid].node_id_iroh: cid for cid in active_clients}, r,
+        )
 
         if not updates:
             raise RuntimeError("No updates received this round")
@@ -279,6 +315,7 @@ class FLServer:
             bytes_to_aggregator  = bytes_recv,
             bytes_p2p_direct     = bytes_direct,
             bytes_relay          = bytes_relay,
+            updates_discarded    = discarded,
         )
         self.metrics.record_round_event(event)
 
@@ -291,6 +328,50 @@ class FLServer:
             "clients_participated": len(updates),
             "bytes_to_aggregator" : bytes_recv,
         }
+
+    async def _collect_updates(
+        self, expected: dict[str, str], r: int,
+    ) -> tuple[list[tuple[dict, float]], int, int, int, int]:
+        """Receive at most one update per expected NodeId until all arrive or
+        the round times out.  Updates from peers that were not selected this
+        round (or duplicates) are discarded, so a peer cannot inject or
+        over-weight updates even if it passed admission control."""
+        loop = asyncio.get_event_loop()
+        deadline = loop.time() + ROUND_TIMEOUT_SEC
+        pending = dict(expected)
+        updates: list[tuple[dict, float]] = []
+        bytes_recv = bytes_direct = bytes_relay = discarded = 0
+        while pending:
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                break
+            try:
+                params, stats = await self._transport.receive_tensors(
+                    ALPN_FL_UPDATE, timeout=remaining
+                )
+            except asyncio.TimeoutError:
+                break
+            except Exception as exc:
+                log.warning("Update receive failed: %s", exc)
+                continue
+            cid = pending.pop(stats.peer_node_id, None)
+            if cid is None:
+                discarded += 1
+                log.warning(
+                    "Round %d — discarding update from unselected/duplicate peer %s",
+                    r, stats.peer_node_id[:16],
+                )
+                continue
+            # Equal weighting (sample counts are not sent with the update)
+            updates.append((params, 1.0))
+            bytes_recv += stats.bytes_on_wire
+            if stats.conn_type.value == "direct":
+                bytes_direct += stats.bytes_on_wire
+            elif stats.conn_type.value in ("relay", "mixed"):  # mixed: relay-carried
+                bytes_relay += stats.bytes_on_wire
+        if pending:
+            log.warning("Round %d — no update from %s", r, sorted(pending.values()))
+        return updates, bytes_recv, bytes_direct, bytes_relay, discarded
 
     # ------------------------------------------------------------------
     # Helpers
@@ -307,11 +388,17 @@ class FLServer:
         loader    = DataLoader(self.test_ds, batch_size=256, shuffle=False, num_workers=0)
         criterion = nn.CrossEntropyLoss()
         total_loss = correct = total = 0
+        y_true: list[int] = []
+        y_pred: list[int] = []
         with torch.no_grad():
             for bx, by in loader:
                 bx, by = bx.to(device), by.to(device)
                 logits  = self.model(bx)
+                pred    = logits.argmax(1)
                 total_loss += criterion(logits, by).item() * bx.size(0)
-                correct    += (logits.argmax(1) == by).sum().item()
+                correct    += (pred == by).sum().item()
                 total      += bx.size(0)
+                y_true += by.cpu().tolist()
+                y_pred += pred.cpu().tolist()
+        self.last_eval = (y_true, y_pred)
         return total_loss / max(total, 1), correct / max(total, 1)

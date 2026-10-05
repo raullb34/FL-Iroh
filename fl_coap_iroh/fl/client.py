@@ -12,6 +12,7 @@ One FLClient represents a single federation participant.  Its responsibilities:
 """
 from __future__ import annotations
 
+import contextlib
 import logging
 import time
 from typing import Optional
@@ -23,6 +24,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from fl_coap_iroh.coap.server import FLCoapServer
 from fl_coap_iroh.metrics.collector import MetricsCollector
+from fl_coap_iroh.metrics.resources import ResourceMonitor, maybe_monitor
 from fl_coap_iroh.transport.iroh_node import (
     ALPN_FL_MODEL,
     ALPN_FL_UPDATE,
@@ -68,6 +70,8 @@ class FLClient:
         relay_url          : Optional[str]        = None,
         scenario           : str                  = "net_lan",
         architecture       : str                  = "B",
+        secret_key_file    : Optional[str]        = None,
+        resource_monitor   : Optional[ResourceMonitor] = None,
     ) -> None:
         self.node_id       = node_id
         self.model         = model
@@ -83,7 +87,11 @@ class FLClient:
             dataset_descriptor = dataset_descriptor,
             coap_port          = coap_port,
         )
-        self._transport = IrohTransportNode(node_id=node_id, relay_url=relay_url)
+        self._transport = IrohTransportNode(
+            node_id=node_id, relay_url=relay_url, secret_key_file=secret_key_file,
+        )
+        # CPU / RSS / energy per round phase (enabled with FL_RESOURCE_MONITOR=1)
+        self.resources  = resource_monitor if resource_monitor is not None else maybe_monitor()
         self._receive_timeout: float = 1800.0
         self.metrics    = MetricsCollector(
             node_id=node_id, scenario=scenario, architecture=architecture
@@ -102,6 +110,13 @@ class FLClient:
     async def stop(self) -> None:
         await self._transport.stop()
         await self._coap.stop()
+        if self.resources is not None:
+            self.resources.stop()
+
+    def _phase(self, name: str, round_num: int):
+        if self.resources is None:
+            return contextlib.nullcontext()
+        return self.resources.phase(name, round_num)
 
     # ------------------------------------------------------------------
     # Configuration
@@ -110,6 +125,19 @@ class FLClient:
     def set_server_endpoint(self, ep: IrohEndpoint) -> None:
         """Provide the server's Iroh endpoint (obtained via CoAP discovery)."""
         self._server_ep = ep
+
+    async def register_via_iroh(self) -> None:
+        """Register with the server over Iroh (ALPN fl-ctrl/1).
+
+        Requires only the server's NodeId (plus relay URL), so it works when
+        the server's CoAP port is unreachable behind NAT/CGNAT."""
+        if self._server_ep is None or self.iroh_endpoint is None:
+            raise RuntimeError("start() and set_server_endpoint() must be called first")
+        await self._transport.send_control(self._server_ep, {
+            "type"          : "register",
+            "client_id"     : self.node_id,
+            "iroh_endpoint" : self.iroh_endpoint.model_dump(),
+        })
 
     def set_policy(self, policy: TrainingPolicy) -> None:
         self._policy = policy
@@ -135,22 +163,27 @@ class FLClient:
         # can wait for the server to finish the current round and send the next model,
         # self-correcting within one round instead of drifting permanently.
         log.info("[%s] Round %d — receiving model…", self.node_id, round_num)
-        global_params, recv_stats = await self._transport.receive_tensors(
-            ALPN_FL_MODEL, timeout=self._receive_timeout
-        )
+        # The receive phase includes idle waiting for the server; the energy
+        # attributable to FL communication is dominated by the send phase.
+        with self._phase("recv", round_num):
+            global_params, recv_stats = await self._transport.receive_tensors(
+                ALPN_FL_MODEL, timeout=self._receive_timeout
+            )
         self.model.load_state_dict(global_params)
         self.metrics.record_transfer(recv_stats, round_num, "recv")
 
         # 2. Local training
         log.info("[%s] Round %d — training locally…", self.node_id, round_num)
-        train_result = self._train(round_num)
+        with self._phase("train", round_num):
+            train_result = self._train(round_num)
 
         # 3. Send update
         log.info("[%s] Round %d — sending update…", self.node_id, round_num)
         local_params = {k: v.cpu() for k, v in self.model.state_dict().items()}
-        send_stats = await self._transport.send_tensors(
-            self._server_ep, local_params, round_num, ALPN_FL_UPDATE
-        )
+        with self._phase("send", round_num):
+            send_stats = await self._transport.send_tensors(
+                self._server_ep, local_params, round_num, ALPN_FL_UPDATE
+            )
         self.metrics.record_transfer(send_stats, round_num, "send")
 
         # 4. Optional validation

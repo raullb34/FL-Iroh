@@ -73,6 +73,7 @@ class NodeCapabilities(BaseModel):
     compute       : ComputeCapabilities = Field(default_factory=ComputeCapabilities)
     energy        : EnergyState         = Field(default_factory=EnergyState)
     availability  : AvailabilityInfo    = Field(default_factory=AvailabilityInfo)
+    tags          : list[str]           = Field(default_factory=list)  # e.g. sensors, crop, region
     version       : str                = "0.1.0"
     timestamp     : float              = Field(default_factory=time.time)
 
@@ -159,7 +160,8 @@ class IrohEndpoint(BaseModel):
 # ---------------------------------------------------------------------------
 
 class ConnType(str, Enum):
-    DIRECT  = "direct"
+    DIRECT  = "direct"    # confirmed direct (hole-punched) UDP path
+    MIXED   = "mixed"     # relay in use while a direct candidate is being validated
     RELAY   = "relay"
     UNKNOWN = "unknown"
 
@@ -196,6 +198,7 @@ class RoundEvent(BaseModel):
     bytes_to_aggregator  : int             = 0
     bytes_p2p_direct     : int             = 0
     bytes_relay          : int             = 0
+    updates_discarded    : int             = 0   # updates from unselected/duplicate peers
     timestamp            : float           = Field(default_factory=time.time)
 
 
