@@ -68,6 +68,9 @@ def _fw(action: str) -> None:
         if action == "block":
             script = ("table inet fle12 {\n  chain out {\n"
                       "    type filter hook output priority 0; policy accept;\n"
+                      # Tailscale's own WireGuard traffic stays up, so an SSH
+                      # session over Tailscale survives the forced-relay window.
+                      "    udp sport 41641 accept\n"
                       "    udp dport != 53 drop\n  }\n}\n")
             r = subprocess.run(["nft", "-f", "-"], input=script, capture_output=True, text=True)
         else:
@@ -82,6 +85,44 @@ def _fw(action: str) -> None:
         r = subprocess.run(cmd, capture_output=True, text=True)
         if r.returncode != 0 and tool == "iptables":
             raise RuntimeError(f"{' '.join(cmd)} failed: {r.stderr.strip()} (run as root)")
+
+
+_OVERLAY_TABLE = ("table inet fle12_overlay {\n  chain out {\n"
+                  "    type filter hook output priority 0; policy accept;\n"
+                  "    ip daddr 100.64.0.0/10 udp dport != 53 drop\n"
+                  "    ip6 daddr fd7a:115c:a1e0::/48 udp dport != 53 drop\n"
+                  "    oifname \"tailscale0\" udp dport != 53 drop\n  }\n}\n")
+
+
+def _overlay_guard(on: bool) -> bool:
+    """Keep Iroh off VPN overlays (Tailscale 100.64.0.0/10, tailscale0) for the
+    whole run, so 'direct' always means an Iroh hole-punched path, never a path
+    tunnelled through Tailscale.  TCP (e.g. SSH over Tailscale) and DNS are
+    unaffected.  Returns whether the guard is active."""
+    import shutil
+    if not shutil.which("nft"):
+        log.warning("nft not found — overlay guard disabled; audit active_addr for 100.x paths")
+        return False
+    if on:
+        r = subprocess.run(["nft", "-f", "-"], input=_OVERLAY_TABLE, capture_output=True, text=True)
+    else:
+        r = subprocess.run(["nft", "delete", "table", "inet", "fle12_overlay"],
+                           capture_output=True, text=True)
+    if r.returncode != 0:
+        if on:
+            log.warning("overlay guard not applied (%s) — run as root", r.stderr.strip())
+        return False
+    return on
+
+
+def _is_overlay(addr: str) -> bool:
+    import ipaddress
+    host = addr.rsplit(":", 1)[0].strip("[]")
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return ip in ipaddress.ip_network("100.64.0.0/10") or ip in ipaddress.ip_network("fd7a:115c:a1e0::/48")
 
 
 def _local_ips() -> str:
@@ -141,6 +182,8 @@ class Campaign:
     async def client(self) -> None:
         a = self.a
         server_ep = IrohEndpoint(**json.loads(Path(a.server_endpoint).read_text()))
+        guard = _overlay_guard(not a.allow_overlay)
+        self.mark("overlay_guard", "on" if guard else "off")
         node = IrohTransportNode("e12-client", secret_key_file=a.key or None)
         await node.start()
         payload = os.urandom(a.payload)
@@ -158,11 +201,13 @@ class Campaign:
                     st = await asyncio.wait_for(
                         node._send_bytes(server_ep, payload, i, ALPN_FL_UPDATE), a.timeout)
                     row.update(ok=True, conn_type=st.conn_type.value, active_addr=st.active_addr,
+                               overlay_path=_is_overlay(st.active_addr),
                                connect_ms=round(st.conn_time_ms, 1),
                                transfer_ms=round(st.transfer_duration_ms, 1),
                                goodput_mbps=round(st.throughput_mbps, 4), error="")
                 except Exception as exc:  # noqa: BLE001
-                    row.update(ok=False, conn_type="failed", active_addr="", connect_ms=None,
+                    row.update(ok=False, conn_type="failed", active_addr="", overlay_path=False,
+                               connect_ms=None,
                                transfer_ms=None, goodput_mbps=None,
                                error=f"{type(exc).__name__}: {exc}"[:100])
                 self.transfers.append(row)
@@ -174,6 +219,8 @@ class Campaign:
             sched.cancel()
             if self._udp_blocked:
                 _fw("unblock")
+            if guard:
+                _overlay_guard(False)
             await node.stop()
 
     async def server(self) -> None:
@@ -253,6 +300,8 @@ def summarise(rows: list[dict]) -> dict:
         res[key] = {
             "n": len(sub), "ok": len(ok),
             "direct": sum(r["conn_type"] == "direct" for r in ok),
+            "direct_via_overlay": sum(bool(r["conn_type"] == "direct" and r.get("overlay_path"))
+                                      for r in ok),
             "mixed": sum(r["conn_type"] == "mixed" for r in ok),
             "relay": sum(r["conn_type"] == "relay" for r in ok),
             "transfer_ms_median": round(statistics.median(r["transfer_ms"] for r in ok), 1) if ok else None,
@@ -273,6 +322,8 @@ def main() -> None:
     ap.add_argument("--payload", type=int, default=65536, help="bytes per transfer")
     ap.add_argument("--timeout", type=float, default=60, help="per-transfer timeout (s)")
     ap.add_argument("--events", default="", help='e.g. "300:block_udp,900:unblock_udp"')
+    ap.add_argument("--allow-overlay", action="store_true",
+                    help="do not block Iroh from Tailscale/VPN overlay addresses")
     ap.add_argument("--results-dir", default="results/e12")
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
