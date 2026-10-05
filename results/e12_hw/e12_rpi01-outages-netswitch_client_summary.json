@@ -1,0 +1,136 @@
+{
+  "label": "rpi01-outages-netswitch",
+  "transfers": 213,
+  "normal": {
+    "n": 213,
+    "ok": 202,
+    "direct": 202,
+    "direct_via_overlay": 0,
+    "mixed": 0,
+    "relay": 0,
+    "retried": 2,
+    "transfer_ms_median": 4054.1,
+    "goodput_mbps_median": 1.973
+  },
+  "udp_blocked": {
+    "n": 0,
+    "ok": 0,
+    "direct": 0,
+    "direct_via_overlay": 0,
+    "mixed": 0,
+    "relay": 0,
+    "retried": 0,
+    "transfer_ms_median": null,
+    "goodput_mbps_median": null
+  },
+  "events": [
+    {
+      "t": 0.04,
+      "wall": 1791213744.4967818,
+      "event": "overlay_guard",
+      "detail": "on",
+      "transfers_until_next_event": 50,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 1.07,
+      "s_to_first_direct": 1.07,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    },
+    {
+      "t": 303.028,
+      "wall": 1791214047.4841642,
+      "event": "link_down",
+      "detail": "wlan0 60s",
+      "transfers_until_next_event": 1,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 56.29,
+      "s_to_first_direct": 56.29,
+      "s_to_first_relay": null,
+      "local_ip_changed": true
+    },
+    {
+      "t": 363.06,
+      "wall": 1791214107.516545,
+      "event": "link_up",
+      "detail": "wlan0",
+      "transfers_until_next_event": 61,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 15.59,
+      "s_to_first_direct": 15.59,
+      "s_to_first_relay": null,
+      "local_ip_changed": true
+    },
+    {
+      "t": 700.526,
+      "wall": 1791214444.9827754,
+      "event": "link_down",
+      "detail": "wlan0 120s",
+      "transfers_until_next_event": 2,
+      "failed_until_first_ok": 2,
+      "s_to_first_ok": null,
+      "s_to_first_direct": null,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    },
+    {
+      "t": 820.574,
+      "wall": 1791214565.0309343,
+      "event": "link_up",
+      "detail": "wlan0",
+      "transfers_until_next_event": 45,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 0.01,
+      "s_to_first_direct": 0.01,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    },
+    {
+      "t": 1100.002,
+      "wall": 1791214844.4584813,
+      "event": "net_switch",
+      "detail": "netplan-wlan0-AirInstitute",
+      "transfers_until_next_event": 0,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": null,
+      "s_to_first_direct": null,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    },
+    {
+      "t": 1102.603,
+      "wall": 1791214847.0590332,
+      "event": "net_switch_done",
+      "detail": "Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti",
+      "transfers_until_next_event": 49,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 4.31,
+      "s_to_first_direct": 4.31,
+      "s_to_first_relay": null,
+      "local_ip_changed": true
+    },
+    {
+      "t": 1500.004,
+      "wall": 1791215244.4603713,
+      "event": "net_switch",
+      "detail": "Pixel 9",
+      "transfers_until_next_event": 0,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": null,
+      "s_to_first_direct": null,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    },
+    {
+      "t": 1502.697,
+      "wall": 1791215247.153377,
+      "event": "net_switch_done",
+      "detail": "Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti",
+      "transfers_until_next_event": 5,
+      "failed_until_first_ok": 5,
+      "s_to_first_ok": null,
+      "s_to_first_direct": null,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    }
+  ]
+}

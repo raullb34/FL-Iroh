@@ -350,6 +350,13 @@ class IrohTransportNode:
         self._iroh_node_id_str : Optional[str] = None
         self._transfer_log     : list[TransferEvent] = []
         self._mock_mode        : bool = False
+        # Endpoint watchdog: iroh 0.35 can wedge after successive network
+        # changes (measured: Wi-Fi -> 4G switch, no recovery in 5 min).  After
+        # FL_RESTART_AFTER_FAILURES consecutive failed transfers the endpoint is
+        # restarted with the same secret key, so the NodeId does not change.
+        self._secret_key       : Optional[bytes] = None
+        self._consecutive_failures = 0
+        self.restarts          = 0
 
     # ------------------------------------------------------------------
     # Lifecycle
@@ -380,16 +387,15 @@ class IrohTransportNode:
 
             # Build shared accept queue and register per-ALPN handlers.
             # Adapter classes must be defined after iroh is imported (uniffi requirement).
-            self._accept_queue = _IrohAcceptQueue()
+            # Reuse the queue across watchdog restarts so pending receivers keep working.
+            if self._accept_queue is None:
+                self._accept_queue = _IrohAcceptQueue()
             creators = _make_iroh_adapters(iroh, self._accept_queue, [ALPN_FL_MODEL, ALPN_FL_UPDATE, ALPN_FL_SYNC, ALPN_FL_CTRL], _main_loop, self)
 
-            if self._secret_key_file:
-                options = iroh.NodeOptions(
-                    protocols=creators,
-                    secret_key=load_or_create_secret_key(self._secret_key_file),
-                )
-            else:
-                options = iroh.NodeOptions(protocols=creators)
+            if self._secret_key is None:
+                self._secret_key = (load_or_create_secret_key(self._secret_key_file)
+                                    if self._secret_key_file else os.urandom(32))
+            options = iroh.NodeOptions(protocols=creators, secret_key=self._secret_key)
 
             self._iroh_node = await iroh.Iroh.memory_with_options(options)
             net = self._iroh_node.net()
@@ -420,10 +426,24 @@ class IrohTransportNode:
     async def stop(self) -> None:
         if self._iroh_node is not None:
             try:
-                await self._iroh_node.node().shutdown()
+                # A wedged endpoint can block shutdown indefinitely.
+                await asyncio.wait_for(self._iroh_node.node().shutdown(), timeout=10)
+            except asyncio.TimeoutError:
+                log.warning("Iroh shutdown timed out — abandoning endpoint")
             except Exception as exc:
                 log.warning("Iroh shutdown error: %s", exc)
+            self._iroh_node = None
         _MockTransport.clear_registry()
+
+    async def restart(self) -> IrohEndpoint:
+        """Restart the iroh endpoint, keeping the same NodeId and accept queue."""
+        log.warning("Restarting iroh endpoint (watchdog, %d consecutive failures)",
+                    self._consecutive_failures)
+        await self.stop()
+        ep = await self.start()
+        self.restarts += 1
+        self._consecutive_failures = 0
+        return ep
 
     # ------------------------------------------------------------------
     # High-level tensor transfer
@@ -492,6 +512,22 @@ class IrohTransportNode:
         except ImportError:
             raise RuntimeError("iroh not available")
 
+        threshold = int(os.environ.get("FL_RESTART_AFTER_FAILURES", 2))
+        if threshold > 0 and self._consecutive_failures >= threshold:
+            await self.restart()
+        try:
+            stats = await self._send_bytes_once(peer_ep, payload, alpn, iroh)
+        except PermissionError:
+            raise
+        except Exception:
+            self._consecutive_failures += 1
+            raise
+        self._consecutive_failures = 0
+        return stats
+
+    async def _send_bytes_once(
+        self, peer_ep: IrohEndpoint, payload: bytes, alpn: bytes, iroh: object,
+    ) -> TransferStats:
         t_start = time.monotonic()
 
         # Build NodeAddr using iroh 0.35 API:

@@ -106,3 +106,20 @@ def _free_udp_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.bind(("127.0.0.1", 0))
         return s.getsockname()[1]
+
+
+async def test_watchdog_restart_keeps_nodeid_and_queue(real_iroh):
+    """A restarted endpoint keeps its NodeId (even without a key file) and
+    still delivers to receivers waiting on the original accept queue."""
+    rx, tx = IrohTransportNode("rx"), IrohTransportNode("tx")
+    ep1 = await rx.start()
+    await tx.start()
+    try:
+        pending = asyncio.create_task(rx._receive_bytes(ALPN_FL_UPDATE, timeout=40))
+        ep2 = await rx.restart()
+        assert ep2.node_id_iroh == ep1.node_id_iroh and rx.restarts == 1
+        await tx._send_bytes(ep2, b"after-restart", 1, ALPN_FL_UPDATE)
+        payload, _ = await pending
+        assert payload == b"after-restart"
+    finally:
+        await rx.stop(); await tx.stop()

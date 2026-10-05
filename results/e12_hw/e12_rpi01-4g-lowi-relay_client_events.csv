@@ -1,0 +1,6 @@
+t,wall,event,detail,transfers_until_next_event,failed_until_first_ok,s_to_first_ok,s_to_first_direct,s_to_first_relay,local_ip_changed
+0.163,1791203421.7884996,overlay_guard,on,57,0,3.17,3.17,295.74,False
+300.03,1791203721.6563292,block_udp,,113,0,28.1,894.78,28.1,False
+1200.055,1791204621.6808743,unblock_udp,,55,0,1.9,1.9,298.81,False
+1501.993,1791204923.6192677,block_udp,,77,0,28.4,594.8,28.4,False
+2100.039,1791205521.6646497,unblock_udp,,57,0,3.77,3.77,,False

@@ -212,7 +212,7 @@ class Campaign:
                         node._send_bytes(server_ep, payload, i, ALPN_FL_UPDATE), a.timeout)
                     row.update(ok=True, conn_type=st.conn_type.value, active_addr=st.active_addr,
                                overlay_path=_is_overlay(st.active_addr),
-                               send_attempts=st.send_attempts,
+                               send_attempts=st.send_attempts, endpoint_restarts=node.restarts,
                                connect_ms=round(st.conn_time_ms, 1),
                                transfer_ms=round(st.transfer_duration_ms, 1),
                                goodput_mbps=round(st.throughput_mbps, 4), error="")

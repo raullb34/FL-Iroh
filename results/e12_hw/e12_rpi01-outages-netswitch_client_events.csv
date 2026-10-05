@@ -1,0 +1,10 @@
+t,wall,event,detail,transfers_until_next_event,failed_until_first_ok,s_to_first_ok,s_to_first_direct,s_to_first_relay,local_ip_changed
+0.04,1791213744.4967818,overlay_guard,on,50,0,1.07,1.07,,False
+303.028,1791214047.4841642,link_down,wlan0 60s,1,0,56.29,56.29,,True
+363.06,1791214107.516545,link_up,wlan0,61,0,15.59,15.59,,True
+700.526,1791214444.9827754,link_down,wlan0 120s,2,2,,,,False
+820.574,1791214565.0309343,link_up,wlan0,45,0,0.01,0.01,,False
+1100.002,1791214844.4584813,net_switch,netplan-wlan0-AirInstitute,0,0,,,,False
+1102.603,1791214847.0590332,net_switch_done,Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti,49,0,4.31,4.31,,True
+1500.004,1791215244.4603713,net_switch,Pixel 9,0,0,,,,False
+1502.697,1791215247.153377,net_switch_done,Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti,5,5,,,,False

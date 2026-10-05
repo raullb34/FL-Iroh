@@ -1,0 +1,86 @@
+{
+  "label": "rpi01-4g-lowi-relay",
+  "transfers": 359,
+  "normal": {
+    "n": 169,
+    "ok": 140,
+    "direct": 138,
+    "direct_via_overlay": 0,
+    "mixed": 2,
+    "relay": 0,
+    "transfer_ms_median": 4260.9,
+    "goodput_mbps_median": 1.878
+  },
+  "udp_blocked": {
+    "n": 190,
+    "ok": 190,
+    "direct": 2,
+    "direct_via_overlay": 1,
+    "mixed": 188,
+    "relay": 0,
+    "transfer_ms_median": 4325.4,
+    "goodput_mbps_median": 1.85
+  },
+  "events": [
+    {
+      "t": 0.163,
+      "wall": 1791203421.7884996,
+      "event": "overlay_guard",
+      "detail": "on",
+      "transfers_until_next_event": 57,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 3.17,
+      "s_to_first_direct": 3.17,
+      "s_to_first_relay": 295.74,
+      "local_ip_changed": false
+    },
+    {
+      "t": 300.03,
+      "wall": 1791203721.6563292,
+      "event": "block_udp",
+      "detail": "",
+      "transfers_until_next_event": 113,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 28.1,
+      "s_to_first_direct": 894.78,
+      "s_to_first_relay": 28.1,
+      "local_ip_changed": false
+    },
+    {
+      "t": 1200.055,
+      "wall": 1791204621.6808743,
+      "event": "unblock_udp",
+      "detail": "",
+      "transfers_until_next_event": 55,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 1.9,
+      "s_to_first_direct": 1.9,
+      "s_to_first_relay": 298.81,
+      "local_ip_changed": false
+    },
+    {
+      "t": 1501.993,
+      "wall": 1791204923.6192677,
+      "event": "block_udp",
+      "detail": "",
+      "transfers_until_next_event": 77,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 28.4,
+      "s_to_first_direct": 594.8,
+      "s_to_first_relay": 28.4,
+      "local_ip_changed": false
+    },
+    {
+      "t": 2100.039,
+      "wall": 1791205521.6646497,
+      "event": "unblock_udp",
+      "detail": "",
+      "transfers_until_next_event": 57,
+      "failed_until_first_ok": 0,
+      "s_to_first_ok": 3.77,
+      "s_to_first_direct": 3.77,
+      "s_to_first_relay": null,
+      "local_ip_changed": false
+    }
+  ]
+}

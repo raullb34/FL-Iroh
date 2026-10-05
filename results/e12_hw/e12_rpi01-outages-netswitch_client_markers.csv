@@ -1,0 +1,10 @@
+t,wall,event,detail
+0.04,1791213744.4967818,overlay_guard,on
+303.028,1791214047.4841642,link_down,wlan0 60s
+363.06,1791214107.516545,link_up,wlan0
+700.526,1791214444.9827754,link_down,wlan0 120s
+820.574,1791214565.0309343,link_up,wlan0
+1100.002,1791214844.4584813,net_switch,netplan-wlan0-AirInstitute
+1102.603,1791214847.0590332,net_switch_done,Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti
+1500.004,1791215244.4603713,net_switch,Pixel 9
+1502.697,1791215247.153377,net_switch_done,Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnecti

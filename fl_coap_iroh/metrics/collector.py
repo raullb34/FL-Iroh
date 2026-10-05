@@ -62,6 +62,8 @@ class MetricsCollector:
             "round"             : round_num,
             "direction"         : direction,
             "conn_type"         : stats.conn_type.value,
+            "active_addr"       : stats.active_addr,
+            "send_attempts"     : stats.send_attempts,
             "conn_time_ms"      : round(stats.conn_time_ms, 3),
             "bytes_payload"     : stats.bytes_payload,
             "bytes_on_wire"     : stats.bytes_on_wire,
