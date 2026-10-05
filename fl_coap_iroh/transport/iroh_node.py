@@ -89,6 +89,7 @@ class TransferStats:
     transfer_duration_ms: float= 0.0
     active_addr     : str      = ""       # socket addr of direct path (audit)
     peer_node_id    : str      = ""       # authenticated NodeId of the remote peer
+    send_attempts   : int      = 1        # transfer-level attempts (>1 = retried)
 
     @property
     def throughput_mbps(self) -> float:
@@ -499,48 +500,27 @@ class IrohTransportNode:
         relay_url = peer_ep.relay_url if peer_ep.relay_url else None
         node_addr = iroh.NodeAddr(pk, relay_url, list(peer_ep.addrs))
 
-        # Connect via the Endpoint obtained from node.node()
-        # Retry up to 3 times to handle transient iroh connection failures
-        # (e.g., remote node not yet fully initialised when the first round begins).
-        t_conn0  = time.monotonic()
-        endpoint = self._iroh_node.node().endpoint()
-        max_attempts = int(os.environ.get("FL_CONNECT_ATTEMPTS", 3))
-        connect_timeout = float(os.environ.get("FL_CONNECT_TIMEOUT_S", DIRECT_TIMEOUT_SEC + 30))
-        for attempt in range(1, max_attempts + 1):
-            try:
-                connection = await asyncio.wait_for(
-                    endpoint.connect(node_addr, alpn),
-                    timeout=connect_timeout,
-                )
-                break
-            except Exception as exc:
-                if attempt == max_attempts:
-                    raise
-                wait = 5 * attempt
-                log.warning(
-                    "_send_bytes connect attempt %d/%d failed (%s: %s) — retrying in %ds",
-                    attempt, max_attempts, type(exc).__name__, exc, wait,
-                )
-                await asyncio.sleep(wait)
-        conn_time_ms = (time.monotonic() - t_conn0) * 1000
-
         # Frame: [len(4)] + [payload] + [sha256(32)]
         sha = hashlib.sha256(payload).digest()
         frame = struct.pack(">I", len(payload)) + payload + sha
 
-        send_stream = await connection.open_uni()
-        # write() may accept only part of the buffer; write_all() does not.
-        await send_stream.write_all(frame)
-        await send_stream.finish()
-        # Wait until the peer has read the stream to completion (or stopped it)
-        # before the Connection can be dropped: dropping it right after
-        # finish() closes the connection and may discard in-flight data.
-        try:
-            await asyncio.wait_for(send_stream.stopped(), timeout=STREAM_ACK_TIMEOUT_SEC)
-        except asyncio.TimeoutError:
-            log.warning("peer did not acknowledge stream within %.0fs", STREAM_ACK_TIMEOUT_SEC)
-        except Exception as exc:  # noqa: BLE001 — e.g. connection closed by an admission check
-            raise ConnectionError(f"stream not acknowledged: {type(exc).__name__}: {exc}") from exc
+        # Transfer-level retry: on lossy mobile/CGNAT direct paths a stream can be
+        # cut mid-transfer (measured on 4G: 5-27 % of 1 MB transfers).  Re-opening
+        # the connection lets iroh re-select a path (direct or relay) and resend.
+        retries = int(os.environ.get("FL_SEND_RETRIES", 2))
+        for send_attempt in range(1, retries + 2):
+            try:
+                connection, conn_time_ms = await self._connect(node_addr, alpn)
+                await self._write_frame(connection, frame)
+                break
+            except PermissionError:
+                raise
+            except Exception as exc:  # noqa: BLE001
+                if send_attempt > retries:
+                    raise
+                log.warning("transfer attempt %d/%d failed (%s) — retrying",
+                            send_attempt, retries + 1, exc)
+                await asyncio.sleep(1.0)
 
         # Capture the transfer end time *before* path classification so the
         # measured throughput (E1) is not polluted by the remote_info settle
@@ -562,13 +542,66 @@ class IrohTransportNode:
             transfer_duration_ms = transfer_ms,
             active_addr          = active_addr,
             peer_node_id         = peer_ep.node_id_iroh,
+            send_attempts        = send_attempt,
         )
         log.info(
-            "send %dB via %s in %.0fms (%.2f Mbit/s) to %s",
+            "send %dB via %s in %.0fms (%.2f Mbit/s) to %s%s",
             len(payload), conn_type.value, stats.transfer_duration_ms,
             stats.throughput_mbps, peer_ep.node_id_iroh[:16],
+            f" (attempt {send_attempt})" if send_attempt > 1 else "",
         )
         return stats
+
+    async def _connect(self, node_addr: object, alpn: bytes) -> tuple[object, float]:
+        """Open a connection, retrying transient failures (e.g. the remote node
+        not yet fully initialised when the first round begins)."""
+        t_conn0  = time.monotonic()
+        endpoint = self._iroh_node.node().endpoint()
+        max_attempts = int(os.environ.get("FL_CONNECT_ATTEMPTS", 3))
+        connect_timeout = float(os.environ.get("FL_CONNECT_TIMEOUT_S", DIRECT_TIMEOUT_SEC + 30))
+        for attempt in range(1, max_attempts + 1):
+            try:
+                connection = await asyncio.wait_for(
+                    endpoint.connect(node_addr, alpn),
+                    timeout=connect_timeout,
+                )
+                break
+            except Exception as exc:
+                if attempt == max_attempts:
+                    raise
+                wait = 5 * attempt
+                log.warning(
+                    "_send_bytes connect attempt %d/%d failed (%s: %s) — retrying in %ds",
+                    attempt, max_attempts, type(exc).__name__, exc, wait,
+                )
+                await asyncio.sleep(wait)
+        conn_time_ms = (time.monotonic() - t_conn0) * 1000
+        return connection, conn_time_ms
+
+    @staticmethod
+    async def _write_frame(connection: object, frame: bytes) -> None:
+        send_stream = await connection.open_uni()
+        # write() may accept only part of the buffer; write_all() does not.
+        await send_stream.write_all(frame)
+        await send_stream.finish()
+        # Wait until the peer has read the stream to completion (or stopped it)
+        # before the Connection can be dropped: dropping it right after
+        # finish() closes the connection and may discard in-flight data.
+        try:
+            await asyncio.wait_for(send_stream.stopped(), timeout=STREAM_ACK_TIMEOUT_SEC)
+        except asyncio.TimeoutError:
+            log.warning("peer did not acknowledge stream within %.0fs", STREAM_ACK_TIMEOUT_SEC)
+        except Exception as exc:  # noqa: BLE001
+            reason = ""
+            try:
+                reason = str(connection.close_reason() or "")
+            except Exception:  # noqa: BLE001
+                pass
+            if "not authorized" in reason:
+                # Rejected by the peer's allow-list: retrying cannot help.
+                raise PermissionError(f"rejected by peer: {reason}") from exc
+            raise ConnectionError(
+                f"stream not acknowledged: {type(exc).__name__}: {exc} {reason}".strip()) from exc
 
     async def _receive_bytes(self, alpn: bytes, timeout: float) -> tuple[bytes, TransferStats]:
         if self._mock_mode:

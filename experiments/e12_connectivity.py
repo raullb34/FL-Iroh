@@ -202,11 +202,12 @@ class Campaign:
                         node._send_bytes(server_ep, payload, i, ALPN_FL_UPDATE), a.timeout)
                     row.update(ok=True, conn_type=st.conn_type.value, active_addr=st.active_addr,
                                overlay_path=_is_overlay(st.active_addr),
+                               send_attempts=st.send_attempts,
                                connect_ms=round(st.conn_time_ms, 1),
                                transfer_ms=round(st.transfer_duration_ms, 1),
                                goodput_mbps=round(st.throughput_mbps, 4), error="")
                 except Exception as exc:  # noqa: BLE001
-                    row.update(ok=False, conn_type="failed", active_addr="", overlay_path=False,
+                    row.update(ok=False, conn_type="failed", active_addr="", overlay_path=False, send_attempts=None,
                                connect_ms=None,
                                transfer_ms=None, goodput_mbps=None,
                                error=f"{type(exc).__name__}: {exc}"[:100])
@@ -304,6 +305,7 @@ def summarise(rows: list[dict]) -> dict:
                                       for r in ok),
             "mixed": sum(r["conn_type"] == "mixed" for r in ok),
             "relay": sum(r["conn_type"] == "relay" for r in ok),
+            "retried": sum(1 for r in ok if (r.get("send_attempts") or 1) > 1),
             "transfer_ms_median": round(statistics.median(r["transfer_ms"] for r in ok), 1) if ok else None,
             "goodput_mbps_median": round(statistics.median(r["goodput_mbps"] for r in ok), 3) if ok else None,
         }
