@@ -1,0 +1,48 @@
+%% FL-Iroh -- Cover letter for submission to Elsevier's Internet of Things journal (ScienceDirect)
+%% Compile standalone: pdflatex cover_letter.tex
+
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{flushright}
+Ra\'ul L\'opez-Blanco\\
+BISITE Research Group, University of Salamanca\\
+Edificio I+D+i, Calle del Espejo 2\\
+37006 Salamanca, Spain\\
+\href{mailto:raullb@usal.es}{raullb@usal.es}\\
+\today
+\end{flushright}
+
+\vspace{1em}
+Dear Editor-in-Chief,
+
+\vspace{1em}
+Please find enclosed our manuscript entitled \textbf{``FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT via QUIC P2P Transport and CoAP Service Discovery,''} which we submit for consideration as a Full Length Article in \emph{Internet of Things}.
+
+Federated Learning for agricultural and environmental IoT is limited in practice by a connectivity barrier rather than a modeling one: most deployments sit behind NAT or Carrier-Grade NAT, and existing FL frameworks still require a publicly reachable aggregation server. Our manuscript addresses this barrier directly. We present FL-Iroh, an open-source FL system that embeds NAT traversal in the transport layer itself, coupling the Iroh QUIC peer-to-peer transport with a CoAP/CoRE control plane for discovery and round coordination, so that peers are addressed by public key rather than by IP address, with an end-to-end-encrypted relay as a guaranteed fallback.
+
+We validate the system on real hardware -- a PC and a Raspberry Pi~4B, 300~km apart on different ISPs -- rather than in simulation alone. Across this campaign, 118 of 120 WAN transfers (98.3\%) used a direct, hole-punched QUIC path even under CGNAT, symmetric NAT, and a port-443-only firewall, and a repeated cold-start campaign established a direct path on 145 of 150 independent attempts (96.7\%), with the encrypted relay never required as a fallback. We further show the transport is algorithm-agnostic by federating both a compact neural network for crop recommendation and, for seven-day-ahead air-quality forecasting across ten monitoring zones, a federated Prophet GAM under a partial-aggregation rule (FedGAM) that we compare honestly against plain FedAvg in a same-model ablation.
+
+We believe this work is a good fit for \emph{Internet of Things}: it targets a practical deployment barrier common to agricultural and environmental sensor networks, reports real-hardware measurements rather than simulation alone, and is accompanied by openly available code, an experiment harness, and the per-run results backing every table.
+
+This manuscript is original, has not been published previously, and is not under consideration for publication elsewhere, in whole or in part. All authors have approved the manuscript and this submission and declare no conflicts of interest. This work was supported by the OSTARA project under the Partnership for Research and Innovation in the Mediterranean Area (PRIMA), the MICIU/AEI/10.13039/501100011033, and the European Union (grant number PCI2026-177466-1).
+
+We would be glad to suggest potential reviewers if useful, and I am available at the address above for any questions regarding the manuscript or the submission process.
+
+Thank you for your consideration.
+
+\vspace{1em}
+Sincerely, on behalf of all authors,
+
+\vspace{2em}
+Ra\'ul L\'opez-Blanco (corresponding author)\\
+Ricardo S.~Alonso\\
+Tiago Pinto\\
+Javier Prieto
+
+\end{document}

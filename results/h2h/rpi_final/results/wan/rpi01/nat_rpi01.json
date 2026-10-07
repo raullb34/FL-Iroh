@@ -1,0 +1,73 @@
+{
+  "label": "rpi01",
+  "timestamp": "2026-10-07T10:24:33+0200",
+  "local_addr": "10.50.16.202:47920",
+  "local_is_rfc1918": true,
+  "local_in_cgnat_space": false,
+  "behind_nat": true,
+  "public_ip": "85.48.2.235",
+  "mapping": "endpoint-independent",
+  "port_preservation": true,
+  "filtering": "address-dependent",
+  "filtering_server": "stun.voipgate.com",
+  "probes": [
+    {
+      "server": "stun.l.google.com:19302",
+      "server_ip": "74.125.250.129",
+      "dst_port": 19302,
+      "mapped": [
+        "85.48.2.235",
+        47920
+      ]
+    },
+    {
+      "server": "stun1.l.google.com:19302",
+      "server_ip": "74.125.250.129",
+      "dst_port": 19302,
+      "mapped": [
+        "85.48.2.235",
+        47920
+      ]
+    },
+    {
+      "server": "stun.cloudflare.com:3478",
+      "server_ip": "162.159.207.0",
+      "dst_port": 3478,
+      "mapped": [
+        "85.48.2.235",
+        47920
+      ]
+    },
+    {
+      "server": "stun.nextcloud.com:3478",
+      "server_ip": "46.225.95.169",
+      "dst_port": 3478,
+      "mapped": [
+        "85.48.2.235",
+        47920
+      ]
+    },
+    {
+      "server": "stun.sipgate.net:3478",
+      "server_ip": "3.33.249.248",
+      "dst_port": 3478,
+      "mapped": [
+        "85.48.2.235",
+        47920
+      ]
+    }
+  ],
+  "same_ip_other_port": {
+    "server": "stun.voipgate.com",
+    "port_a": 3478,
+    "mapped_a": [
+      "85.48.2.235",
+      47920
+    ],
+    "port_b": 3479,
+    "mapped_b": [
+      "85.48.2.235",
+      47920
+    ]
+  }
+}

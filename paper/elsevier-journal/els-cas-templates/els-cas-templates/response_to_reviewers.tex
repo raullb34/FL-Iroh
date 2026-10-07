@@ -43,7 +43,7 @@ Below we answer each comment. Section, table and experiment numbers refer to the
 \end{comment}
 \reply We agree, and addressing this comment led to the most important correction in the revision.
 
-(a)~\emph{NAT classification.} We implemented an RFC~4787/RFC~5780 STUN-based classifier (\texttt{scripts/nat\_classify.py}). It runs on the device itself, queries five STUN servers on different IPs from one local port to classify mapping, and uses CHANGE-REQUEST tests to classify filtering. We classified every network used in the new experiments: an enterprise office network, a mobile 4G carrier reached through a phone hotspot (two NAT layers), and a residential fixed-line network seen from the host OS and from WSL2 (Table~4). All four show endpoint-independent mapping and address-dependent filtering; the mobile carrier and WSL2 do not preserve ports. The scenarios of the original campaign were not probed at the time, and we now describe them as configured topologies.
+(a)~\emph{NAT classification.} We implemented an RFC~4787/RFC~5780 STUN-based classifier (\texttt{scripts/\allowbreak nat\_classify.py}). It runs on the device itself, queries five STUN servers on different IPs from one local port to classify mapping, and uses CHANGE-REQUEST tests to classify filtering. We classified every network used in the new experiments: an enterprise office network, a mobile 4G carrier reached through a phone hotspot (two NAT layers), and a residential fixed-line network seen from the host OS and from WSL2 (Table~4). All four show endpoint-independent mapping and address-dependent filtering; the mobile carrier and WSL2 do not preserve ports. The scenarios of the original campaign were not probed at the time, and we now describe them as configured topologies.
 
 (b)~\emph{Additional networks and peers.} The new experiments use three further networks: office, mobile CGNAT and residential, in different locations and with different ISPs and one mobile operator. They also add two new peer pairings (Raspberry Pi in the office or on 4G $\leftrightarrow$ PC in the office or at home), on top of the original cross-ISP pair 300~km apart.
 
@@ -56,7 +56,7 @@ Below we answer each comment. Section, table and experiment numbers refer to the
 \begin{comment}
 2) Relay is described as a guaranteed fallback, yet interestingly it was never actually selected in the 150 cold-start experiments. [...] create a network configuration in which UDP hole-punching cannot succeed and then evaluate relay establishment latency, reliability, throughput, and recovery behavior.
 \end{comment}
-\reply Done (new E8). On a Raspberry Pi connected through a mobile CGNAT we blocked all outgoing UDP except DNS with an nftables rule, which makes hole punching impossible. The relay uses HTTPS over TCP and remains available. We alternated blocked and open periods during a 40-minute run with 1~MB transfers every 5~s. Results (Table~13):
+\reply Done (new E8). On a Raspberry Pi connected through a mobile CGNAT we blocked all outgoing UDP except DNS with an nftables rule, which makes hole punching impossible. The relay uses HTTPS over TCP and remains available. We alternated blocked and open periods during a 40-minute run with 1~MB transfers every 5~s. Results (Table~14):
 \begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
 \item \textbf{Reliability.} With UDP blocked, all 190 transfers were delivered over the relay.
 \item \textbf{Fallback latency.} After blocking, the first delivery over the relay came after about 28~s. The in-flight transfer stalled but was not lost.
@@ -67,19 +67,26 @@ The corrected analysis of comment~1 also shows that the relay was in fact used i
 
 An unexpected finding is that on the mobile CGNAT the direct path was \emph{less} reliable than the relay. 5--27\% of direct transfers were interrupted mid-stream, versus 0 of 190 relay-carried transfers. This motivated a transfer-level retry, now part of the system (\S3.3).
 
-\changes New \S4.8 (E8) and Table~13; \S3.3; \S5.1.
+\changes New \S4.8 (E8) and Table~14; \S3.3; \S5.1.
 
 \begin{comment}
 3) Table 8 is essentially an architectural comparison, while the accuracy experiment uses an in-process Flower-compatible harness rather than a real Flower deployment over an actual Tailscale mesh. [...] a live head-to-head comparison on the same hardware would be much more persuasive.
 \end{comment}
-\reply We agree that a live comparison would be more persuasive. The artifact now supports it: the Flower client runs on the Raspberry Pi with the same resource monitor as FL-Iroh (E11), and the monitor also accounts for the \texttt{tailscaled} daemon. However, we could not complete it within the revision period, because the new connectivity, resilience and federation experiments of comments~1, 2, 5 and~7 took priority. We now state explicitly that Table~8 of the original submission (now Table~17) is an architectural comparison and that the accuracy parity is an in-process sanity check, and the live comparison appears in the roadmap. \TBD{If time permits before submission, replace this paragraph with the live results.} We also updated Table~17 with the public-key admission control implemented in this revision.
+\reply Done. We ran both stacks live on the same machines and network: aggregator on the PC, the Raspberry Pi~3B and two PC clients, the air-quality task, 30 rounds, with server-side evaluation in both. For Flower~1.21 the Raspberry Pi reached the server through Tailscale; for FL-Iroh it registered by public key. Results (new Table~20):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Completion and accuracy.} Both completed 30/30 rounds, with similar final accuracy (48.4\% Flower, 49.6\% FL-Iroh).
+\item \textbf{Round time.} The median round took 8.4~s with Flower over Tailscale and 2.2~s with FL-Iroh (p95 13.8 vs.\ 3.3~s). We did not profile the source of Flower's longer rounds, so we report the difference without attributing it.
+\item \textbf{Resources on the Raspberry Pi} (FL client plus \texttt{tailscaled} in both runs): CPU time per round 5.5 vs.\ 6.1~s; memory 440/445 vs.\ 432/479~MB (median/peak); estimated energy per round 18.0 vs.\ 10.3~J, mainly because the rounds were shorter.
+\item \textbf{Setup.} Because the Flower server ran behind the host's NAT, making it reachable over the tailnet required an administrator to add a port-forwarding rule and a firewall exception; FL-Iroh required no network configuration.
+\end{itemize}
+The live run also exposed a race in our transfer retry that could deliver a model twice. We fixed it before the final runs (\S4.11).
 
-\changes \S4.12; Tables~17--18; Table~19 (roadmap).
+\changes \S4.12 (live comparison) and new Table~20; Table~18.
 
 \begin{comment}
 4) [...] there are currently no measurements of CPU utilization, memory consumption, or energy use on the Raspberry Pi. [...]
 \end{comment}
-\reply Added (E11, Table~16). We implemented a resource monitor that records per-phase CPU time, resident memory, system load and power, and used it on the Raspberry Pi~3B during a complete federation over the WAN. Per round (medians over 29 rounds):
+\reply Added (E11, Table~17). We implemented a resource monitor that records per-phase CPU time, resident memory, system load and power, and used it on the Raspberry Pi~3B during a complete federation over the WAN. Per round (medians over 29 rounds):
 \begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
 \item \textbf{Local training:} 1.02~s of wall time and 2.79~s of CPU time.
 \item \textbf{Communication phases:} receiving and sending take 3.1--3.5~s of wall time, but only 0.1--0.2~s of CPU time.
@@ -89,9 +96,9 @@ Memory, rather than computation, is therefore the binding constraint. This suppo
 
 The Raspberry Pi~3B has no power sensor, so energy is \emph{estimated} with a utilization model based on published idle and full-load board power (1.4/3.7~W). We report it explicitly as an estimate: about 2.9~J for training and 4.5--5.2~J for the communication phases, which are dominated by idle waiting. The monitor reads hardware sensors (an INA219/INA226 shunt via Linux \texttt{hwmon}, or the PMIC of a Raspberry Pi~5) when they are present, and measured energy is listed in the roadmap.
 
-On removing the system daemon: FL-Iroh adds no daemon by design. A measured comparison against the \texttt{tailscaled} daemon on the same device is part of the live comparison of comment~3.
+On removing the system daemon: the live comparison of comment~3 measured the FL client together with \texttt{tailscaled} on the same Raspberry Pi. CPU and memory were similar for the two stacks (FL-Iroh used about 10\% more CPU time per round, because the QUIC stack runs inside the client process), so removing the daemon does not, by itself, yield a measurable resource saving on this device. We state this explicitly in the paper. The estimated energy per round was lower with FL-Iroh (10.3 vs.\ 18.0~J), because its rounds were shorter. FL-Iroh's advantage is therefore operational (no privileged daemon, account or port forwarding) and in round latency, not in CPU or memory.
 
-\changes New \S4.11 (E11) and Table~16; \S5.5 (Limitations, Energy).
+\changes New \S4.11 (E11) and Table~17; \S4.12 and Table~20; \S5.5 (Limitations, Energy).
 
 \begin{comment}
 5) [...] most of the FL experiments themselves are executed on a 16-core Xeon HPC system [...] run complete multi-round FL training on multiple Raspberry Pi-class devices [...]
@@ -128,11 +135,11 @@ Rejoining at the FL level is demonstrated in E11, where the Raspberry Pi joined 
 \begin{comment}
 8) I would also like to see degraded-network experiments. [...] A controlled packet-loss/latency sweep would be particularly useful for showing when QUIC's behavior begins to affect FL round duration or convergence.
 \end{comment}
-\reply Added (E9, Table~14). We ran the full federated workload (10 clients, 20 rounds) and a transfer benchmark (100~KB, 1~MB, 10~MB) over real Iroh connections, inside an isolated network namespace with \texttt{tc-netem}. The conditions were: one-way delay of 25--250~ms, jitter, loss of 1--20\%, rate limits from 10~Mbit/s to 512~kbit/s, and two combined rural profiles. All 320 rounds of the 16 completed conditions finished. For 14~KB edge-model updates, impairments lengthen rounds (1.4~s to 3.7~s at 250~ms delay, 8.7~s at 20\% loss and 10.7~s at 512~kbit/s) but do not change accuracy or macro-F1. The exception is 20\% loss, where late updates reduced participation in two rounds, and the final round aggregated only five clients.
+\reply Added (E9, Table~15). We ran the full federated workload (10 clients, 20 rounds) and a transfer benchmark (100~KB, 1~MB, 10~MB) over real Iroh connections, inside an isolated network namespace with \texttt{tc-netem}. The conditions were: one-way delay of 25--250~ms, jitter, loss of 1--20\%, rate limits from 10~Mbit/s to 512~kbit/s, and two combined rural profiles. All 320 rounds of the 16 completed conditions finished. For 14~KB edge-model updates, impairments lengthen rounds (1.4~s to 3.7~s at 250~ms delay, 8.7~s at 20\% loss and 10.7~s at 512~kbit/s) but do not change accuracy or macro-F1. The exception is 20\% loss, where late updates reduced participation in two rounds, and the final round aggregated only five clients.
 
 QUIC's behavior becomes visible with payload size. 10~MB transfers grow to 9.5~s at 250~ms delay and to 167~s at 512~kbit/s, and they fail entirely under the harsh rural profile (75$\pm$25~ms, 10\% loss, 1~Mbit/s). A jitter profile that strongly reorders packets stalled the transfers; we report and exclude it.
 
-\changes New \S4.9 (E9) and Table~14.
+\changes New \S4.9 (E9) and Table~15.
 
 \begin{comment}
 9) Scalability experiment for CoAP discovery stops at 100 nodes [...] What happens at 500, 1,000, or several thousand endpoints, especially if multiple capability tags and simultaneous registrations are involved?
@@ -156,23 +163,30 @@ QUIC's behavior becomes visible with payload size. 10~MB transfers grow to 9.5~s
 \item \textbf{Endpoint binding.} The NAT-traversing control channel requires the registered endpoint to belong to the authenticated sender.
 \item \textbf{Per-round binding.} Each round accepts at most one update per selected member.
 \end{itemize}
-Results (Table~15): on loopback and over the WAN, 0 of 30 unauthorized payloads were accepted. All 30 attempts were rejected and logged, in 10~ms on loopback and 0.33~s over the WAN. The allow-list adds no measurable latency to authorized transfers (11.0 vs.\ 11.1~ms), and a spoofed registration was rejected.
+Results (Table~16): on loopback and over the WAN, 0 of 30 unauthorized payloads were accepted. All 30 attempts were rejected and logged, in 10~ms on loopback and 0.33~s over the WAN. The allow-list adds no measurable latency to authorized transfers (11.0 vs.\ 11.1~ms), and a spoofed registration was rejected.
 
-\changes \S3.2; \S4.10 (E10) and Table~15; \S5.4; Table~17.
+\changes \S3.2; \S4.10 (E10) and Table~16; \S5.4; Table~18.
 
 \begin{comment}
 11) Privacy claims should also be phrased carefully. [...] You should avoid broadly describing the overall learning system as privacy-preserving.
 \end{comment}
 \reply We agree and have revised the wording throughout. FL-Iroh is now described as keeping raw data on the device and encrypting updates in transit, not as a privacy-preserving learning system. The threat model (\S5.4) adds an explicit ``Privacy scope'' paragraph. It states that the aggregator receives individual updates in the clear, which may leak information through gradient inversion or membership inference, and that no differential privacy or secure aggregation is applied. It also states that admission control does not protect against poisoned updates from members. Secure aggregation, differential privacy and robust aggregation are now part of the roadmap.
 
-\changes \S1; \S5.4; Conclusion; Table~19.
+\changes \S1; \S5.4; Conclusion; Table~21.
 
 \begin{comment}
 12) Air-quality experiment [...] Report macro-F1, per-class precision/recall, balanced accuracy, and a confusion matrix.
 \end{comment}
-\reply Added. The code now stores all predictions and computes accuracy, balanced accuracy, macro- and weighted-F1, per-class precision/recall/F1 and the confusion matrix. Table~12 reports these metrics for all models and the trivial baselines over five seeds. For example, the majority-class baseline reaches 22.9\% accuracy but only 33.3\% balanced accuracy and 12.4\% macro-F1. \TBD{Summarize the main findings once the multi-seed runs finish: AirMLP vs.\ persistence on macro-F1, recall of the minority \textit{Medio} class, Prophet vs.\ neural models.} Full per-class reports and confusion matrices for every configuration and seed are in the repository.
+\reply Added. The code now stores all predictions and computes accuracy, balanced accuracy, macro- and weighted-F1, per-class precision/recall/F1 and the confusion matrix. Table~12 reports these metrics for all models and the trivial baselines over five seeds. For example, the majority-class baseline reaches 22.9\% accuracy but only 33.3\% balanced accuracy and 12.4\% macro-F1. The new metrics change the picture in an informative way:
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Persistence baseline.} It reaches 47.5\% accuracy but only 43.1\% macro-F1.
+\item \textbf{AirMLP} does not beat persistence on macro-F1 (40.3\% geographic, 43.1\% IID). It almost never predicts the middle class \textit{Medio} correctly (recall 15--17\%).
+\item \textbf{AirLSTM}, added in this revision with a 7-day input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1--49.1\%) and nearly doubles the recall of \textit{Medio} (28\%). \textit{Medio} remains the hardest class for all models.
+\item \TBD{Prophet: one sentence once the HPC multi-seed run is available.}
+\end{itemize}
+We also add row-normalized confusion matrices (Table~13). Full per-class reports and confusion matrices for every configuration and seed are in the repository.
 
-\changes \S4.7 (E6) and Table~12.
+\changes \S4.7 (E6), Table~12 and new Table~13.
 
 \begin{comment}
 13) FedGAM [...] I wonder whether FedGAM is mature enough to be presented as a substantive contribution in its current form.
@@ -193,7 +207,7 @@ Results (Table~15): on loopback and over the WAN, 0 of 30 unauthorized payloads 
 \end{comment}
 \reply We agree and added a dedicated subsection (\S5.3). The transport is agnostic to the aggregation rule and the model, but not to the client runtime or platform. The prototype serializes with \texttt{torch.save} and requires Python/PyTorch on a 64-bit Linux system, which takes about 40\% of the Raspberry Pi~3B's memory (E11) and excludes microcontrollers. We explain what a non-Python client would require: a framework-neutral tensor encoding and a native client speaking the three ALPN protocols, which Iroh's Rust implementation makes feasible. We claim aggregation and model agnosticism only.
 
-\changes \S1; \S3.4; new \S5.3; Table~19.
+\changes \S1; \S3.4; new \S5.3; Table~21.
 
 % ============================================================================
 \section*{Reviewer 2}
@@ -236,9 +250,9 @@ Results (Table~15): on loopback and over the WAN, 0 of 30 unauthorized payloads 
 \begin{comment}
 5. You can add a research road map to the conclusion section [...]
 \end{comment}
-\reply Added. The conclusion now ends with a research roadmap (Table~19) organized by horizon. The short-term engineering items cover measurement breadth, operational baselines and measured energy. The medium-term systems items cover lightweight runtimes, communication efficiency, and asynchrony and intermittency. The long-term research items cover trustworthy FL, decentralized topologies and domain models. Each item lists concrete opportunities for other researchers.
+\reply Added. The conclusion now ends with a research roadmap (Table~21) organized by horizon. The short-term engineering items cover measurement breadth, operational baselines and measured energy. The medium-term systems items cover lightweight runtimes, communication efficiency, and asynchrony and intermittency. The long-term research items cover trustworthy FL, decentralized topologies and domain models. Each item lists concrete opportunities for other researchers.
 
-\changes \S6 and Table~19.
+\changes \S6 and Table~21.
 
 \bigskip
 We hope that the revised manuscript addresses all comments satisfactorily, and we thank the reviewers again for helping us improve the paper.

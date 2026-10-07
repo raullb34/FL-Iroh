@@ -74,12 +74,12 @@
 
 % ---- Abstract -------------------------------------------------------------
 \begin{abstract}
-Federated Learning (FL) for agricultural and environmental IoT faces a connectivity barrier: edge devices behind Network Address Translators (NAT) and Carrier-Grade NAT (CGNAT) cannot host or reliably reach an aggregation endpoint without static IPs, VPN overlays, or cloud relays. We present FL-Iroh, an open-source FL system that embeds NAT traversal in the application transport, coupling the Iroh QUIC peer-to-peer transport---in which peers are addressed and authenticated by an Ed25519 public key rather than an IP address---with a CoAP/CoRE control plane and a resource directory for capability-based discovery. Federation membership is enforced by a public-key allow-list, and model exchange falls back to an end-to-end-encrypted relay whenever no direct path can be validated. We evaluate the system on real hardware across five networks whose NAT behavior we classify with RFC~4787 probes, including a mobile-carrier CGNAT, and on a Raspberry Pi~3B client. Every cold-start connection attempt on the new office--home path (30/30) and 95.8\% of 120 earlier WAN attempts were established; long-lived sessions ran over validated direct paths (60/60 transfers office--home), while with all UDP blocked the relay delivered 190/190 transfers and the path returned to direct within 4~s of unblocking. A complete federation over the WAN completed 29 of 30 rounds with the Raspberry Pi~3B training in every round it joined (1.0~s and 2.8~CPU-s per round, 419~MB peak memory), unauthorized peers were rejected in 0.3~s, all 320 rounds of a packet-loss/latency/bandwidth sweep completed, and CoAP discovery through the resource directory resolved multi-tag queries over 5{,}000 registered endpoints in 19~ms. The transport is aggregation-agnostic: the same channel carries neural networks and a federated Prophet model, which we evaluate with imbalance-aware metrics on a seven-day-ahead air-quality forecasting task.
+Federated Learning (FL) for agricultural and environmental IoT faces a connectivity barrier: edge devices behind Network Address Translators (NAT) and Carrier-Grade NAT (CGNAT) cannot host or reliably reach an aggregator without static IPs, VPN overlays, or cloud relays. We present FL-Iroh, an open-source FL system that embeds NAT traversal in the application transport: the Iroh QUIC peer-to-peer transport addresses and authenticates peers by Ed25519 public key, a public-key allow-list enforces federation membership, an end-to-end-encrypted relay carries traffic whenever no direct path is validated, and a CoAP/CoRE control plane with a resource directory provides capability-based discovery. We evaluate it on real hardware across five networks with RFC~4787-classified NAT behavior, including a mobile-carrier CGNAT, with a Raspberry Pi~3B client. All 30 cold starts on a new office--home path and 95.8\% of 120 earlier WAN attempts connected; long-lived sessions used validated direct paths (60/60 transfers), and with all UDP blocked the relay delivered 190/190 transfers, returning to direct within 4~s of unblocking. A federation over the WAN completed 29 of 30 rounds with the Raspberry Pi training in every round it joined (1.0~s and 419~MB peak memory per round); unauthorized peers were rejected in 0.3~s; all 320 rounds of a loss/latency/bandwidth sweep completed; and resource-directory discovery answered multi-tag queries over 5{,}000 endpoints in 19~ms. The transport is aggregation-agnostic, carrying neural networks and a federated Prophet model evaluated with imbalance-aware metrics on air-quality forecasting.
 \end{abstract}
 
 \begin{highlights}
 \item FL transport with built-in NAT traversal, public-key addressing and admission control
-\item RFC~4787-classified networks incl.\ mobile CGNAT; relay keeps 100\% delivery without UDP
+\item RFC~4787-classified networks incl.\ mobile CGNAT; relay delivers 100\% without UDP
 \item Real WAN federation with a Raspberry Pi~3B client; CPU, memory and energy per round
 \item CoAP resource directory: multi-tag discovery over 5{,}000 endpoints in tens of ms
 \item All rounds complete under loss, latency and bandwidth limits typical of rural links
@@ -300,7 +300,7 @@ The SHA-256 suffix in Eq.~\eqref{eq:wire} provides integrity verification at the
 
 Every node exposes CoAP resources following the CoRE link format~\cite{rfc6690}: \texttt{/fl/capabilities} (hardware, energy state and capability tags such as sensor types, crop or region), \texttt{/iroh/endpoint}, \texttt{/fl/round}, \texttt{/fl/policy}, \texttt{/fl/metrics}, and \texttt{/fl/register} on the aggregator. Responses are JSON or CBOR~\cite{rfc8949}, negotiated with the CoAP Accept option.
 
-Discovery can be performed in two ways. In \emph{probe} mode the aggregator queries \texttt{/fl/capabilities} of every known node and filters client-side, costing one request per node. In \emph{resource-directory} mode, following RFC~9176~\cite{rfc9176}, each node registers once (POST \texttt{/rd} with its tags, role, energy state, lifetime and Iroh endpoint) and the aggregator answers a single lookup (GET \texttt{/rd-lookup/ep?tag=agri,r3,soil\_moisture\&min\_energy=20}) with server-side filtering on any combination of capability tags, role and energy level, optionally paged. Registrations expire after their lifetime unless refreshed. E5 compares both modes up to 5{,}000 endpoints.
+Discovery can be performed in two ways. In \emph{probe} mode the aggregator queries \texttt{/fl/capabilities} of every known node and filters client-side, costing one request per node. In \emph{resource-directory} mode, following RFC~9176~\cite{rfc9176}, each node registers once (POST \texttt{/rd} with its tags, role, energy state, lifetime and Iroh endpoint) and the aggregator answers a single lookup, e.g.\ GET \texttt{/rd-lookup/ep} with query \texttt{tag=agri,r3,soil\_moisture} and \texttt{min\_energy=20}, with server-side filtering on any combination of capability tags, role and energy level, optionally paged. Registrations expire after their lifetime unless refreshed. E5 compares both modes up to 5{,}000 endpoints.
 
 \subsection{Round Protocol}
 \label{sec:round}
@@ -309,6 +309,7 @@ Fig.~\ref{fig:sequence} shows the message sequence of one round and Table~\ref{a
 
 \begin{figure}[t]
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tikzpicture}[font=\scriptsize, >=Stealth,
   actor/.style={draw, rounded corners=2pt, fill=gray!10, minimum width=1.6cm, minimum height=0.5cm, align=center}]
 \node[actor] (c) at (0,0) {Client $k$};
@@ -325,7 +326,7 @@ Fig.~\ref{fig:sequence} shows the message sequence of one round and Table~\ref{a
 \node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.1) {bind to selected ID};
 \node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.6) {aggregate, evaluate};
 \draw[->, blue!70!black] (6.4,-5.05) -- node[above] {round state (\texttt{/fl/round})} (0,-5.05);
-\end{tikzpicture}
+\end{tikzpicture}}
 \caption{Message sequence of one FL-Iroh round. Model and update streams use a validated direct path when one exists and the end-to-end-encrypted relay otherwise; the application code is identical in both cases.}
 \label{fig:sequence}
 \end{figure}
@@ -493,7 +494,8 @@ Under IID partitioning, SimpleCNN converges to 65.86\% test accuracy with a 95\%
 \centering
 \caption{E3: cold-start connection establishment ($N{=}30$ independent attempts per scenario; strict path classification). \emph{Connected} = direct + relay-carried. Median est.\ = client-side dial-to-connection time of successful attempts. The C1 base profile ran with a remote client and therefore also traversed the WAN.}
 \label{tab:e3est}
-\footnotesize
+\scriptsize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l l r r r r r r}
 \toprule
 \textbf{Scenario} & \textbf{Path} & \textbf{Attempts} & \textbf{Direct} & \textbf{Relay-carried} & \textbf{Failed} & \textbf{Connected (\%)} & \textbf{Median est.} \\
@@ -552,10 +554,10 @@ We compare the two discovery modes of \S\ref{sec:coap} for $N \in \{10, 100, 500
 \caption{E5: discovery latency and wire bytes (median; loopback). Probe = one query per endpoint with client-side filtering; RD = one lookup with server-side filtering.}
 \label{tab:e5}
 \scriptsize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{@{}r l r r r r@{}}
 \toprule
-\textbf{N} & \textbf{Mode} & \textbf{Tags} & \textbf{Matches} & \textbf{Time (ms)} & \textbf{Bytes} \\
+\textbf{N} & \textbf{Mode} & \textbf{Tags} & \textbf{Match} & \textbf{ms} & \textbf{Bytes} \\
 \midrule
 100   & probe & 3 & 1    & 57.0   & 45{,}927 \\
 100   & RD    & 3 & 1    & 1.5    & 336 \\
@@ -567,7 +569,7 @@ We compare the two discovery modes of \S\ref{sec:coap} for $N \in \{10, 100, 500
 5{,}000 & RD    & 2 & 222 & 66.8   & 61{,}633 \\
 5{,}000 & RD    & 3 & 68  & 18.9   & 19{,}626 \\
 \midrule
-\multicolumn{2}{@{}l}{RD registration, $N{=}5{,}000$} & \multicolumn{4}{l}{5{,}000/5{,}000 registered; median 220~ms, p95 329~ms} \\
+\multicolumn{6}{@{}l}{RD registration, $N{=}5{,}000$: all registered; median 220~ms, p95 329~ms} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -583,20 +585,21 @@ Probe discovery grows linearly with the number of endpoints regardless of how ma
 
 \begin{table*}[t]
 \centering
-\caption{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean with 95\% CI). Class distribution 49.3/27.8/22.9\% (\textit{Bajo/Medio/Alto}).}
+\caption{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean $\pm$ half-width of the 95\% CI, in \%; real Iroh transport). Class distribution 49.3/27.8/22.9\% (\textit{Bajo/Medio/Alto}).}
 \label{tab:e6}
-\footnotesize
+\scriptsize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l l r r r r r r}
 \toprule
 \textbf{Model} & \textbf{Partition} & \textbf{Accuracy} & \textbf{Balanced acc.} & \textbf{Macro-F1} & \textbf{Recall \textit{Bajo}} & \textbf{Recall \textit{Medio}} & \textbf{Recall \textit{Alto}} \\
 \midrule
 Majority class (train)          & ---        & 22.94\% & 33.33\% & 12.44\% & 0.0\% & 0.0\% & 100.0\% \\
-Persistence ($t{-}7$)           & ---        & 47.54\% & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
+Persistence ($t{-}7$)           & ---        & 47.54\% & 43.07\% & 43.13\% & 62.2\% & 30.7\% & 36.3\% \\
 \midrule
-AirMLP (FedAvg)                 & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirMLP (FedAvg)                 & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirLSTM (FedAvg)                & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirLSTM (FedAvg)                & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
+AirMLP (FedAvg)                 & Geographic & 46.85 $\pm$ 1.02 & 42.22 $\pm$ 0.48 & 40.25 $\pm$ 0.23 & 64.8 $\pm$ 3.7 & 15.3 $\pm$ 2.6 & 46.6 $\pm$ 3.6 \\
+AirMLP (FedAvg)                 & IID        & 49.64 $\pm$ 0.61 & 44.93 $\pm$ 0.61 & 43.05 $\pm$ 0.93 & 68.0 $\pm$ 2.0 & 17.2 $\pm$ 2.4 & 49.6 $\pm$ 1.8 \\
+AirLSTM (FedAvg)                & Geographic & 53.17 $\pm$ 0.55 & 48.77 $\pm$ 0.42 & 48.11 $\pm$ 0.52 & 69.6 $\pm$ 3.2 & 27.8 $\pm$ 2.9 & 48.9 $\pm$ 2.0 \\
+AirLSTM (FedAvg)                & IID        & 55.00 $\pm$ 0.31 & 49.44 $\pm$ 0.34 & 49.07 $\pm$ 0.58 & 74.8 $\pm$ 0.7 & 28.0 $\pm$ 2.5 & 45.6 $\pm$ 1.4 \\
 \midrule
 ProphetWrapper (FedAvg)         & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
 ProphetWrapper (FedAvg)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
@@ -606,7 +609,28 @@ ProphetWrapper (FedGAM)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{}
 \end{tabular}
 \end{table*}
 
-\TBD{E6 discussion to be completed with the multi-seed results (job running): AirMLP vs persistence on macro-F1 and balanced accuracy; recall of the minority \textit{Medio} class (expected weakest); Prophet vs neural models; FedGAM vs FedAvg ablation.}
+\begin{table}[t]
+\centering
+\caption{E6: confusion matrices summed over five seeds, row-normalized (\%; rows = true class, columns = predicted \textit{Bajo/Medio/Alto})}
+\label{tab:e6cm}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}l l r r r@{}}
+\toprule
+\textbf{Model (IID)} & \textbf{True} & \textbf{Bajo} & \textbf{Medio} & \textbf{Alto} \\
+\midrule
+AirMLP  & \textit{Bajo}  & 68.0 & 10.9 & 21.1 \\
+        & \textit{Medio} & 47.0 & 17.2 & 35.8 \\
+        & \textit{Alto}  & 34.0 & 16.4 & 49.6 \\
+\midrule
+AirLSTM & \textit{Bajo}  & 74.8 & 14.3 & 10.9 \\
+        & \textit{Medio} & 44.5 & 28.0 & 27.6 \\
+        & \textit{Alto}  & 28.4 & 26.0 & 45.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Imbalance-aware results.} Accuracy alone overstates the difficulty gap between models and hides how they fail. The 7-day persistence forecaster reaches 47.5\% accuracy but only 43.1\% macro-F1 and balanced accuracy. The memoryless AirMLP does not beat it on the imbalance-aware metrics (macro-F1 40.3\% geographic, 43.1\% IID): it mainly separates the extreme classes and almost never predicts \textit{Medio} correctly (recall 15--17\%), which it confuses with both neighbors (Table~\ref{tab:e6cm}). AirLSTM, which sees a 7-day input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1\% geographic, 49.1\% IID; balanced accuracy 48.8--49.4\%) and nearly doubles the recall of \textit{Medio} (28\%), which remains the hardest class for all models because it is a narrow band between two terciles. The geographic (non-IID) partition costs 1--3pp on every metric for both neural models. The accuracy of AirMLP over real Iroh connections (46.9\% and 49.6\%) matches the values obtained with the in-process transport in the original submission (47.3\% and 49.6\%), a further check that the transport does not alter learning outcomes. \TBD{Prophet rows and one sentence on Prophet vs neural models, from the HPC multi-seed run.}
 
 \textbf{FedGAM case study.} Switching from FedAvg to FedGAM requires a single server-side change (\texttt{aggregator\_fn}); the same Iroh channels carry AirMLP tensors (1{,}987 parameters) and Prophet Fourier coefficients (27 parameters). In the original submission Prophet+FedGAM and Prophet+FedAvg were statistically indistinguishable (57.93\% vs.\ 57.66\% accuracy, IID, Welch $p{=}0.35$; $\Delta{<}0.3$pp geographic). With eight years of local history each zone can estimate its own trend, so restricting aggregation to the seasonal terms brings no measurable benefit here; FedGAM is therefore presented as an example of a model-specific aggregation rule deployed without transport changes, not as a performance contribution.
 
@@ -615,20 +639,20 @@ ProphetWrapper (FedGAM)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{}
 
 E8 exercises the relay and the recovery paths on real hardware. A long-lived client on the Raspberry Pi sends a 1~MB update every 5~s to a long-lived server; every transfer re-dials the server by node ID, as the FL data plane does, and the path, active address, retries and local IP addresses are logged per transfer. Perturbations are injected on the Raspberry Pi: blocking all outgoing UDP except DNS with an nftables rule (hole punching becomes impossible and only the relay, which uses HTTPS over TCP, remains), taking the Wi-Fi interface down, and switching between networks with NetworkManager. Throughout E8--E11 a second nftables rule prevents Iroh from using the Tailscale overlay addresses present on the test devices, so that a ``direct'' path is always an Iroh hole-punched path; every transfer is additionally audited for overlay addresses.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{E8: delivery and path per phase (Raspberry Pi on N2 mobile CGNAT $\to$ PC on N1; 1~MB every 5~s; medians)}
 \label{tab:e8}
 \scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}p{2.6cm} r r r r r@{}}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l r r r r r@{}}
 \toprule
-\textbf{Phase} & \textbf{Sent} & \textbf{Delivered} & \textbf{Direct} & \textbf{Relay-c.} & \textbf{Goodput} \\
+\textbf{Phase} & \textbf{Sent} & \textbf{Delivered} & \textbf{Direct} & \textbf{Relay-carried} & \textbf{Goodput (Mbps)} \\
 \midrule
-UDP open, start              & 57  & 54 (94.7\%)  & 53  & 1   & \multirow{3}{*}{1.88~Mbps} \\
+UDP open, start              & 57  & 54 (94.7\%)  & 53  & 1   & \multirow{3}{*}{1.88} \\
 UDP open, after unblock 1    & 55  & 40 (72.7\%)  & 39  & 1   & \\
 UDP open, after unblock 2    & 57  & 46 (80.7\%)  & 46  & 0   & \\
-UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85~Mbps \\
+UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85 \\
 \midrule
 \multicolumn{6}{@{}l}{Fallback to relay after blocking: first delivery after 28.1~s and 28.4~s, no transfer lost} \\
 \multicolumn{6}{@{}l}{Return to direct after unblocking: 1.9~s and 3.8~s} \\
@@ -637,7 +661,7 @@ UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85~Mbps \\
 \vspace{0.3em}
 
 {\scriptsize $^{*}$Classified at the moment of unblocking; one carried a Tailscale address and is excluded from direct counts.}
-\end{table}
+\end{table*}
 
 \textbf{Forced relay (Table~\ref{tab:e8}).} With UDP blocked, all 190 transfers were delivered over the relay, at the same goodput as the direct path because the 4G uplink, not the relay, was the bottleneck. The switch to the relay took about 28~s, during which the in-flight transfer stalled but was not lost; on unblocking, the path returned to direct within 4~s. On this mobile CGNAT the direct path was less reliable than the relay: 5.3\% of direct transfers were interrupted mid-stream at the start of the run and 19--27\% after the UDP block was lifted, while none of the relay-carried transfers failed. This observation motivated the transfer-level retry of \S\ref{sec:transport}.
 
@@ -735,7 +759,7 @@ Send update                    & 3.45 & 0.20 & 1.51 & 5.2 \\
 \end{tabular}
 \end{table}
 
-The Raspberry Pi joined the federation shortly after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 with all three clients, at a median of 7.9~s per round (p95 21.3~s). The last round failed because the clients count rounds locally and the two PC clients, which had started one round earlier, had already finished; a server-driven termination message removes this artifact. Local training is cheap on this device---1.0~s of wall time and 2.8~s of CPU time (multi-core) per epoch---while the communication phases are dominated by waiting for other clients and by the relay-carried path to the aggregator in WSL2 (56 of 58 Raspberry Pi transfers; \S\ref{sec:e8}). Memory, not computation, is the tighter constraint: the Python/PyTorch runtime occupies 255--419~MB, about 40\% of the device's RAM, which supports our recommendation of a native client runtime for smaller devices (\S\ref{sec:agnostic}). We also note a deployment pitfall: the default PyPI PyTorch wheel for 64-bit ARM is built for newer ARMv8.2 server cores and terminates with an illegal-instruction error during back-propagation on Cortex-A53/A72 boards; the CPU-only wheel works.
+The Raspberry Pi joined the federation shortly after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 with all three clients, at a median of 7.9~s per round (p95 21.3~s). The last round failed because of a race we found in this experiment: when the receiver closed a connection right after reading a model, the sender sometimes saw the close before the acknowledgement and resent the model, so clients occasionally trained twice per server round and finished early (four stale updates were discarded by the per-round binding of \S\ref{sec:admission}). Receivers now close with an explicit receipt code that senders treat as delivery; with this fix the live comparison of \S\ref{sec:flower}, on the same hardware, completed 30 of 30 rounds with all clients and no discarded update. Local training is cheap on this device---1.0~s of wall time and 2.8~s of CPU time (multi-core) per epoch---while the communication phases are dominated by waiting for other clients and by the relay-carried path to the aggregator in WSL2 (56 of 58 Raspberry Pi transfers; \S\ref{sec:e8}). Memory, not computation, is the tighter constraint: the Python/PyTorch runtime occupies 255--419~MB, about 40\% of the device's RAM, which supports our recommendation of a native client runtime for smaller devices (\S\ref{sec:agnostic}). We also note a deployment pitfall: the default PyPI PyTorch wheel for 64-bit ARM is built for newer ARMv8.2 server cores and terminates with an illegal-instruction error during back-propagation on Cortex-A53/A72 boards; the CPU-only wheel works.
 
 \subsection{Operational Comparison with Flower over Tailscale}
 \label{sec:flower}
@@ -766,7 +790,7 @@ Account / ToS dependency & No account; default public relay operated by n0 (subj
 \end{tabular}
 \end{table*}
 
-\paragraph{Accuracy parity.} We ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$, $R{=}100$, the same five seeds as E2) through a Flower-compatible reference harness---an in-process simulation reusing the same model, partitions and training loop---and compared final test accuracy with E2 (Table~\ref{tab:e7acc}). The two are statistically indistinguishable under IID and $\alpha{=}0.1$ partitions. This parity is expected by construction and only confirms that FL-Iroh's data plane introduces no accuracy artifact. A live Flower deployment over a Tailscale mesh on the same hardware, measuring setup effort, round time and the resource cost of the \texttt{tailscaled} daemon on the Raspberry Pi with the monitor used in E11, is supported by the artifact but was not completed for this revision; we list it in the roadmap (\S\ref{sec:conclusion}).
+\paragraph{Accuracy parity.} We ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$, $R{=}100$, the same five seeds as E2) through a Flower-compatible reference harness---an in-process simulation reusing the same model, partitions and training loop---and compared final test accuracy with E2 (Table~\ref{tab:e7acc}). The two are statistically indistinguishable under IID and $\alpha{=}0.1$ partitions. This parity is expected by construction and only confirms that FL-Iroh's data plane introduces no accuracy artifact. The live comparison below complements this check with operational measurements.
 
 \begin{table}[t]
 \centering
@@ -784,6 +808,31 @@ Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Live comparison on the same hardware.} We also ran both stacks live on the same machines and network: the aggregator on the PC (inside WSL2), the Raspberry Pi~3B as one client (zone~0) and two clients on the PC (zones 1 and 2), the air-quality task with AirMLP, $R{=}30$ rounds and evaluation on the server in both cases. For Flower~1.21 the Raspberry Pi reached the server through Tailscale (the \texttt{tailscaled} daemon was already running on both machines); for FL-Iroh it registered by public key over \texttt{fl-ctrl/1}. Both machines were in the same office network, so both stacks used a direct path (Tailscale peer-to-peer; FL-Iroh: 100\% of bytes direct). On the Raspberry Pi we monitored the FL client process \emph{and} \texttt{tailscaled} in both runs. Table~\ref{tab:h2h} summarizes the results.
+
+\begin{table}[t]
+\centering
+\caption{Live head-to-head on identical hardware and network (AirMLP, 3 clients incl.\ a Raspberry Pi~3B, $R{=}30$). Raspberry Pi figures include the FL client and \texttt{tailscaled}; energy is model-based (\S\ref{sec:e11}).}
+\label{tab:h2h}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{3.3cm} >{\raggedleft\arraybackslash}p{2.3cm} >{\raggedleft\arraybackslash}p{1.6cm}@{}}
+\toprule
+\textbf{Metric} & \textbf{Flower + Tailscale} & \textbf{FL-Iroh} \\
+\midrule
+Rounds completed                         & 30/30         & 30/30 \\
+Round duration, median / p95             & 8.4 / 13.8~s  & 2.2 / 3.3~s \\
+Final test accuracy                      & 48.4\%        & 49.6\% \\
+RPi CPU time per round                   & 5.5~s         & 6.1~s \\
+RPi resident memory, median / peak       & 440 / 445~MB  & 432 / 479~MB \\
+RPi energy per round (estimated)         & 18.0~J        & 10.3~J \\
+Server network setup                     & port fwd.\ + firewall (admin) & none \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations follow. First, on the Raspberry Pi the two stacks have similar CPU and memory footprints: FL-Iroh used about 10\% more CPU time per round, the peak memory was 34~MB higher and the median slightly lower, because Iroh's QUIC stack runs inside the client process while Tailscale's runs in a separate daemon. Removing the system daemon therefore does not, by itself, yield a measurable resource saving on this device. Second, rounds completed about four times faster with FL-Iroh in this setup, and since a large part of the per-round energy is the idle power drawn while waiting, the estimated energy per round was correspondingly lower (10.3 vs.\ 18.0~J). We did not profile the source of Flower's longer rounds (framework orchestration, gRPC streaming or the overlay), so we report the difference as observed rather than attribute it. Third, the operational difference was concrete: because the Flower server ran behind the host's NAT (WSL2), making it reachable over the tailnet required an administrator to add a port-forwarding rule and a firewall exception on the host, whereas FL-Iroh required no network configuration. On a native Linux server the forwarding step would not be needed, but Flower would still depend on the \texttt{tailscaled} daemon and a Tailscale account on every node.
 
 % =========================================================================
 \section{Discussion}
@@ -824,7 +873,7 @@ FL-Iroh's transport security rests on Iroh's QUIC/TLS~1.3 channel: every byte ex
 
 \textbf{Energy.} The Raspberry Pi~3B has no power sensor; energy figures are model-based estimates. The resource monitor reads hardware sensors where available (an INA219/INA226 shunt monitor via Linux \texttt{hwmon}, or the PMIC of a Raspberry Pi~5) and should be used for measured energy in future deployments.
 
-\textbf{Scale of the federation.} The WAN federation (E11) involved three clients, one of them on a Raspberry Pi; E2, E4 and E6 used up to ten simulated clients on a server. Larger physical deployments, and the live Flower-over-Tailscale comparison, remain to be done.
+\textbf{Scale of the federation.} The WAN federation (E11) and the live comparison with Flower involved three clients, one of them on a Raspberry Pi; E2, E4 and E6 used up to ten simulated clients on a server. Larger physical deployments remain to be done, and the live comparison was run on a single office network.
 
 \textbf{Small tabular datasets.} The Crop Recommendation benchmark and the daily CyL air-quality data are static and relatively clean; they do not capture sub-hourly sensor noise, concept drift or the spatial density of real monitoring networks.
 
@@ -855,7 +904,7 @@ Table~\ref{tab:roadmap} organizes the open problems into a research roadmap, fro
 \textbf{Horizon} & \textbf{Direction} & \textbf{Concrete opportunities} \\
 \midrule
 Short term (engineering) & Measurement breadth & Multi-operator, multi-country connectivity campaigns with RFC~4787 probes; many clients behind one CGNAT; IPv6-only networks; native (non-WSL) aggregators; field validation of endpoint recovery. \\
- & Operational baselines & Live Flower-over-Tailscale (and other overlay) comparisons on identical hardware, including daemon CPU/memory/energy; self-hosted relays and their capacity. \\
+ & Operational baselines & Comparisons with other overlays and frameworks across sites and on larger fleets, extending the single-network live comparison with Flower over Tailscale; self-hosted relays and their capacity. \\
  & Measured energy & Shunt-monitor or PMIC-based energy per round on solar-powered nodes; energy-aware client selection using the capability tags of the resource directory. \\
 \midrule
 Medium term (systems) & Lightweight runtimes & Framework-neutral tensor encoding; native Rust/C clients for MCU-class devices; integer and sparse update formats. \\

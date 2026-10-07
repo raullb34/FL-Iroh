@@ -1,0 +1,604 @@
+09:47:25 [INFO] Wrote operational comparison: e8_comparison.csv and e8_comparison.md
+09:48:15 [INFO] Air quality dataset loaded: 28514 train / 3561 test | 6 features | 3 classes
+09:48:15 [INFO] Geographic partition: 10 provinces  min=2305  max=2922  mean=2851
+09:48:15 [INFO] === E8 Flower SERVER on 0.0.0.0:8080 (bind your Tailscale IP for remote clients) ===
+09:48:15 [INFO]     Remote clients connect with: --server-address <this-node tailscale ip>:8080
+[93mWARNING [0m:   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
+
+		$ flower-superlink --insecure
+
+	To view usage and all available options, run:
+
+		$ flower-superlink --help
+
+	Using `start_server()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+09:48:15 [WARNING] DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
+
+		$ flower-superlink --insecure
+
+	To view usage and all available options, run:
+
+		$ flower-superlink --help
+
+	Using `start_server()` is deprecated.
+
+            This is a deprecated feature. It will be removed
+            entirely in future versions of Flower.
+        
+[92mINFO [0m:      Starting Flower server, config: num_rounds=30, no round_timeout
+09:48:15 [INFO] Starting Flower server, config: num_rounds=30, no round_timeout
+[92mINFO [0m:      Flower ECE: gRPC server running (30 rounds), SSL is disabled
+09:48:15 [INFO] Flower ECE: gRPC server running (30 rounds), SSL is disabled
+[92mINFO [0m:      [INIT]
+09:48:15 [INFO] [INIT]
+[92mINFO [0m:      Requesting initial parameters from one random client
+09:48:15 [INFO] Requesting initial parameters from one random client
+[92mINFO [0m:      Received initial parameters from one random client
+09:48:16 [INFO] Received initial parameters from one random client
+[92mINFO [0m:      Starting evaluation of initial global parameters
+09:48:16 [INFO] Starting evaluation of initial global parameters
+09:48:16 [INFO]   [server] round 0  test_acc=0.4729
+[92mINFO [0m:      initial parameters (loss, other metrics): 1.088917915823084, {'test_acc': 0.4729008705419826}
+09:48:16 [INFO] initial parameters (loss, other metrics): 1.088917915823084, {'test_acc': 0.4729008705419826}
+[92mINFO [0m:      
+09:48:16 [INFO] 
+[92mINFO [0m:      [ROUND 1]
+09:48:16 [INFO] [ROUND 1]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:48:20 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:48:48 [INFO] aggregate_fit: received 3 results and 0 failures
+[93mWARNING [0m:   No fit_metrics_aggregation_fn provided
+09:48:48 [WARNING] No fit_metrics_aggregation_fn provided
+09:48:48 [INFO]   [server] round 1  test_acc=0.4524
+[92mINFO [0m:      fit progress: (1, 1.066718667452672, {'test_acc': 0.45240101095197977}, 30.065902556001674)
+09:48:48 [INFO] fit progress: (1, 1.066718667452672, {'test_acc': 0.45240101095197977}, 30.065902556001674)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:48:48 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:48:48 [INFO] 
+[92mINFO [0m:      [ROUND 2]
+09:48:48 [INFO] [ROUND 2]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:48:48 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:48:55 [INFO] aggregate_fit: received 3 results and 0 failures
+09:48:56 [INFO]   [server] round 2  test_acc=0.4914
+[92mINFO [0m:      fit progress: (2, 1.0472109527341504, {'test_acc': 0.4914349901713002}, 37.45079072900262)
+09:48:56 [INFO] fit progress: (2, 1.0472109527341504, {'test_acc': 0.4914349901713002}, 37.45079072900262)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:48:56 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:48:56 [INFO] 
+[92mINFO [0m:      [ROUND 3]
+09:48:56 [INFO] [ROUND 3]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:48:56 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:49:07 [INFO] aggregate_fit: received 3 results and 0 failures
+09:49:08 [INFO]   [server] round 3  test_acc=0.4926
+[92mINFO [0m:      fit progress: (3, 1.0393066379803682, {'test_acc': 0.4925582701488346}, 47.106218558001274)
+09:49:08 [INFO] fit progress: (3, 1.0393066379803682, {'test_acc': 0.4925582701488346}, 47.106218558001274)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:49:08 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:49:08 [INFO] 
+[92mINFO [0m:      [ROUND 4]
+09:49:08 [INFO] [ROUND 4]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:49:08 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:49:19 [INFO] aggregate_fit: received 3 results and 0 failures
+09:49:19 [INFO]   [server] round 4  test_acc=0.5080
+[92mINFO [0m:      fit progress: (4, 1.0213399941718369, {'test_acc': 0.5080033698399326}, 58.40461614800006)
+09:49:19 [INFO] fit progress: (4, 1.0213399941718369, {'test_acc': 0.5080033698399326}, 58.40461614800006)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:49:19 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:49:19 [INFO] 
+[92mINFO [0m:      [ROUND 5]
+09:49:19 [INFO] [ROUND 5]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:49:19 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:49:27 [INFO] aggregate_fit: received 3 results and 0 failures
+09:49:27 [INFO]   [server] round 5  test_acc=0.4923
+[92mINFO [0m:      fit progress: (5, 1.0370202221183487, {'test_acc': 0.492277450154451}, 66.49795953799912)
+09:49:27 [INFO] fit progress: (5, 1.0370202221183487, {'test_acc': 0.492277450154451}, 66.49795953799912)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:49:27 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:49:27 [INFO] 
+[92mINFO [0m:      [ROUND 6]
+09:49:27 [INFO] [ROUND 6]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:49:27 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:49:34 [INFO] aggregate_fit: received 3 results and 0 failures
+09:49:34 [INFO]   [server] round 6  test_acc=0.4951
+[92mINFO [0m:      fit progress: (6, 1.0313485923760126, {'test_acc': 0.495085650098287}, 73.50915282200003)
+09:49:34 [INFO] fit progress: (6, 1.0313485923760126, {'test_acc': 0.495085650098287}, 73.50915282200003)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:49:34 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:49:34 [INFO] 
+[92mINFO [0m:      [ROUND 7]
+09:49:34 [INFO] [ROUND 7]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:49:34 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:49:50 [INFO] aggregate_fit: received 3 results and 0 failures
+09:49:50 [INFO]   [server] round 7  test_acc=0.4971
+[92mINFO [0m:      fit progress: (7, 1.0339713365098995, {'test_acc': 0.4970513900589722}, 87.20144886500202)
+09:49:50 [INFO] fit progress: (7, 1.0339713365098995, {'test_acc': 0.4970513900589722}, 87.20144886500202)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:49:50 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:49:50 [INFO] 
+[92mINFO [0m:      [ROUND 8]
+09:49:50 [INFO] [ROUND 8]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:49:50 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:00 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:00 [INFO]   [server] round 8  test_acc=0.4990
+[92mINFO [0m:      fit progress: (8, 1.023853952916142, {'test_acc': 0.4990171300196574}, 97.18924345199775)
+09:50:00 [INFO] fit progress: (8, 1.023853952916142, {'test_acc': 0.4990171300196574}, 97.18924345199775)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:00 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:00 [INFO] 
+[92mINFO [0m:      [ROUND 9]
+09:50:00 [INFO] [ROUND 9]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:00 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:08 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:08 [INFO]   [server] round 9  test_acc=0.4881
+[92mINFO [0m:      fit progress: (9, 1.0313644809556857, {'test_acc': 0.488065150238697}, 104.86118571300176)
+09:50:08 [INFO] fit progress: (9, 1.0313644809556857, {'test_acc': 0.488065150238697}, 104.86118571300176)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:08 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:08 [INFO] 
+[92mINFO [0m:      [ROUND 10]
+09:50:08 [INFO] [ROUND 10]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:08 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:24 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:24 [INFO]   [server] round 10  test_acc=0.5007
+[92mINFO [0m:      fit progress: (10, 1.019708400092678, {'test_acc': 0.500702049985959}, 118.75879229199927)
+09:50:24 [INFO] fit progress: (10, 1.019708400092678, {'test_acc': 0.500702049985959}, 118.75879229199927)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:24 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:24 [INFO] 
+[92mINFO [0m:      [ROUND 11]
+09:50:24 [INFO] [ROUND 11]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:24 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:32 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:32 [INFO]   [server] round 11  test_acc=0.4858
+[92mINFO [0m:      fit progress: (11, 1.0304583472771713, {'test_acc': 0.48581859028362817}, 126.35322593800083)
+09:50:32 [INFO] fit progress: (11, 1.0304583472771713, {'test_acc': 0.48581859028362817}, 126.35322593800083)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:32 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:32 [INFO] 
+[92mINFO [0m:      [ROUND 12]
+09:50:32 [INFO] [ROUND 12]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:32 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:37 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:37 [INFO]   [server] round 12  test_acc=0.4940
+[92mINFO [0m:      fit progress: (12, 1.0206928529018968, {'test_acc': 0.4939623701207526}, 131.97412455300218)
+09:50:37 [INFO] fit progress: (12, 1.0206928529018968, {'test_acc': 0.4939623701207526}, 131.97412455300218)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:37 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:37 [INFO] 
+[92mINFO [0m:      [ROUND 13]
+09:50:37 [INFO] [ROUND 13]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:37 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:46 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:46 [INFO]   [server] round 13  test_acc=0.4844
+[92mINFO [0m:      fit progress: (13, 1.0326749443237917, {'test_acc': 0.4844144903117102}, 140.39735141299752)
+09:50:46 [INFO] fit progress: (13, 1.0326749443237917, {'test_acc': 0.4844144903117102}, 140.39735141299752)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:46 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:46 [INFO] 
+[92mINFO [0m:      [ROUND 14]
+09:50:46 [INFO] [ROUND 14]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:46 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:50:56 [INFO] aggregate_fit: received 3 results and 0 failures
+09:50:56 [INFO]   [server] round 14  test_acc=0.4813
+[92mINFO [0m:      fit progress: (14, 1.0309831694383629, {'test_acc': 0.4813254703734906}, 147.89482011400105)
+09:50:56 [INFO] fit progress: (14, 1.0309831694383629, {'test_acc': 0.4813254703734906}, 147.89482011400105)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:50:56 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:50:56 [INFO] 
+[92mINFO [0m:      [ROUND 15]
+09:50:56 [INFO] [ROUND 15]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:50:56 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:06 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:06 [INFO]   [server] round 15  test_acc=0.4920
+[92mINFO [0m:      fit progress: (15, 1.0202843821206076, {'test_acc': 0.4919966301600674}, 158.2652007650031)
+09:51:06 [INFO] fit progress: (15, 1.0202843821206076, {'test_acc': 0.4919966301600674}, 158.2652007650031)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:06 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:06 [INFO] 
+[92mINFO [0m:      [ROUND 16]
+09:51:06 [INFO] [ROUND 16]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:06 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:18 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:18 [INFO]   [server] round 16  test_acc=0.4881
+[92mINFO [0m:      fit progress: (16, 1.0243354979876353, {'test_acc': 0.488065150238697}, 170.30947460100288)
+09:51:18 [INFO] fit progress: (16, 1.0243354979876353, {'test_acc': 0.488065150238697}, 170.30947460100288)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:18 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:18 [INFO] 
+[92mINFO [0m:      [ROUND 17]
+09:51:18 [INFO] [ROUND 17]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:18 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:27 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:28 [INFO]   [server] round 17  test_acc=0.4808
+[92mINFO [0m:      fit progress: (17, 1.0344220495598935, {'test_acc': 0.48076383038472337}, 177.15911283100286)
+09:51:28 [INFO] fit progress: (17, 1.0344220495598935, {'test_acc': 0.48076383038472337}, 177.15911283100286)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:28 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:28 [INFO] 
+[92mINFO [0m:      [ROUND 18]
+09:51:28 [INFO] [ROUND 18]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:28 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:35 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:35 [INFO]   [server] round 18  test_acc=0.4796
+[92mINFO [0m:      fit progress: (18, 1.0318420945978741, {'test_acc': 0.479640550407189}, 184.90162233400042)
+09:51:35 [INFO] fit progress: (18, 1.0318420945978741, {'test_acc': 0.479640550407189}, 184.90162233400042)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:35 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:35 [INFO] 
+[92mINFO [0m:      [ROUND 19]
+09:51:35 [INFO] [ROUND 19]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:35 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:45 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:46 [INFO]   [server] round 19  test_acc=0.4813
+[92mINFO [0m:      fit progress: (19, 1.0267259281895462, {'test_acc': 0.4813254703734906}, 195.16552214800322)
+09:51:46 [INFO] fit progress: (19, 1.0267259281895462, {'test_acc': 0.4813254703734906}, 195.16552214800322)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:46 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:46 [INFO] 
+[92mINFO [0m:      [ROUND 20]
+09:51:46 [INFO] [ROUND 20]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:46 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:51:54 [INFO] aggregate_fit: received 3 results and 0 failures
+09:51:54 [INFO]   [server] round 20  test_acc=0.4985
+[92mINFO [0m:      fit progress: (20, 1.0206439079979905, {'test_acc': 0.4984554900308902}, 203.71390192900435)
+09:51:54 [INFO] fit progress: (20, 1.0206439079979905, {'test_acc': 0.4984554900308902}, 203.71390192900435)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:51:54 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:51:54 [INFO] 
+[92mINFO [0m:      [ROUND 21]
+09:51:54 [INFO] [ROUND 21]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:51:54 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:01 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:01 [INFO]   [server] round 21  test_acc=0.4926
+[92mINFO [0m:      fit progress: (21, 1.020349048121998, {'test_acc': 0.4925582701488346}, 208.88843107999855)
+09:52:01 [INFO] fit progress: (21, 1.020349048121998, {'test_acc': 0.4925582701488346}, 208.88843107999855)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:01 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:01 [INFO] 
+[92mINFO [0m:      [ROUND 22]
+09:52:01 [INFO] [ROUND 22]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:01 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:10 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:10 [INFO]   [server] round 22  test_acc=0.4934
+[92mINFO [0m:      fit progress: (22, 1.0226965142715785, {'test_acc': 0.4934007301319854}, 217.97877779699775)
+09:52:10 [INFO] fit progress: (22, 1.0226965142715785, {'test_acc': 0.4934007301319854}, 217.97877779699775)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:10 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:10 [INFO] 
+[92mINFO [0m:      [ROUND 23]
+09:52:10 [INFO] [ROUND 23]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:10 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:21 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:21 [INFO]   [server] round 23  test_acc=0.4788
+[92mINFO [0m:      fit progress: (23, 1.0302563288077247, {'test_acc': 0.4787980904240382}, 228.87933758200234)
+09:52:21 [INFO] fit progress: (23, 1.0302563288077247, {'test_acc': 0.4787980904240382}, 228.87933758200234)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:21 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:21 [INFO] 
+[92mINFO [0m:      [ROUND 24]
+09:52:21 [INFO] [ROUND 24]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:21 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:24 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:25 [INFO]   [server] round 24  test_acc=0.4959
+[92mINFO [0m:      fit progress: (24, 1.0214533077066985, {'test_acc': 0.4959281100814378}, 232.08763810300297)
+09:52:25 [INFO] fit progress: (24, 1.0214533077066985, {'test_acc': 0.4959281100814378}, 232.08763810300297)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:25 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:25 [INFO] 
+[92mINFO [0m:      [ROUND 25]
+09:52:25 [INFO] [ROUND 25]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:25 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:40 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:41 [INFO]   [server] round 25  test_acc=0.4881
+[92mINFO [0m:      fit progress: (25, 1.0278008292143817, {'test_acc': 0.488065150238697}, 246.5424789020035)
+09:52:41 [INFO] fit progress: (25, 1.0278008292143817, {'test_acc': 0.488065150238697}, 246.5424789020035)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:41 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:41 [INFO] 
+[92mINFO [0m:      [ROUND 26]
+09:52:41 [INFO] [ROUND 26]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:41 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:52:54 [INFO] aggregate_fit: received 3 results and 0 failures
+09:52:54 [INFO]   [server] round 26  test_acc=0.4917
+[92mINFO [0m:      fit progress: (26, 1.026689402644, {'test_acc': 0.4917158101656838}, 259.78682656800083)
+09:52:54 [INFO] fit progress: (26, 1.026689402644, {'test_acc': 0.4917158101656838}, 259.78682656800083)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:52:54 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:52:54 [INFO] 
+[92mINFO [0m:      [ROUND 27]
+09:52:54 [INFO] [ROUND 27]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:52:54 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:53:01 [INFO] aggregate_fit: received 3 results and 0 failures
+09:53:01 [INFO]   [server] round 27  test_acc=0.4951
+[92mINFO [0m:      fit progress: (27, 1.0187356128882772, {'test_acc': 0.495085650098287}, 266.5893232430026)
+09:53:01 [INFO] fit progress: (27, 1.0187356128882772, {'test_acc': 0.495085650098287}, 266.5893232430026)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:53:01 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:53:01 [INFO] 
+[92mINFO [0m:      [ROUND 28]
+09:53:01 [INFO] [ROUND 28]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:53:01 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:53:12 [INFO] aggregate_fit: received 3 results and 0 failures
+09:53:12 [INFO]   [server] round 28  test_acc=0.4850
+[92mINFO [0m:      fit progress: (28, 1.0281727528578777, {'test_acc': 0.48497613030047737}, 275.6009771989993)
+09:53:12 [INFO] fit progress: (28, 1.0281727528578777, {'test_acc': 0.48497613030047737}, 275.6009771989993)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:53:12 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:53:12 [INFO] 
+[92mINFO [0m:      [ROUND 29]
+09:53:12 [INFO] [ROUND 29]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:53:12 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:53:20 [INFO] aggregate_fit: received 3 results and 0 failures
+09:53:20 [INFO]   [server] round 29  test_acc=0.4841
+[92mINFO [0m:      fit progress: (29, 1.0254016951274685, {'test_acc': 0.48413367031732657}, 283.6831674310015)
+09:53:20 [INFO] fit progress: (29, 1.0254016951274685, {'test_acc': 0.48413367031732657}, 283.6831674310015)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:53:20 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:53:20 [INFO] 
+[92mINFO [0m:      [ROUND 30]
+09:53:20 [INFO] [ROUND 30]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09:53:20 [INFO] configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09:53:26 [INFO] aggregate_fit: received 3 results and 0 failures
+09:53:26 [INFO]   [server] round 30  test_acc=0.4836
+[92mINFO [0m:      fit progress: (30, 1.0295215813305498, {'test_acc': 0.4835720303285594}, 289.4902461419988)
+09:53:26 [INFO] fit progress: (30, 1.0295215813305498, {'test_acc': 0.4835720303285594}, 289.4902461419988)
+[92mINFO [0m:      configure_evaluate: no clients selected, skipping evaluation
+09:53:26 [INFO] configure_evaluate: no clients selected, skipping evaluation
+[92mINFO [0m:      
+09:53:26 [INFO] 
+[92mINFO [0m:      [SUMMARY]
+09:53:26 [INFO] [SUMMARY]
+[92mINFO [0m:      Run finished 30 round(s) in 289.50s
+09:53:26 [INFO] Run finished 30 round(s) in 289.50s
+[92mINFO [0m:      	History (loss, centralized):
+09:53:26 [INFO] 	History (loss, centralized):
+[92mINFO [0m:      		round 0: 1.088917915823084
+09:53:26 [INFO] 		round 0: 1.088917915823084
+[92mINFO [0m:      		round 1: 1.066718667452672
+09:53:26 [INFO] 		round 1: 1.066718667452672
+[92mINFO [0m:      		round 2: 1.0472109527341504
+09:53:26 [INFO] 		round 2: 1.0472109527341504
+[92mINFO [0m:      		round 3: 1.0393066379803682
+09:53:26 [INFO] 		round 3: 1.0393066379803682
+[92mINFO [0m:      		round 4: 1.0213399941718369
+09:53:26 [INFO] 		round 4: 1.0213399941718369
+[92mINFO [0m:      		round 5: 1.0370202221183487
+09:53:26 [INFO] 		round 5: 1.0370202221183487
+[92mINFO [0m:      		round 6: 1.0313485923760126
+09:53:26 [INFO] 		round 6: 1.0313485923760126
+[92mINFO [0m:      		round 7: 1.0339713365098995
+09:53:26 [INFO] 		round 7: 1.0339713365098995
+[92mINFO [0m:      		round 8: 1.023853952916142
+09:53:26 [INFO] 		round 8: 1.023853952916142
+[92mINFO [0m:      		round 9: 1.0313644809556857
+09:53:26 [INFO] 		round 9: 1.0313644809556857
+[92mINFO [0m:      		round 10: 1.019708400092678
+09:53:26 [INFO] 		round 10: 1.019708400092678
+[92mINFO [0m:      		round 11: 1.0304583472771713
+09:53:26 [INFO] 		round 11: 1.0304583472771713
+[92mINFO [0m:      		round 12: 1.0206928529018968
+09:53:26 [INFO] 		round 12: 1.0206928529018968
+[92mINFO [0m:      		round 13: 1.0326749443237917
+09:53:26 [INFO] 		round 13: 1.0326749443237917
+[92mINFO [0m:      		round 14: 1.0309831694383629
+09:53:26 [INFO] 		round 14: 1.0309831694383629
+[92mINFO [0m:      		round 15: 1.0202843821206076
+09:53:26 [INFO] 		round 15: 1.0202843821206076
+[92mINFO [0m:      		round 16: 1.0243354979876353
+09:53:26 [INFO] 		round 16: 1.0243354979876353
+[92mINFO [0m:      		round 17: 1.0344220495598935
+09:53:26 [INFO] 		round 17: 1.0344220495598935
+[92mINFO [0m:      		round 18: 1.0318420945978741
+09:53:26 [INFO] 		round 18: 1.0318420945978741
+[92mINFO [0m:      		round 19: 1.0267259281895462
+09:53:26 [INFO] 		round 19: 1.0267259281895462
+[92mINFO [0m:      		round 20: 1.0206439079979905
+09:53:26 [INFO] 		round 20: 1.0206439079979905
+[92mINFO [0m:      		round 21: 1.020349048121998
+09:53:26 [INFO] 		round 21: 1.020349048121998
+[92mINFO [0m:      		round 22: 1.0226965142715785
+09:53:26 [INFO] 		round 22: 1.0226965142715785
+[92mINFO [0m:      		round 23: 1.0302563288077247
+09:53:26 [INFO] 		round 23: 1.0302563288077247
+[92mINFO [0m:      		round 24: 1.0214533077066985
+09:53:26 [INFO] 		round 24: 1.0214533077066985
+[92mINFO [0m:      		round 25: 1.0278008292143817
+09:53:26 [INFO] 		round 25: 1.0278008292143817
+[92mINFO [0m:      		round 26: 1.026689402644
+09:53:26 [INFO] 		round 26: 1.026689402644
+[92mINFO [0m:      		round 27: 1.0187356128882772
+09:53:26 [INFO] 		round 27: 1.0187356128882772
+[92mINFO [0m:      		round 28: 1.0281727528578777
+09:53:26 [INFO] 		round 28: 1.0281727528578777
+[92mINFO [0m:      		round 29: 1.0254016951274685
+09:53:26 [INFO] 		round 29: 1.0254016951274685
+[92mINFO [0m:      		round 30: 1.0295215813305498
+09:53:26 [INFO] 		round 30: 1.0295215813305498
+[92mINFO [0m:      	History (metrics, centralized):
+09:53:26 [INFO] 	History (metrics, centralized):
+[92mINFO [0m:      	{'test_acc': [(0, 0.4729008705419826),
+09:53:26 [INFO] 	{'test_acc': [(0, 0.4729008705419826),
+[92mINFO [0m:      	              (1, 0.45240101095197977),
+09:53:26 [INFO] 	              (1, 0.45240101095197977),
+[92mINFO [0m:      	              (2, 0.4914349901713002),
+09:53:26 [INFO] 	              (2, 0.4914349901713002),
+[92mINFO [0m:      	              (3, 0.4925582701488346),
+09:53:26 [INFO] 	              (3, 0.4925582701488346),
+[92mINFO [0m:      	              (4, 0.5080033698399326),
+09:53:26 [INFO] 	              (4, 0.5080033698399326),
+[92mINFO [0m:      	              (5, 0.492277450154451),
+09:53:26 [INFO] 	              (5, 0.492277450154451),
+[92mINFO [0m:      	              (6, 0.495085650098287),
+09:53:26 [INFO] 	              (6, 0.495085650098287),
+[92mINFO [0m:      	              (7, 0.4970513900589722),
+09:53:26 [INFO] 	              (7, 0.4970513900589722),
+[92mINFO [0m:      	              (8, 0.4990171300196574),
+09:53:26 [INFO] 	              (8, 0.4990171300196574),
+[92mINFO [0m:      	              (9, 0.488065150238697),
+09:53:26 [INFO] 	              (9, 0.488065150238697),
+[92mINFO [0m:      	              (10, 0.500702049985959),
+09:53:26 [INFO] 	              (10, 0.500702049985959),
+[92mINFO [0m:      	              (11, 0.48581859028362817),
+09:53:26 [INFO] 	              (11, 0.48581859028362817),
+[92mINFO [0m:      	              (12, 0.4939623701207526),
+09:53:26 [INFO] 	              (12, 0.4939623701207526),
+[92mINFO [0m:      	              (13, 0.4844144903117102),
+09:53:26 [INFO] 	              (13, 0.4844144903117102),
+[92mINFO [0m:      	              (14, 0.4813254703734906),
+09:53:26 [INFO] 	              (14, 0.4813254703734906),
+[92mINFO [0m:      	              (15, 0.4919966301600674),
+09:53:26 [INFO] 	              (15, 0.4919966301600674),
+[92mINFO [0m:      	              (16, 0.488065150238697),
+09:53:26 [INFO] 	              (16, 0.488065150238697),
+[92mINFO [0m:      	              (17, 0.48076383038472337),
+09:53:26 [INFO] 	              (17, 0.48076383038472337),
+[92mINFO [0m:      	              (18, 0.479640550407189),
+09:53:26 [INFO] 	              (18, 0.479640550407189),
+[92mINFO [0m:      	              (19, 0.4813254703734906),
+09:53:26 [INFO] 	              (19, 0.4813254703734906),
+[92mINFO [0m:      	              (20, 0.4984554900308902),
+09:53:26 [INFO] 	              (20, 0.4984554900308902),
+[92mINFO [0m:      	              (21, 0.4925582701488346),
+09:53:26 [INFO] 	              (21, 0.4925582701488346),
+[92mINFO [0m:      	              (22, 0.4934007301319854),
+09:53:26 [INFO] 	              (22, 0.4934007301319854),
+[92mINFO [0m:      	              (23, 0.4787980904240382),
+09:53:26 [INFO] 	              (23, 0.4787980904240382),
+[92mINFO [0m:      	              (24, 0.4959281100814378),
+09:53:26 [INFO] 	              (24, 0.4959281100814378),
+[92mINFO [0m:      	              (25, 0.488065150238697),
+09:53:26 [INFO] 	              (25, 0.488065150238697),
+[92mINFO [0m:      	              (26, 0.4917158101656838),
+09:53:26 [INFO] 	              (26, 0.4917158101656838),
+[92mINFO [0m:      	              (27, 0.495085650098287),
+09:53:26 [INFO] 	              (27, 0.495085650098287),
+[92mINFO [0m:      	              (28, 0.48497613030047737),
+09:53:26 [INFO] 	              (28, 0.48497613030047737),
+[92mINFO [0m:      	              (29, 0.48413367031732657),
+09:53:26 [INFO] 	              (29, 0.48413367031732657),
+[92mINFO [0m:      	              (30, 0.4835720303285594)]}
+09:53:26 [INFO] 	              (30, 0.4835720303285594)]}
+[92mINFO [0m:      
+09:53:26 [INFO] 
+09:53:26 [ERROR] Exception iterating responses: 
+Traceback (most recent call last):
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/grpc/_server.py", line 652, in _take_response_from_response_iterator
+    return next(response_iterator), True
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/flower_service_servicer.py", line 119, in Join
+    ins_wrapper: InsWrapper = next(ins_wrapper_iterator)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/grpc_bridge.py", line 166, in ins_wrapper_iterator
+    self._raise_if_closed()
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/grpc_bridge.py", line 82, in _raise_if_closed
+    raise GrpcBridgeClosed()
+flwr.server.superlink.fleet.grpc_bidi.grpc_bridge.GrpcBridgeClosed
+09:53:26 [ERROR] Exception iterating responses: 
+Traceback (most recent call last):
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/grpc/_server.py", line 652, in _take_response_from_response_iterator
+    return next(response_iterator), True
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/flower_service_servicer.py", line 119, in Join
+    ins_wrapper: InsWrapper = next(ins_wrapper_iterator)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/grpc_bridge.py", line 166, in ins_wrapper_iterator
+    self._raise_if_closed()
+  File "/mnt/c/Users/Raul/Documents/Github/FL-Iroh based/.venv/lib/python3.12/site-packages/flwr/server/superlink/fleet/grpc_bidi/grpc_bridge.py", line 82, in _raise_if_closed
+    raise GrpcBridgeClosed()
+flwr.server.superlink.fleet.grpc_bidi.grpc_bridge.GrpcBridgeClosed
+09:53:26 [INFO] E8 server done: 30 rounds, mean 9.506s/round, 290.1s total
+PC side finished

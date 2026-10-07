@@ -1,0 +1,325 @@
+10:24:24 [INFO] fl_coap_iroh.data.partition — Air quality dataset loaded: 28514 train / 3561 test | 6 features | 3 classes
+10:24:24 [INFO] fl_coap_iroh.transport.admission — Loaded allow-list with 3 NodeId(s) from keys/allow_fl.txt
+10:24:24 [INFO] fl_coap_iroh.transport.iroh_node — Iroh node started: 70738f558ecdb74a  addrs=['85.48.2.235:64919', '172.17.0.1:38803', '172.18.0.1:38803', '192.168.197.140:38803']
+10:24:25 [INFO] fl_coap_iroh.coap.server — CoAP server [server] listening on 0.0.0.0:5990
+10:24:25 [INFO] fl_coap_iroh.fl.server — FLServer server started (mock=False)
+10:24:25 [INFO] fl_coap_iroh — Server endpoint: {'node_id_iroh': '70738f558ecdb74aeed3dc23c150d83a2af55bc18b05e297387c6fafdec2f13c', 'addrs': ['85.48.2.235:64919', '172.17.0.1:38803', '172.18.0.1:38803', '192.168.197.140:38803'], 'relay_url': 'https://euw1-1.relay.iroh.network./', 'direct_capable': True, 'last_seen': 1791361464.5774806}
+10:24:25 [INFO] fl_coap_iroh — Waiting for 3 clients to register (timeout 1800 s)…
+10:24:50 [INFO] fl_coap_iroh.transport.iroh_node — recv 349B via direct in 1ms
+10:24:50 [INFO] fl_coap_iroh.fl.server — Registered client pc1  iroh=a521f0558f5b4c6a
+10:24:50 [INFO] fl_coap_iroh.transport.iroh_node — recv 349B via direct in 1ms
+10:24:50 [INFO] fl_coap_iroh.fl.server — Registered client pc2  iroh=5055684860c43a38
+10:24:53 [INFO] fl_coap_iroh.transport.iroh_node — recv 332B via direct in 10ms
+10:24:53 [INFO] fl_coap_iroh.fl.server — Registered client rpi01  iroh=899b110ce8636010
+10:24:54 [INFO] fl_coap_iroh — 3 client(s) registered — starting rounds
+10:24:54 [INFO] fl_coap_iroh.fl.server — Round 1 — sending model to 3 clients…
+10:24:54 [INFO] fl_coap_iroh.transport.iroh_node — recv 332B via direct in 6ms
+10:24:54 [INFO] fl_coap_iroh.fl.server — Registered client rpi01  iroh=899b110ce8636010
+10:24:54 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 16ms (7.06 Mbit/s) to 5055684860c43a38
+10:24:54 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 16ms (7.11 Mbit/s) to a521f0558f5b4c6a
+10:24:54 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 46ms (2.41 Mbit/s) to 899b110ce8636010
+10:24:54 [INFO] fl_coap_iroh.fl.server — Round 1 — waiting for 3 updates…
+10:25:10 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 99ms
+10:25:23 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 0ms
+10:25:23 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:25:23 [INFO] fl_coap_iroh.fl.server — Round 1/30  acc=0.4962  loss=1.0529  29.2s  clients=3
+10:25:23 [INFO] fl_coap_iroh.fl.server — Round 2 — sending model to 3 clients…
+10:25:23 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 20ms (5.71 Mbit/s) to a521f0558f5b4c6a
+10:25:23 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 18ms (6.21 Mbit/s) to 5055684860c43a38
+10:25:23 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 63ms (1.78 Mbit/s) to 899b110ce8636010
+10:25:23 [INFO] fl_coap_iroh.fl.server — Round 2 — waiting for 3 updates…
+10:25:24 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:25:24 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 3ms
+10:25:24 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:25:24 [WARNING] fl_coap_iroh.fl.server — Round 2 — discarding update from unselected/duplicate peer a521f0558f5b4c6a
+10:25:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 73ms
+10:25:25 [INFO] fl_coap_iroh.fl.server — Round 2/30  acc=0.5024  loss=1.0416  1.5s  clients=3
+10:25:25 [INFO] fl_coap_iroh.fl.server — Round 3 — sending model to 3 clients…
+10:25:27 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 17ms (6.59 Mbit/s) to 5055684860c43a38
+10:25:27 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 22ms (5.17 Mbit/s) to a521f0558f5b4c6a
+10:25:27 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 66ms (1.68 Mbit/s) to 899b110ce8636010
+10:25:27 [INFO] fl_coap_iroh.fl.server — Round 3 — waiting for 3 updates…
+10:25:30 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 114ms
+10:25:30 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:25:30 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:25:31 [INFO] fl_coap_iroh.fl.server — Round 3/30  acc=0.5074  loss=1.0292  3.5s  clients=3
+10:25:31 [INFO] fl_coap_iroh.fl.server — Round 4 — sending model to 3 clients…
+10:25:31 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 21ms (5.45 Mbit/s) to 5055684860c43a38
+10:25:31 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 16ms (7.20 Mbit/s) to a521f0558f5b4c6a
+10:25:31 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 87ms (1.28 Mbit/s) to 899b110ce8636010
+10:25:31 [INFO] fl_coap_iroh.fl.server — Round 4 — waiting for 3 updates…
+10:25:32 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 46ms
+10:25:35 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 16ms
+10:25:36 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:25:36 [INFO] fl_coap_iroh.fl.server — Round 4/30  acc=0.4971  loss=1.0356  5.0s  clients=3
+10:25:36 [INFO] fl_coap_iroh.fl.server — Round 5 — sending model to 3 clients…
+10:25:36 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 15ms (7.40 Mbit/s) to 5055684860c43a38
+10:25:36 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 11ms (10.13 Mbit/s) to a521f0558f5b4c6a
+10:25:36 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 74ms (1.51 Mbit/s) to 899b110ce8636010
+10:25:36 [INFO] fl_coap_iroh.fl.server — Round 5 — waiting for 3 updates…
+10:25:37 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 52ms
+10:25:41 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:25:42 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:25:42 [INFO] fl_coap_iroh.fl.server — Round 5/30  acc=0.5018  loss=1.0274  6.1s  clients=3
+10:25:42 [INFO] fl_coap_iroh.fl.server — Round 6 — sending model to 3 clients…
+10:25:42 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 18ms (6.24 Mbit/s) to a521f0558f5b4c6a
+10:25:42 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 14ms (7.85 Mbit/s) to 5055684860c43a38
+10:25:42 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 66ms (1.69 Mbit/s) to 899b110ce8636010
+10:25:42 [INFO] fl_coap_iroh.fl.server — Round 6 — waiting for 3 updates…
+10:25:43 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 102ms
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:25:47 [INFO] fl_coap_iroh.fl.server — Round 6/30  acc=0.4993  loss=1.0319  5.2s  clients=3
+10:25:47 [INFO] fl_coap_iroh.fl.server — Round 7 — sending model to 3 clients…
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 15ms (7.50 Mbit/s) to 5055684860c43a38
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 17ms (6.57 Mbit/s) to a521f0558f5b4c6a
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 67ms (1.67 Mbit/s) to 899b110ce8636010
+10:25:47 [INFO] fl_coap_iroh.fl.server — Round 7 — waiting for 3 updates…
+10:25:47 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:25:48 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:25:48 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:25:48 [WARNING] fl_coap_iroh.fl.server — Round 7 — discarding update from unselected/duplicate peer 5055684860c43a38
+10:25:48 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 112ms
+10:25:48 [INFO] fl_coap_iroh.fl.server — Round 7/30  acc=0.5046  loss=1.0273  1.5s  clients=3
+10:25:48 [INFO] fl_coap_iroh.fl.server — Round 8 — sending model to 3 clients…
+10:25:48 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 15ms (7.31 Mbit/s) to a521f0558f5b4c6a
+10:25:48 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 12ms (9.37 Mbit/s) to 5055684860c43a38
+10:25:49 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 85ms (1.32 Mbit/s) to 899b110ce8636010
+10:25:49 [INFO] fl_coap_iroh.fl.server — Round 8 — waiting for 3 updates…
+10:25:52 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 106ms
+10:25:53 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:25:53 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:25:53 [INFO] fl_coap_iroh.fl.server — Round 8/30  acc=0.5060  loss=1.0199  4.6s  clients=3
+10:25:53 [INFO] fl_coap_iroh.fl.server — Round 9 — sending model to 3 clients…
+10:25:53 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed (stream not acknowledged: IrohError:  closed by peer: 0) — retrying
+10:25:53 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 19ms (5.93 Mbit/s) to 5055684860c43a38
+10:25:53 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 89ms (1.26 Mbit/s) to 899b110ce8636010
+10:25:54 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 1064ms (0.11 Mbit/s) to a521f0558f5b4c6a (attempt 2)
+10:25:54 [INFO] fl_coap_iroh.fl.server — Round 9 — waiting for 3 updates…
+10:25:55 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 88ms
+10:25:57 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:25:57 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:25:58 [INFO] fl_coap_iroh.fl.server — Round 9/30  acc=0.5086  loss=1.0194  4.5s  clients=3
+10:25:58 [INFO] fl_coap_iroh.fl.server — Round 10 — sending model to 3 clients…
+10:25:58 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 23ms (4.78 Mbit/s) to a521f0558f5b4c6a
+10:25:58 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 39ms (2.87 Mbit/s) to 5055684860c43a38
+10:25:58 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 90ms (1.25 Mbit/s) to 899b110ce8636010
+10:25:58 [INFO] fl_coap_iroh.fl.server — Round 10 — waiting for 3 updates…
+10:25:59 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 118ms
+10:26:05 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:05 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:26:05 [INFO] fl_coap_iroh.fl.server — Round 10/30  acc=0.5032  loss=1.0194  5.4s  clients=3
+10:26:06 [INFO] fl_coap_iroh.fl.server — Round 11 — sending model to 3 clients…
+10:26:06 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 42ms (2.64 Mbit/s) to 5055684860c43a38
+10:26:06 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 43ms (2.60 Mbit/s) to a521f0558f5b4c6a
+10:26:06 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 144ms (0.78 Mbit/s) to 899b110ce8636010
+10:26:06 [INFO] fl_coap_iroh.fl.server — Round 11 — waiting for 3 updates…
+10:26:07 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 51ms
+10:26:07 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:26:11 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 12ms
+10:26:12 [INFO] fl_coap_iroh.fl.server — Round 11/30  acc=0.5007  loss=1.0218  6.5s  clients=3
+10:26:12 [INFO] fl_coap_iroh.fl.server — Round 12 — sending model to 3 clients…
+10:26:12 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 33ms (3.38 Mbit/s) to 5055684860c43a38
+10:26:12 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 42ms (2.64 Mbit/s) to a521f0558f5b4c6a
+10:26:12 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 100ms (1.11 Mbit/s) to 899b110ce8636010
+10:26:12 [INFO] fl_coap_iroh.fl.server — Round 12 — waiting for 3 updates…
+10:26:13 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 59ms
+10:26:14 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:26:16 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:26:16 [INFO] fl_coap_iroh.fl.server — Round 12/30  acc=0.5015  loss=1.0221  4.4s  clients=3
+10:26:16 [INFO] fl_coap_iroh.fl.server — Round 13 — sending model to 3 clients…
+10:26:16 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 29ms (3.84 Mbit/s) to 5055684860c43a38
+10:26:16 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 68ms (1.65 Mbit/s) to a521f0558f5b4c6a
+10:26:17 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 146ms (0.77 Mbit/s) to 899b110ce8636010
+10:26:17 [INFO] fl_coap_iroh.fl.server — Round 13 — waiting for 3 updates…
+10:26:19 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 264ms
+10:26:22 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:26:22 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:26:22 [INFO] fl_coap_iroh.fl.server — Round 13/30  acc=0.5015  loss=1.0280  5.8s  clients=3
+10:26:22 [INFO] fl_coap_iroh.fl.server — Round 14 — sending model to 3 clients…
+10:26:22 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 24ms (4.75 Mbit/s) to 5055684860c43a38
+10:26:22 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 54ms (2.09 Mbit/s) to a521f0558f5b4c6a
+10:26:22 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 152ms (0.73 Mbit/s) to 899b110ce8636010
+10:26:22 [INFO] fl_coap_iroh.fl.server — Round 14 — waiting for 3 updates…
+10:26:24 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 124ms
+10:26:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:26:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:25 [INFO] fl_coap_iroh.fl.server — Round 14/30  acc=0.5035  loss=1.0204  3.1s  clients=3
+10:26:25 [INFO] fl_coap_iroh.fl.server — Round 15 — sending model to 3 clients…
+10:26:25 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed (stream not acknowledged: IrohError:  closed by peer: 0) — retrying
+10:26:25 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 49ms (2.28 Mbit/s) to a521f0558f5b4c6a
+10:26:25 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 137ms (0.82 Mbit/s) to 899b110ce8636010
+10:26:26 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 1051ms (0.11 Mbit/s) to 5055684860c43a38 (attempt 2)
+10:26:26 [INFO] fl_coap_iroh.fl.server — Round 15 — waiting for 3 updates…
+10:26:28 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 119ms
+10:26:31 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:26:37 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:26:37 [WARNING] fl_coap_iroh.fl.server — Round 15 — discarding update from unselected/duplicate peer 5055684860c43a38
+10:26:37 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:37 [INFO] fl_coap_iroh.fl.server — Round 15/30  acc=0.5010  loss=1.0192  9.5s  clients=3
+10:26:37 [INFO] fl_coap_iroh.fl.server — Round 16 — sending model to 3 clients…
+10:26:37 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 18ms (6.20 Mbit/s) to a521f0558f5b4c6a
+10:26:37 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 14ms (7.80 Mbit/s) to 5055684860c43a38
+10:26:37 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 107ms (1.04 Mbit/s) to 899b110ce8636010
+10:26:37 [INFO] fl_coap_iroh.fl.server — Round 16 — waiting for 3 updates…
+10:26:38 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:39 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 89ms
+10:26:47 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 11ms
+10:26:47 [INFO] fl_coap_iroh.fl.server — Round 16/30  acc=0.4948  loss=1.0262  10.1s  clients=3
+10:26:47 [INFO] fl_coap_iroh.fl.server — Round 17 — sending model to 3 clients…
+10:26:47 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 22ms (4.99 Mbit/s) to 5055684860c43a38
+10:26:47 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 28ms (3.98 Mbit/s) to a521f0558f5b4c6a
+10:26:48 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 155ms (0.72 Mbit/s) to 899b110ce8636010
+10:26:48 [INFO] fl_coap_iroh.fl.server — Round 17 — waiting for 3 updates…
+10:26:48 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 11ms
+10:26:49 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 118ms
+10:26:50 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 17ms
+10:26:51 [INFO] fl_coap_iroh.fl.server — Round 17/30  acc=0.4999  loss=1.0206  3.6s  clients=3
+10:26:51 [INFO] fl_coap_iroh.fl.server — Round 18 — sending model to 3 clients…
+10:26:51 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 54ms (2.09 Mbit/s) to 5055684860c43a38
+10:26:51 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 47ms (2.40 Mbit/s) to a521f0558f5b4c6a
+10:26:51 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 113ms (0.99 Mbit/s) to 899b110ce8636010
+10:26:51 [INFO] fl_coap_iroh.fl.server — Round 18 — waiting for 3 updates…
+10:26:52 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:26:53 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 149ms
+10:26:56 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:26:57 [INFO] fl_coap_iroh.fl.server — Round 18/30  acc=0.4973  loss=1.0232  5.6s  clients=3
+10:26:57 [INFO] fl_coap_iroh.fl.server — Round 19 — sending model to 3 clients…
+10:26:57 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 27ms (4.07 Mbit/s) to a521f0558f5b4c6a
+10:26:57 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 24ms (4.73 Mbit/s) to 5055684860c43a38
+10:26:57 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 156ms (0.71 Mbit/s) to 899b110ce8636010
+10:26:57 [INFO] fl_coap_iroh.fl.server — Round 19 — waiting for 3 updates…
+10:26:58 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 2ms
+10:26:58 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 3ms
+10:26:58 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 144ms
+10:26:58 [INFO] fl_coap_iroh.fl.server — Round 19/30  acc=0.4940  loss=1.0274  1.4s  clients=3
+10:26:58 [INFO] fl_coap_iroh.fl.server — Round 20 — sending model to 3 clients…
+10:26:58 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed (stream not acknowledged: IrohError:  closed by peer: 0) — retrying
+10:26:58 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 22ms (5.19 Mbit/s) to a521f0558f5b4c6a
+10:26:58 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 132ms (0.84 Mbit/s) to 899b110ce8636010
+10:26:59 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 1037ms (0.11 Mbit/s) to 5055684860c43a38 (attempt 2)
+10:26:59 [INFO] fl_coap_iroh.fl.server — Round 20 — waiting for 3 updates…
+10:26:59 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:59 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:26:59 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 6ms
+10:26:59 [WARNING] fl_coap_iroh.fl.server — Round 20 — discarding update from unselected/duplicate peer a521f0558f5b4c6a
+10:27:01 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 169ms
+10:27:02 [INFO] fl_coap_iroh.fl.server — Round 20/30  acc=0.4979  loss=1.0244  4.0s  clients=3
+10:27:02 [INFO] fl_coap_iroh.fl.server — Round 21 — sending model to 3 clients…
+10:27:02 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 25ms (4.47 Mbit/s) to a521f0558f5b4c6a
+10:27:02 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 55ms (2.04 Mbit/s) to 5055684860c43a38
+10:27:02 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 213ms (0.53 Mbit/s) to 899b110ce8636010
+10:27:02 [INFO] fl_coap_iroh.fl.server — Round 21 — waiting for 3 updates…
+10:27:03 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:27:04 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 136ms
+10:27:06 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 7ms
+10:27:06 [INFO] fl_coap_iroh.fl.server — Round 21/30  acc=0.4940  loss=1.0256  4.2s  clients=3
+10:27:06 [INFO] fl_coap_iroh.fl.server — Round 22 — sending model to 3 clients…
+10:27:06 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 27ms (4.11 Mbit/s) to a521f0558f5b4c6a
+10:27:06 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 41ms (2.69 Mbit/s) to 5055684860c43a38
+10:27:07 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 189ms (0.59 Mbit/s) to 899b110ce8636010
+10:27:07 [INFO] fl_coap_iroh.fl.server — Round 22 — waiting for 3 updates…
+10:27:07 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 2ms
+10:27:07 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:27:07 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:27:07 [WARNING] fl_coap_iroh.fl.server — Round 22 — discarding update from unselected/duplicate peer 5055684860c43a38
+10:27:08 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:27:08 [WARNING] fl_coap_iroh.fl.server — Round 22 — discarding update from unselected/duplicate peer a521f0558f5b4c6a
+10:27:08 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:27:08 [WARNING] fl_coap_iroh.fl.server — Round 22 — discarding update from unselected/duplicate peer a521f0558f5b4c6a
+10:27:09 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 113ms
+10:27:11 [INFO] fl_coap_iroh.fl.server — Round 22/30  acc=0.4923  loss=1.0230  2.6s  clients=3
+10:27:11 [INFO] fl_coap_iroh.fl.server — Round 23 — sending model to 3 clients…
+10:27:11 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 9ms (12.09 Mbit/s) to 5055684860c43a38
+10:27:11 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 26ms (4.33 Mbit/s) to a521f0558f5b4c6a
+10:27:12 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 86ms (1.30 Mbit/s) to 899b110ce8636010
+10:27:12 [INFO] fl_coap_iroh.fl.server — Round 23 — waiting for 3 updates…
+10:27:13 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 57ms
+10:27:16 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:27:16 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:27:16 [INFO] fl_coap_iroh.fl.server — Round 23/30  acc=0.4906  loss=1.0219  4.4s  clients=3
+10:27:16 [INFO] fl_coap_iroh.fl.server — Round 24 — sending model to 3 clients…
+10:27:16 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 10ms (11.48 Mbit/s) to 5055684860c43a38
+10:27:16 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 11ms (10.03 Mbit/s) to a521f0558f5b4c6a
+10:27:16 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 97ms (1.15 Mbit/s) to 899b110ce8636010
+10:27:16 [INFO] fl_coap_iroh.fl.server — Round 24 — waiting for 3 updates…
+10:27:18 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 12ms
+10:27:18 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:27:19 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 110ms
+10:27:19 [INFO] fl_coap_iroh.fl.server — Round 24/30  acc=0.4945  loss=1.0213  3.0s  clients=3
+10:27:19 [INFO] fl_coap_iroh.fl.server — Round 25 — sending model to 3 clients…
+10:27:19 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 24ms (4.60 Mbit/s) to 5055684860c43a38
+10:27:19 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 28ms (4.02 Mbit/s) to a521f0558f5b4c6a
+10:27:19 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 103ms (1.08 Mbit/s) to 899b110ce8636010
+10:27:19 [INFO] fl_coap_iroh.fl.server — Round 25 — waiting for 3 updates…
+10:27:21 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 145ms
+10:27:22 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 9ms
+10:27:22 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 5ms
+10:27:22 [INFO] fl_coap_iroh.fl.server — Round 25/30  acc=0.4990  loss=1.0189  3.4s  clients=3
+10:27:22 [INFO] fl_coap_iroh.fl.server — Round 26 — sending model to 3 clients…
+10:27:22 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 12ms (9.66 Mbit/s) to 5055684860c43a38
+10:27:22 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 9ms (12.26 Mbit/s) to a521f0558f5b4c6a
+10:27:23 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 288ms (0.39 Mbit/s) to 899b110ce8636010
+10:27:23 [INFO] fl_coap_iroh.fl.server — Round 26 — waiting for 3 updates…
+10:27:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 160ms
+10:27:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:27:25 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:27:26 [INFO] fl_coap_iroh.fl.server — Round 26/30  acc=0.4973  loss=1.0242  3.3s  clients=3
+10:27:26 [INFO] fl_coap_iroh.fl.server — Round 27 — sending model to 3 clients…
+10:27:26 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed (stream not acknowledged: IrohError:  closed by peer: 0) — retrying
+10:27:26 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 13ms (8.75 Mbit/s) to a521f0558f5b4c6a
+10:27:26 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 139ms (0.80 Mbit/s) to 899b110ce8636010
+10:27:27 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 1069ms (0.10 Mbit/s) to 5055684860c43a38 (attempt 2)
+10:27:27 [INFO] fl_coap_iroh.fl.server — Round 27 — waiting for 3 updates…
+10:27:28 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 140ms
+10:27:28 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 1ms
+10:27:28 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 15ms
+10:27:29 [INFO] fl_coap_iroh.fl.server — Round 27/30  acc=0.4959  loss=1.0278  3.1s  clients=3
+10:27:29 [INFO] fl_coap_iroh.fl.server — Round 28 — sending model to 3 clients…
+10:27:29 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 31ms (3.60 Mbit/s) to a521f0558f5b4c6a
+10:27:29 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 66ms (1.70 Mbit/s) to 5055684860c43a38
+10:27:29 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 125ms (0.89 Mbit/s) to 899b110ce8636010
+10:27:29 [INFO] fl_coap_iroh.fl.server — Round 28 — waiting for 3 updates…
+10:27:30 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 67ms
+10:27:31 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 8ms
+10:27:32 [INFO] fl_coap_iroh.transport.iroh_node — recv 13933B via direct in 4ms
+10:27:32 [INFO] fl_coap_iroh.fl.server — Round 28/30  acc=0.4945  loss=1.0203  3.2s  clients=3
+10:27:32 [INFO] fl_coap_iroh.fl.server — Round 29 — sending model to 3 clients…
+10:27:32 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 9ms (12.20 Mbit/s) to a521f0558f5b4c6a
+10:27:32 [INFO] fl_coap_iroh.transport.iroh_node — send 13933B via direct in 100ms (1.12 Mbit/s) to 899b110ce8636010
+10:27:55 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:28:22 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed () — retrying
+10:28:43 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:29:11 [ERROR] fl_coap_iroh.fl.server — send_tensors → pc2 FAILED: TimeoutError: 
+10:29:11 [ERROR] fl_coap_iroh.fl.server — Round 29 failed: Only 2 sends succeeded (need 3)
+10:29:11 [INFO] fl_coap_iroh.fl.server — Round 30 — sending model to 3 clients…
+10:29:33 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:29:33 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:29:33 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:29:58 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed () — retrying
+10:29:58 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed () — retrying
+10:29:58 [WARNING] fl_coap_iroh.transport.iroh_node — transfer attempt 1/2 failed () — retrying
+10:30:22 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:30:22 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:30:22 [WARNING] fl_coap_iroh.transport.iroh_node — _send_bytes connect attempt 1/2 failed (TimeoutError: ) — retrying in 5s
+10:30:49 [ERROR] fl_coap_iroh.fl.server — send_tensors → pc2 FAILED: TimeoutError: 
+10:30:49 [ERROR] fl_coap_iroh.fl.server — send_tensors → pc1 FAILED: TimeoutError: 
+10:30:49 [ERROR] fl_coap_iroh.fl.server — send_tensors → rpi01 FAILED: TimeoutError: 
+10:30:49 [ERROR] fl_coap_iroh.fl.server — Round 30 failed: Only 0 sends succeeded (need 3)
+10:30:52 [INFO] fl_coap_iroh.coap.server — CoAP server [server] stopped
+10:30:52 [INFO] fl_coap_iroh.metrics.collector — Exported 28 rows → results/h2h/fliroh_final/server/B_wan_round_events.csv
+10:30:52 [INFO] fl_coap_iroh — Results: {'round_events': 'results/h2h/fliroh_final/server/B_wan_round_events.csv'}
+10:30:52 [INFO] fl_coap_iroh — Summary: {
+  "node_id": "server",
+  "architecture": "B",
+  "scenario": "wan",
+  "rounds_total": 28,
+  "rounds_success": 28,
+  "test_acc_final": 0.4945240101095198,
+  "test_acc_max": 0.5085650098286998,
+  "duration_mean_sec": 5.280132282571295,
+  "pct_direct": 0.0,
+  "pct_relay": 0.0,
+  "bytes_to_aggregator": 1173396
+}
+PC side finished

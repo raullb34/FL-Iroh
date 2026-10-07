@@ -1,0 +1,12 @@
+# E8 — FL-Iroh vs. Flower + Tailscale (operational comparison)
+
+| Axis | FL-Iroh | Flower + Tailscale |
+|------|---------|--------------------|
+| NAT / CGNAT traversal | Built-in: QUIC hole-punching with transparent DERP relay fallback (E2E encrypted) | Delegated to Tailscale overlay (WireGuard + DERP); Flower itself needs a reachable server address |
+| Server reachability | Peer addressed by 32-byte public node ID; no routable server IP required | Clients must know the server's Tailnet IP (100.x.y.z); star topology with a single server |
+| External infrastructure | Public/self-hosted DERP relay only (stateless, swappable) | Tailscale coordination server (control plane) + DERP + long-lived FL server process |
+| Extra system daemon | None — userspace library, no elevated privileges | tailscaled system daemon on every node (typically root / NET_ADMIN) |
+| Transport encryption | End-to-end QUIC/TLS 1.3 (relay sees only ciphertext) | End-to-end WireGuard (relay sees only ciphertext) |
+| Manual setup steps per node | Exchange node IDs (out-of-band, one value) | Install tailscaled, authenticate node to tailnet, discover server IP, open/forward port |
+| Topology | P2P data plane + CoAP control plane (serverless-capable) | Centralized star; FL server is a single point of failure |
+| Account / ToS dependency | None for default relays; fully self-hostable | Tailscale account + ACL policy management (free tier device/user caps) |

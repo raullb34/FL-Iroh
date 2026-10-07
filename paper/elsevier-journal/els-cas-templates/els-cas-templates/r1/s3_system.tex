@@ -74,7 +74,7 @@ The SHA-256 suffix in Eq.~\eqref{eq:wire} provides integrity verification at the
 
 Every node exposes CoAP resources following the CoRE link format~\cite{rfc6690}: \texttt{/fl/capabilities} (hardware, energy state and capability tags such as sensor types, crop or region), \texttt{/iroh/endpoint}, \texttt{/fl/round}, \texttt{/fl/policy}, \texttt{/fl/metrics}, and \texttt{/fl/register} on the aggregator. Responses are JSON or CBOR~\cite{rfc8949}, negotiated with the CoAP Accept option.
 
-Discovery can be performed in two ways. In \emph{probe} mode the aggregator queries \texttt{/fl/capabilities} of every known node and filters client-side, costing one request per node. In \emph{resource-directory} mode, following RFC~9176~\cite{rfc9176}, each node registers once (POST \texttt{/rd} with its tags, role, energy state, lifetime and Iroh endpoint) and the aggregator answers a single lookup (GET \texttt{/rd-lookup/ep?tag=agri,r3,soil\_moisture\&min\_energy=20}) with server-side filtering on any combination of capability tags, role and energy level, optionally paged. Registrations expire after their lifetime unless refreshed. E5 compares both modes up to 5{,}000 endpoints.
+Discovery can be performed in two ways. In \emph{probe} mode the aggregator queries \texttt{/fl/capabilities} of every known node and filters client-side, costing one request per node. In \emph{resource-directory} mode, following RFC~9176~\cite{rfc9176}, each node registers once (POST \texttt{/rd} with its tags, role, energy state, lifetime and Iroh endpoint) and the aggregator answers a single lookup, e.g.\ GET \texttt{/rd-lookup/ep} with query \texttt{tag=agri,r3,soil\_moisture} and \texttt{min\_energy=20}, with server-side filtering on any combination of capability tags, role and energy level, optionally paged. Registrations expire after their lifetime unless refreshed. E5 compares both modes up to 5{,}000 endpoints.
 
 \subsection{Round Protocol}
 \label{sec:round}
@@ -83,6 +83,7 @@ Fig.~\ref{fig:sequence} shows the message sequence of one round and Algorithm~\r
 
 \begin{figure}[t]
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tikzpicture}[font=\scriptsize, >=Stealth,
   actor/.style={draw, rounded corners=2pt, fill=gray!10, minimum width=1.6cm, minimum height=0.5cm, align=center}]
 \node[actor] (c) at (0,0) {Client $k$};
@@ -99,7 +100,7 @@ Fig.~\ref{fig:sequence} shows the message sequence of one round and Algorithm~\r
 \node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.1) {bind to selected ID};
 \node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.6) {aggregate, evaluate};
 \draw[->, blue!70!black] (6.4,-5.05) -- node[above] {round state (\texttt{/fl/round})} (0,-5.05);
-\end{tikzpicture}
+\end{tikzpicture}}
 \caption{Message sequence of one FL-Iroh round. Model and update streams use a validated direct path when one exists and the end-to-end-encrypted relay otherwise; the application code is identical in both cases.}
 \label{fig:sequence}
 \end{figure}

@@ -24,7 +24,7 @@ Account / ToS dependency & No account; default public relay operated by n0 (subj
 \end{tabular}
 \end{table*}
 
-\paragraph{Accuracy parity.} We ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$, $R{=}100$, the same five seeds as E2) through a Flower-compatible reference harness---an in-process simulation reusing the same model, partitions and training loop---and compared final test accuracy with E2 (Table~\ref{tab:e7acc}). The two are statistically indistinguishable under IID and $\alpha{=}0.1$ partitions. This parity is expected by construction and only confirms that FL-Iroh's data plane introduces no accuracy artifact. A live Flower deployment over a Tailscale mesh on the same hardware, measuring setup effort, round time and the resource cost of the \texttt{tailscaled} daemon on the Raspberry Pi with the monitor used in E11, is supported by the artifact but was not completed for this revision; we list it in the roadmap (\S\ref{sec:conclusion}).
+\paragraph{Accuracy parity.} We ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$, $R{=}100$, the same five seeds as E2) through a Flower-compatible reference harness---an in-process simulation reusing the same model, partitions and training loop---and compared final test accuracy with E2 (Table~\ref{tab:e7acc}). The two are statistically indistinguishable under IID and $\alpha{=}0.1$ partitions. This parity is expected by construction and only confirms that FL-Iroh's data plane introduces no accuracy artifact. The live comparison below complements this check with operational measurements.
 
 \begin{table}[t]
 \centering
@@ -42,6 +42,31 @@ Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Live comparison on the same hardware.} We also ran both stacks live on the same machines and network: the aggregator on the PC (inside WSL2), the Raspberry Pi~3B as one client (zone~0) and two clients on the PC (zones 1 and 2), the air-quality task with AirMLP, $R{=}30$ rounds and evaluation on the server in both cases. For Flower~1.21 the Raspberry Pi reached the server through Tailscale (the \texttt{tailscaled} daemon was already running on both machines); for FL-Iroh it registered by public key over \texttt{fl-ctrl/1}. Both machines were in the same office network, so both stacks used a direct path (Tailscale peer-to-peer; FL-Iroh: 100\% of bytes direct). On the Raspberry Pi we monitored the FL client process \emph{and} \texttt{tailscaled} in both runs. Table~\ref{tab:h2h} summarizes the results.
+
+\begin{table}[t]
+\centering
+\caption{Live head-to-head on identical hardware and network (AirMLP, 3 clients incl.\ a Raspberry Pi~3B, $R{=}30$). Raspberry Pi figures include the FL client and \texttt{tailscaled}; energy is model-based (\S\ref{sec:e11}).}
+\label{tab:h2h}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{3.3cm} >{\raggedleft\arraybackslash}p{2.3cm} >{\raggedleft\arraybackslash}p{1.6cm}@{}}
+\toprule
+\textbf{Metric} & \textbf{Flower + Tailscale} & \textbf{FL-Iroh} \\
+\midrule
+Rounds completed                         & 30/30         & 30/30 \\
+Round duration, median / p95             & 8.4 / 13.8~s  & 2.2 / 3.3~s \\
+Final test accuracy                      & 48.4\%        & 49.6\% \\
+RPi CPU time per round                   & 5.5~s         & 6.1~s \\
+RPi resident memory, median / peak       & 440 / 445~MB  & 432 / 479~MB \\
+RPi energy per round (estimated)         & 18.0~J        & 10.3~J \\
+Server network setup                     & port fwd.\ + firewall (admin) & none \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations follow. First, on the Raspberry Pi the two stacks have similar CPU and memory footprints: FL-Iroh used about 10\% more CPU time per round, the peak memory was 34~MB higher and the median slightly lower, because Iroh's QUIC stack runs inside the client process while Tailscale's runs in a separate daemon. Removing the system daemon therefore does not, by itself, yield a measurable resource saving on this device. Second, rounds completed about four times faster with FL-Iroh in this setup, and since a large part of the per-round energy is the idle power drawn while waiting, the estimated energy per round was correspondingly lower (10.3 vs.\ 18.0~J). We did not profile the source of Flower's longer rounds (framework orchestration, gRPC streaming or the overlay), so we report the difference as observed rather than attribute it. Third, the operational difference was concrete: because the Flower server ran behind the host's NAT (WSL2), making it reachable over the tailnet required an administrator to add a port-forwarding rule and a firewall exception on the host, whereas FL-Iroh required no network configuration. On a native Linux server the forwarding step would not be needed, but Flower would still depend on the \texttt{tailscaled} daemon and a Tailscale account on every node.
 
 % =========================================================================
 \section{Discussion}
@@ -82,7 +107,7 @@ FL-Iroh's transport security rests on Iroh's QUIC/TLS~1.3 channel: every byte ex
 
 \textbf{Energy.} The Raspberry Pi~3B has no power sensor; energy figures are model-based estimates. The resource monitor reads hardware sensors where available (an INA219/INA226 shunt monitor via Linux \texttt{hwmon}, or the PMIC of a Raspberry Pi~5) and should be used for measured energy in future deployments.
 
-\textbf{Scale of the federation.} The WAN federation (E11) involved three clients, one of them on a Raspberry Pi; E2, E4 and E6 used up to ten simulated clients on a server. Larger physical deployments, and the live Flower-over-Tailscale comparison, remain to be done.
+\textbf{Scale of the federation.} The WAN federation (E11) and the live comparison with Flower involved three clients, one of them on a Raspberry Pi; E2, E4 and E6 used up to ten simulated clients on a server. Larger physical deployments remain to be done, and the live comparison was run on a single office network.
 
 \textbf{Small tabular datasets.} The Crop Recommendation benchmark and the daily CyL air-quality data are static and relatively clean; they do not capture sub-hourly sensor noise, concept drift or the spatial density of real monitoring networks.
 

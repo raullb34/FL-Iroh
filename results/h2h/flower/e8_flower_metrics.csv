@@ -1,0 +1,2 @@
+framework,transport,dataset,partition,alpha,n_clients,rounds,test_acc_final,payload_bytes_per_round,wall_time_per_round_s,wall_time_total_s
+flower,tailscale,air_quality,geographic,0.1,3,30,0.4836,47688,9.5057,290.11

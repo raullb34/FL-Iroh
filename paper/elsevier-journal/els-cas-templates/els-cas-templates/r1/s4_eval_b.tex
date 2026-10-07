@@ -37,10 +37,10 @@ We compare the two discovery modes of \S\ref{sec:coap} for $N \in \{10, 100, 500
 \caption{E5: discovery latency and wire bytes (median; loopback). Probe = one query per endpoint with client-side filtering; RD = one lookup with server-side filtering.}
 \label{tab:e5}
 \scriptsize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{@{}r l r r r r@{}}
 \toprule
-\textbf{N} & \textbf{Mode} & \textbf{Tags} & \textbf{Matches} & \textbf{Time (ms)} & \textbf{Bytes} \\
+\textbf{N} & \textbf{Mode} & \textbf{Tags} & \textbf{Match} & \textbf{ms} & \textbf{Bytes} \\
 \midrule
 100   & probe & 3 & 1    & 57.0   & 45{,}927 \\
 100   & RD    & 3 & 1    & 1.5    & 336 \\
@@ -52,7 +52,7 @@ We compare the two discovery modes of \S\ref{sec:coap} for $N \in \{10, 100, 500
 5{,}000 & RD    & 2 & 222 & 66.8   & 61{,}633 \\
 5{,}000 & RD    & 3 & 68  & 18.9   & 19{,}626 \\
 \midrule
-\multicolumn{2}{@{}l}{RD registration, $N{=}5{,}000$} & \multicolumn{4}{l}{5{,}000/5{,}000 registered; median 220~ms, p95 329~ms} \\
+\multicolumn{6}{@{}l}{RD registration, $N{=}5{,}000$: all registered; median 220~ms, p95 329~ms} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -68,20 +68,21 @@ Probe discovery grows linearly with the number of endpoints regardless of how ma
 
 \begin{table*}[t]
 \centering
-\caption{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean with 95\% CI). Class distribution 49.3/27.8/22.9\% (\textit{Bajo/Medio/Alto}).}
+\caption{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean $\pm$ half-width of the 95\% CI, in \%; real Iroh transport). Class distribution 49.3/27.8/22.9\% (\textit{Bajo/Medio/Alto}).}
 \label{tab:e6}
-\footnotesize
+\scriptsize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l l r r r r r r}
 \toprule
 \textbf{Model} & \textbf{Partition} & \textbf{Accuracy} & \textbf{Balanced acc.} & \textbf{Macro-F1} & \textbf{Recall \textit{Bajo}} & \textbf{Recall \textit{Medio}} & \textbf{Recall \textit{Alto}} \\
 \midrule
 Majority class (train)          & ---        & 22.94\% & 33.33\% & 12.44\% & 0.0\% & 0.0\% & 100.0\% \\
-Persistence ($t{-}7$)           & ---        & 47.54\% & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
+Persistence ($t{-}7$)           & ---        & 47.54\% & 43.07\% & 43.13\% & 62.2\% & 30.7\% & 36.3\% \\
 \midrule
-AirMLP (FedAvg)                 & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirMLP (FedAvg)                 & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirLSTM (FedAvg)                & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
-AirLSTM (FedAvg)                & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
+AirMLP (FedAvg)                 & Geographic & 46.85 $\pm$ 1.02 & 42.22 $\pm$ 0.48 & 40.25 $\pm$ 0.23 & 64.8 $\pm$ 3.7 & 15.3 $\pm$ 2.6 & 46.6 $\pm$ 3.6 \\
+AirMLP (FedAvg)                 & IID        & 49.64 $\pm$ 0.61 & 44.93 $\pm$ 0.61 & 43.05 $\pm$ 0.93 & 68.0 $\pm$ 2.0 & 17.2 $\pm$ 2.4 & 49.6 $\pm$ 1.8 \\
+AirLSTM (FedAvg)                & Geographic & 53.17 $\pm$ 0.55 & 48.77 $\pm$ 0.42 & 48.11 $\pm$ 0.52 & 69.6 $\pm$ 3.2 & 27.8 $\pm$ 2.9 & 48.9 $\pm$ 2.0 \\
+AirLSTM (FedAvg)                & IID        & 55.00 $\pm$ 0.31 & 49.44 $\pm$ 0.34 & 49.07 $\pm$ 0.58 & 74.8 $\pm$ 0.7 & 28.0 $\pm$ 2.5 & 45.6 $\pm$ 1.4 \\
 \midrule
 ProphetWrapper (FedAvg)         & Geographic & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
 ProphetWrapper (FedAvg)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} & \TBD{} \\
@@ -91,7 +92,28 @@ ProphetWrapper (FedGAM)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{}
 \end{tabular}
 \end{table*}
 
-\TBD{E6 discussion to be completed with the multi-seed results (job running): AirMLP vs persistence on macro-F1 and balanced accuracy; recall of the minority \textit{Medio} class (expected weakest); Prophet vs neural models; FedGAM vs FedAvg ablation.}
+\begin{table}[t]
+\centering
+\caption{E6: confusion matrices summed over five seeds, row-normalized (\%; rows = true class, columns = predicted \textit{Bajo/Medio/Alto})}
+\label{tab:e6cm}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}l l r r r@{}}
+\toprule
+\textbf{Model (IID)} & \textbf{True} & \textbf{Bajo} & \textbf{Medio} & \textbf{Alto} \\
+\midrule
+AirMLP  & \textit{Bajo}  & 68.0 & 10.9 & 21.1 \\
+        & \textit{Medio} & 47.0 & 17.2 & 35.8 \\
+        & \textit{Alto}  & 34.0 & 16.4 & 49.6 \\
+\midrule
+AirLSTM & \textit{Bajo}  & 74.8 & 14.3 & 10.9 \\
+        & \textit{Medio} & 44.5 & 28.0 & 27.6 \\
+        & \textit{Alto}  & 28.4 & 26.0 & 45.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Imbalance-aware results.} Accuracy alone overstates the difficulty gap between models and hides how they fail. The 7-day persistence forecaster reaches 47.5\% accuracy but only 43.1\% macro-F1 and balanced accuracy. The memoryless AirMLP does not beat it on the imbalance-aware metrics (macro-F1 40.3\% geographic, 43.1\% IID): it mainly separates the extreme classes and almost never predicts \textit{Medio} correctly (recall 15--17\%), which it confuses with both neighbors (Table~\ref{tab:e6cm}). AirLSTM, which sees a 7-day input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1\% geographic, 49.1\% IID; balanced accuracy 48.8--49.4\%) and nearly doubles the recall of \textit{Medio} (28\%), which remains the hardest class for all models because it is a narrow band between two terciles. The geographic (non-IID) partition costs 1--3pp on every metric for both neural models. The accuracy of AirMLP over real Iroh connections (46.9\% and 49.6\%) matches the values obtained with the in-process transport in the original submission (47.3\% and 49.6\%), a further check that the transport does not alter learning outcomes. \TBD{Prophet rows and one sentence on Prophet vs neural models, from the HPC multi-seed run.}
 
 \textbf{FedGAM case study.} Switching from FedAvg to FedGAM requires a single server-side change (\texttt{aggregator\_fn}); the same Iroh channels carry AirMLP tensors (1{,}987 parameters) and Prophet Fourier coefficients (27 parameters). In the original submission Prophet+FedGAM and Prophet+FedAvg were statistically indistinguishable (57.93\% vs.\ 57.66\% accuracy, IID, Welch $p{=}0.35$; $\Delta{<}0.3$pp geographic). With eight years of local history each zone can estimate its own trend, so restricting aggregation to the seasonal terms brings no measurable benefit here; FedGAM is therefore presented as an example of a model-specific aggregation rule deployed without transport changes, not as a performance contribution.
 
@@ -100,20 +122,20 @@ ProphetWrapper (FedGAM)         & IID        & \TBD{} & \TBD{} & \TBD{} & \TBD{}
 
 E8 exercises the relay and the recovery paths on real hardware. A long-lived client on the Raspberry Pi sends a 1~MB update every 5~s to a long-lived server; every transfer re-dials the server by node ID, as the FL data plane does, and the path, active address, retries and local IP addresses are logged per transfer. Perturbations are injected on the Raspberry Pi: blocking all outgoing UDP except DNS with an nftables rule (hole punching becomes impossible and only the relay, which uses HTTPS over TCP, remains), taking the Wi-Fi interface down, and switching between networks with NetworkManager. Throughout E8--E11 a second nftables rule prevents Iroh from using the Tailscale overlay addresses present on the test devices, so that a ``direct'' path is always an Iroh hole-punched path; every transfer is additionally audited for overlay addresses.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{E8: delivery and path per phase (Raspberry Pi on N2 mobile CGNAT $\to$ PC on N1; 1~MB every 5~s; medians)}
 \label{tab:e8}
 \scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}p{2.6cm} r r r r r@{}}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l r r r r r@{}}
 \toprule
-\textbf{Phase} & \textbf{Sent} & \textbf{Delivered} & \textbf{Direct} & \textbf{Relay-c.} & \textbf{Goodput} \\
+\textbf{Phase} & \textbf{Sent} & \textbf{Delivered} & \textbf{Direct} & \textbf{Relay-carried} & \textbf{Goodput (Mbps)} \\
 \midrule
-UDP open, start              & 57  & 54 (94.7\%)  & 53  & 1   & \multirow{3}{*}{1.88~Mbps} \\
+UDP open, start              & 57  & 54 (94.7\%)  & 53  & 1   & \multirow{3}{*}{1.88} \\
 UDP open, after unblock 1    & 55  & 40 (72.7\%)  & 39  & 1   & \\
 UDP open, after unblock 2    & 57  & 46 (80.7\%)  & 46  & 0   & \\
-UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85~Mbps \\
+UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85 \\
 \midrule
 \multicolumn{6}{@{}l}{Fallback to relay after blocking: first delivery after 28.1~s and 28.4~s, no transfer lost} \\
 \multicolumn{6}{@{}l}{Return to direct after unblocking: 1.9~s and 3.8~s} \\
@@ -122,7 +144,7 @@ UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85~Mbps \\
 \vspace{0.3em}
 
 {\scriptsize $^{*}$Classified at the moment of unblocking; one carried a Tailscale address and is excluded from direct counts.}
-\end{table}
+\end{table*}
 
 \textbf{Forced relay (Table~\ref{tab:e8}).} With UDP blocked, all 190 transfers were delivered over the relay, at the same goodput as the direct path because the 4G uplink, not the relay, was the bottleneck. The switch to the relay took about 28~s, during which the in-flight transfer stalled but was not lost; on unblocking, the path returned to direct within 4~s. On this mobile CGNAT the direct path was less reliable than the relay: 5.3\% of direct transfers were interrupted mid-stream at the start of the run and 19--27\% after the UDP block was lifted, while none of the relay-carried transfers failed. This observation motivated the transfer-level retry of \S\ref{sec:transport}.
 
@@ -220,7 +242,7 @@ Send update                    & 3.45 & 0.20 & 1.51 & 5.2 \\
 \end{tabular}
 \end{table}
 
-The Raspberry Pi joined the federation shortly after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 with all three clients, at a median of 7.9~s per round (p95 21.3~s). The last round failed because the clients count rounds locally and the two PC clients, which had started one round earlier, had already finished; a server-driven termination message removes this artifact. Local training is cheap on this device---1.0~s of wall time and 2.8~s of CPU time (multi-core) per epoch---while the communication phases are dominated by waiting for other clients and by the relay-carried path to the aggregator in WSL2 (56 of 58 Raspberry Pi transfers; \S\ref{sec:e8}). Memory, not computation, is the tighter constraint: the Python/PyTorch runtime occupies 255--419~MB, about 40\% of the device's RAM, which supports our recommendation of a native client runtime for smaller devices (\S\ref{sec:agnostic}). We also note a deployment pitfall: the default PyPI PyTorch wheel for 64-bit ARM is built for newer ARMv8.2 server cores and terminates with an illegal-instruction error during back-propagation on Cortex-A53/A72 boards; the CPU-only wheel works.
+The Raspberry Pi joined the federation shortly after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 with all three clients, at a median of 7.9~s per round (p95 21.3~s). The last round failed because of a race we found in this experiment: when the receiver closed a connection right after reading a model, the sender sometimes saw the close before the acknowledgement and resent the model, so clients occasionally trained twice per server round and finished early (four stale updates were discarded by the per-round binding of \S\ref{sec:admission}). Receivers now close with an explicit receipt code that senders treat as delivery; with this fix the live comparison of \S\ref{sec:flower}, on the same hardware, completed 30 of 30 rounds with all clients and no discarded update. Local training is cheap on this device---1.0~s of wall time and 2.8~s of CPU time (multi-core) per epoch---while the communication phases are dominated by waiting for other clients and by the relay-carried path to the aggregator in WSL2 (56 of 58 Raspberry Pi transfers; \S\ref{sec:e8}). Memory, not computation, is the tighter constraint: the Python/PyTorch runtime occupies 255--419~MB, about 40\% of the device's RAM, which supports our recommendation of a native client runtime for smaller devices (\S\ref{sec:agnostic}). We also note a deployment pitfall: the default PyPI PyTorch wheel for 64-bit ARM is built for newer ARMv8.2 server cores and terminates with an illegal-instruction error during back-propagation on Cortex-A53/A72 boards; the CPU-only wheel works.
 
 \subsection{Operational Comparison with Flower over Tailscale}
 \label{sec:flower}
