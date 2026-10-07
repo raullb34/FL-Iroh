@@ -1,7 +1,7 @@
 %% FL-Iroh -- Elsevier CAS (cas-dc) double-column manuscript (ANONYMOUS FOR BLIND REVIEW)
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL fl-iroh-cas-dc_anonymous.tex      Wed Oct  7 11:16:20 2026
-%DIF ADD fl-iroh-cas-dc_R1_anonymous.tex   Wed Oct  7 11:16:20 2026
+%DIF DEL fl-iroh-cas-dc_anonymous.tex      Wed Oct  7 11:19:46 2026
+%DIF ADD fl-iroh-cas-dc_R1_anonymous.tex   Wed Oct  7 11:19:46 2026
 %% Ported from paper.tex (IEEEtran). English only.
 %% Compile from this directory so the cas-dc.cls / cas-common.sty are found.
 
@@ -412,12 +412,12 @@ Iroh~\cite{iroh2024} creates a QUIC endpoint \DIFdelbegin \DIFdel{that embeds a 
     }%DIFDELCMD < \item %%%
 \DIFdel{Simultaneously attempts UDP hole-punching to each direct address.
     }%DIFDELCMD < \item %%%
-\DIFdel{If hole-punching succeeds within a configurable timeout, }\DIFdelend \DIFaddbegin \DIFadd{and, immediately, for data; (ii)~probes the candidate direct addresses (hole punching); and (iii)~migrates }\DIFaddend the QUIC session \DIFdelbegin \DIFdel{migrates to the direct path }\DIFdelend \DIFaddbegin \DIFadd{to a direct path once a probe round trip validates it. Iroh reports the resulting path as }\emph{\DIFadd{direct}} \DIFadd{(a validated UDP path), }\emph{\DIFadd{mixed}} \DIFadd{(the relay carries traffic while a direct candidate is still being validated) or }\emph{\DIFadd{relay}}\DIFadd{. FL-Iroh records this state for every transfer, together with the active address, and we count only }\emph{\DIFadd{direct}} \DIFadd{as a hole-punched path; }\emph{\DIFadd{mixed}} \DIFadd{transfers are relay-carried}\DIFaddend .
-\DIFdelbegin %DIFDELCMD < \item %%%
+\DIFdel{If hole-punching succeeds within a configurable timeout, }\DIFdelend \DIFaddbegin \DIFadd{and, immediately, for data; (ii)~probes the candidate direct addresses (hole punching); and (iii)~migrates }\DIFaddend the QUIC session \DIFdelbegin \DIFdel{migrates to the direct path }\DIFdelend \DIFaddbegin \DIFadd{to a direct path once a probe round trip validates it. Iroh reports the resulting path as }\emph{\DIFadd{direct}} \DIFadd{(a validated UDP path), }\emph{\DIFadd{mixed}} \DIFadd{(the relay carries traffic while a direct candidate is still being validated) or }\emph{\DIFadd{relay}}\DIFaddend . \DIFdelbegin %DIFDELCMD < \item %%%
 \DIFdel{If no direct path can be negotiated (e.g., certain restrictive symmetric-NAT mappings) , all QUIC packets are forwarded by the DERP relay transparently.
 }%DIFDELCMD < \end{enumerate}
 %DIFDELCMD < %%%
-\DIFdelend \DIFaddbegin 
+\DIFdelend \DIFaddbegin \DIFadd{FL-Iroh records this state for every transfer, together with the active address, and we count only }\emph{\DIFadd{direct}} \DIFadd{as a hole-punched path; }\emph{\DIFadd{mixed}} \DIFadd{transfers are relay-carried.
+}
 
 \DIFadd{Two mechanisms harden the transport for unattended operation. }\emph{\DIFadd{Transfer-level retry}}\DIFadd{: if a stream is interrupted before the receiver acknowledges it (measured on a 4G CGNAT path in \S\ref{sec:e8}), the sender reopens the connection---letting Iroh re-select a path---and resends, up to a configurable number of attempts; rejections by the peer's allow-list are not retried. }\emph{\DIFadd{Endpoint watchdog}}\DIFadd{: after a configurable number of consecutive failed transfers the Iroh endpoint is restarted with the same secret key, so the node ID and pending receivers are preserved. We added the watchdog after observing in hardware tests that, after successive network switches, the endpoint of the Iroh version we use could stop establishing connections until restarted (\S\ref{sec:e8}).
 }\DIFaddend 
@@ -657,9 +657,10 @@ Results are shown in Table~\ref{tab:e1}. HTTP/2 peaks at 573~Mbps for 1~MB paylo
 %DIFDELCMD < 
 
 %DIFDELCMD < %%%
-\DIFdel{The flat throughput curve across payloads (100~KB to 100~MB all saturate at $\approx$2.8~Mbps, $N{=}30$ per cell, stdev${<}$0.05~Mbps) }\DIFdelend \DIFaddbegin \DIFadd{, which }\DIFaddend points to a relay-side \DIFdelbegin \DIFdel{ceiling---server }\DIFdelend \DIFaddbegin \DIFadd{ceiling (server }\DIFaddend capacity or per-connection rate limiting on the public \DIFdelbegin \DIFdel{relay---rather than QUIC protocol }\DIFdelend \DIFaddbegin \DIFadd{relay) rather than QUIC }\DIFaddend overhead; we did not benchmark a self-hosted \DIFdelbegin \DIFdel{DERP }\DIFdelend relay to separate the two\DIFdelbegin \DIFdel{explanations. Either way, a self-hosted relay on a dedicated server would lift this ceiling, and the public relay already suffices for AgriMLP-sized model updates ($\approx$220~ms per round-trip exchange) }\DIFdelend \DIFaddbegin \DIFadd{. In E8 the relay delivered 1~MB updates at a median 1.85~Mbps over a 4G uplink, essentially the same as the direct path on that link (1.88~Mbps), so on mobile links the access network rather than the relay was the bottleneck. For AgriMLP and AirMLP updates (14--32~KB) relay transport time is a few hundred milliseconds per round}\DIFaddend .
+\DIFdel{The flat throughput curve across payloads (100~KB to 100~MB all saturate at $\approx$2.8~Mbps, $N{=}30$ per cell, stdev${<}$0.05~Mbps) }\DIFdelend \DIFaddbegin \DIFadd{, which }\DIFaddend points to a relay-side \DIFdelbegin \DIFdel{ceiling---server }\DIFdelend \DIFaddbegin \DIFadd{ceiling (server }\DIFaddend capacity or per-connection rate limiting on the public \DIFdelbegin \DIFdel{relay---rather than QUIC protocol }\DIFdelend \DIFaddbegin \DIFadd{relay) rather than QUIC }\DIFaddend overhead; we did not benchmark a self-hosted \DIFdelbegin \DIFdel{DERP }\DIFdelend relay to separate the two\DIFdelbegin \DIFdel{explanations. Either way, a self-hosted relay on a dedicated server would lift this ceiling, and the public relay already suffices for AgriMLP-sized model updates ($\approx$220~ms per round-trip exchange) }\DIFdelend . \DIFaddbegin \DIFadd{In E8 the relay delivered 1~MB updates at a median 1.85~Mbps over a 4G uplink, essentially the same as the direct path on that link (1.88~Mbps), so on mobile links the access network rather than the relay was the bottleneck. For AgriMLP and AirMLP updates (14--32~KB) relay transport time is a few hundred milliseconds per round.
+}
 
-\DIFaddbegin \begin{table}[t]
+\begin{table}[t]
 \centering
 \caption{\DIFaddFL{E1: Transport Throughput Summary}}
 \label{tab:e1}
@@ -683,8 +684,9 @@ iroh relay WAN       & 100~MB  & 2.81   & 2.83   & 30 \\
 \bottomrule
 \end{tabular}
 \end{table}
+\DIFaddend 
 
-\DIFaddend \subsection{E2: FL Convergence Under Non-IID Data}
+\subsection{E2: FL Convergence Under Non-IID Data}
 \label{sec:e2}
 
 We evaluate FedAvg convergence on CIFAR-10 with SimpleCNN under IID and non-IID (Dirichlet $\alpha{=}0.1$) partitioning \DIFdelbegin \DIFdel{. All runs use }\DIFdelend \DIFaddbegin \DIFadd{(}\DIFaddend $K{=}10$\DIFdelbegin \DIFdel{clients}\DIFdelend , $E{=}1$\DIFdelbegin \DIFdel{local epoch, cross-entropy loss, SGD optimizer (lr$=$0.01)}\DIFdelend , $R{=}100$\DIFdelbegin \DIFdel{rounds. Multi-seed replication (}\DIFdelend \DIFaddbegin \DIFadd{, }\DIFaddend $n{=}5$ \DIFdelbegin \DIFdel{) provides 95\% confidence intervals via Student-t distribution. Results in }\DIFdelend \DIFaddbegin \DIFadd{seeds; }\DIFaddend Table~\ref{tab:e2}\DIFaddbegin \DIFadd{)}\DIFaddend .
@@ -999,45 +1001,16 @@ Under IID partitioning, accuracy is statistically flat across \DIFdelbegin \DIFd
 
 \textbf{\DIFdelbegin \DIFdel{Deployment scope}\DIFdelend \DIFaddbegin \DIFadd{Configurations}\DIFaddend .} \DIFdelbegin \DIFdel{The feature set includes outdoor meteorological variables (AEMET wind speed, precipitation) . This dataset applies to }\emph{\DIFdel{outdoor}} %DIFAUXCMD
 \DIFdel{monitoring installations; greenhouse or indoor deployments require a different feature set (removing wind/precipitation, adding CO$_2$, humidity) . The 10 monitoring-zone clients are : \'Avila, Burgos, Le\'on, Palencia, Ponferrada, Salamanca, Segovia, Soria, Valladolid, and Zamora (the nine provincial capitals plus Ponferrada). Sensor tags are registered via CoAP with the }\texttt{\DIFdel{rt=air-quality}} %DIFAUXCMD
-\DIFdel{attribute. }%DIFDELCMD < 
-
-%DIFDELCMD < %%%
-\textbf{\DIFdel{Configurations.}} %DIFAUXCMD
-\DIFdel{We run six configurations to isolate model and aggregation effects: AirMLP + FedAvg (geographic and IID), ProphetWrapper + FedGAM, and ProphetWrapper + FedAvg (geographic and IID).Multi-seed replication (}\DIFdelend \DIFaddbegin \DIFadd{AirMLP and AirLSTM (a 7-day input window) with FedAvg under geographic and IID partitions, and ProphetWrapper with FedAvg or FedGAM; }\DIFaddend $n{=}5$ \DIFdelbegin \DIFdel{) provides 95\% confidence intervals.
-}\DIFdelend \DIFaddbegin \DIFadd{seeds, $R{=}50$, real Iroh transport. Prophet models are evaluated per zone: each zone's model (federated seasonality plus its local trend under FedGAM; retrained from the full global state under FedAvg) predicts its own test year, and predictions are pooled across zones.
+\DIFdel{attribute. }\DIFdelend \DIFaddbegin \DIFadd{AirMLP and AirLSTM (a 7-day input window) with FedAvg under geographic and IID partitions, and ProphetWrapper with FedAvg or FedGAM; $n{=}5$ seeds, $R{=}50$, real Iroh transport. Prophet models are evaluated per zone: each zone's model (federated seasonality plus its local trend under FedGAM; retrained from the full global state under FedAvg) predicts its own test year, and predictions are pooled across zones.
 }\DIFaddend 
 
-\DIFdelbegin %DIFDELCMD < \begin{table}[t]
-%DIFDELCMD < %%%
-\DIFdelendFL \DIFaddbeginFL \begin{table*}[t]
-\DIFaddendFL \centering
-\DIFdelbeginFL %DIFDELCMD < \caption{%
-{%DIFAUXCMD
-\DIFdelFL{E6: 7-Day-Ahead ICA Forecasting ($K{=}10$, $R{=}50$, test 2019, $n{=}5$ seeds)}}
-%DIFAUXCMD
-\DIFdelendFL \DIFaddbeginFL \caption{\DIFaddFL{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean $\pm$ half-width of the 95\% CI, in \%; real Iroh transport). Class distribution 49.3/27.8/22.9\% (}\textit{\DIFaddFL{Bajo/Medio/Alto}}\DIFaddFL{).}}
-\DIFaddendFL \label{tab:e6}
+\DIFdelbegin \textbf{\DIFdel{Configurations.}} %DIFAUXCMD
+\DIFdel{We run six configurations to isolate model and aggregation effects: AirMLP + FedAvg }\DIFdelend \DIFaddbegin \begin{table*}[t]
+\centering
+\caption{\DIFaddFL{E6: 7-day-ahead ICA forecasting on the 2019 test year ($K{=}10$, $R{=}50$, $n{=}5$ seeds; mean $\pm$ half-width of the 95\% CI, in \%; real Iroh transport). Class distribution 49.3/27.8/22.9\% (}\textit{\DIFaddFL{Bajo/Medio/Alto}}\DIFaddFL{).}}
+\label{tab:e6}
 \scriptsize
-\DIFdelbeginFL %DIFDELCMD < \setlength{\tabcolsep}{3.5pt}
-%DIFDELCMD < \begin{tabular}{l l r r}
-%DIFDELCMD < \toprule
-%DIFDELCMD < \textbf{Model} & \textbf{Partition} & \textbf{Test Acc.} & \textbf{95\% CI} \\
-%DIFDELCMD < \midrule
-%DIFDELCMD < Majority class (train)      & ---        & 22.94\% & (deterministic) \\
-%DIFDELCMD < Persistence (class at $t{-}7$) & ---     & 47.54\% & (deterministic) \\
-%DIFDELCMD < \midrule
-%DIFDELCMD < AirMLP (FedAvg)             & Geographic & 47.26\% & [46.38\%, 48.14\%] \\
-%DIFDELCMD < AirMLP (FedAvg)             & IID        & 49.63\% & [49.08\%, 50.17\%] \\
-%DIFDELCMD < \midrule
-%DIFDELCMD < ProphetWrapper (FedGAM)     & Geographic & 56.78\% & (deterministic) \\
-%DIFDELCMD < ProphetWrapper (FedGAM)     & IID        & 57.93\% & [57.31\%, 58.55\%] \\
-%DIFDELCMD < ProphetWrapper (FedAvg)     & Geographic & 56.59\% & (deterministic) \\
-%DIFDELCMD < ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
-%DIFDELCMD < \bottomrule
-%DIFDELCMD < \end{tabular}
-%DIFDELCMD < \vspace{0.5em}
-%DIFDELCMD < %%%
-\DIFdelendFL \DIFaddbeginFL \setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l l r r r r r r}
 \toprule
 \textbf{Model} & \textbf{Partition} & \textbf{Accuracy} & \textbf{Balanced acc.} & \textbf{Macro-F1} & \textbf{Recall \textit{Bajo}} & \textbf{Recall \textit{Medio}} & \textbf{Recall \textit{Alto}} \\
@@ -1050,19 +1023,15 @@ AirMLP (FedAvg)                 & IID        & 49.64 $\pm$ 0.61 & 44.93 $\pm$ 0.
 AirLSTM (FedAvg)                & Geographic & 53.17 $\pm$ 0.55 & 48.77 $\pm$ 0.42 & 48.11 $\pm$ 0.52 & 69.6 $\pm$ 3.2 & 27.8 $\pm$ 2.9 & 48.9 $\pm$ 2.0 \\
 AirLSTM (FedAvg)                & IID        & 55.00 $\pm$ 0.31 & 49.44 $\pm$ 0.34 & 49.07 $\pm$ 0.58 & 74.8 $\pm$ 0.7 & 28.0 $\pm$ 2.5 & 45.6 $\pm$ 1.4 \\
 \midrule
-ProphetWrapper (FedAvg)         & Geographic & 56.59$^{\ddagger}$ & 48.87 & 49.61 & 79.0 & 36.8 & 30.8 \\
-ProphetWrapper (FedAvg)         & IID$^{\S}$ & 57.66 $\pm$ 0.40 & 42.80 $\pm$ 0.40 & 35.67 $\pm$ 0.47 & 63.5 $\pm$ 0.8 & 64.0 $\pm$ 1.4 & 0.8 $\pm$ 0.8 \\
-ProphetWrapper (FedGAM)         & Geographic & 56.78$^{\ddagger}$ & 49.07 & 49.82 & 79.3 & 36.9 & 31.0 \\
-ProphetWrapper (FedGAM)         & IID$^{\S}$ & 57.93 $\pm$ 0.62 & 42.94 $\pm$ 0.39 & 35.78 $\pm$ 0.53 & 63.9 $\pm$ 1.0 & 64.2 $\pm$ 1.1 & 0.8 $\pm$ 0.8 \\
+ProphetWrapper (FedAvg)         & Geographic & 56.44$^{\ddagger}$ & 48.70 & 49.42 & 79.0 & 36.4 & 30.6 \\
+ProphetWrapper (FedAvg)         & IID$^{\S}$ & 57.58 $\pm$ 0.33 & 42.85 $\pm$ 0.35 & 35.63 $\pm$ 0.48 & 63.4 $\pm$ 0.6 & 64.4 $\pm$ 1.2 & 0.8 $\pm$ 0.7 \\
+ProphetWrapper (FedGAM)         & Geographic & 56.78$^{\ddagger}$ & 49.18 & 49.94 & 78.9 & 37.5 & 31.1 \\
+ProphetWrapper (FedGAM)         & IID$^{\S}$ & 57.93 $\pm$ 0.52 & 42.93 $\pm$ 0.34 & 35.77 $\pm$ 0.47 & 63.9 $\pm$ 0.8 & 64.2 $\pm$ 1.0 & 0.8 $\pm$ 0.7 \\
 \bottomrule
 \end{tabular}
 \vspace{0.3em}
-\DIFaddendFL 
 
-\DIFdelbeginFL \emph{\DIFdelFL{7-day-ahead ICA forecasting on outdoor CyL stations, test year 2019 (class distribution 49.3/27.8/22.9\%; labels from training-set NO$_2$ terciles $T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3$, balanced in-sample only). Trivial baselines: majority class fitted on train (}\textit{\DIFdelFL{Alto}}%DIFAUXCMD
-\DIFdelFL{) and 7-day persistence (predict the class observed at $t{-}7$; 3,551 of 3,561 test rows have the $t{-}7$ observation available). Geographic non-IID: 10 natural zone partitions. Prophet geographic runs are deterministic MAP fits: the five seeds coincide, so no meaningful CI exists (effectively $n{=}1$). Accuracy values are on the held-out 2019 test set.}}
-%DIFAUXCMD
-\DIFdelendFL \DIFaddbeginFL {\scriptsize \DIFaddFL{$^{\ddagger}$Prophet geographic runs are deterministic MAP fits: all five seeds coincide (no CI). $^{\S}$Evaluated on the 2019 test year of a single zone (inherited from the original evaluation code), whose class distribution differs; not comparable with the other rows.}}
+{\scriptsize \DIFaddFL{$^{\ddagger}$Prophet geographic runs are deterministic MAP fits: all five seeds coincide (no CI). $^{\S}$Evaluated on the 2019 test year of a single zone (inherited from the original evaluation code), whose class distribution differs; not comparable with the other rows.}}
 \end{table*}
 
 \begin{table}[t]
@@ -1084,38 +1053,52 @@ AirLSTM & \textit{Bajo}  & 74.8 & 14.3 & 10.9 \\
         & \textit{Alto}  & 28.4 & 26.0 & 45.6 \\
 \bottomrule
 \end{tabular}
-\DIFaddendFL \end{table}
+\end{table}
 
-\DIFdelbegin \textbf{\DIFdel{Trivial baselines.}} %DIFAUXCMD
-\DIFdel{Two deterministic baselines calibrate the difficulty of the task on the 2019 test year. A majority-class predictor fitted on the training data (}\textit{\DIFdel{Alto}}%DIFAUXCMD
-\DIFdel{) achieves only 22.94}\DIFdelend \DIFaddbegin \textbf{\DIFadd{Imbalance-aware results.}} \DIFadd{Accuracy alone overstates the difficulty gap between models and hides how they fail. The 7-day persistence forecaster reaches 47.5\% accuracy but only 43.1}\DIFaddend \% \DIFdelbegin \DIFdel{---}\emph{\DIFdel{below}} %DIFAUXCMD
-\DIFdel{the nominal 33.3\% of a balanced random guess---because the class distribution shifts between the training window and 2019. The stronger trivial baseline is }\DIFdelend \DIFaddbegin \DIFadd{macro-F1 and balanced accuracy. The memoryless AirMLP does not beat it on the imbalance-aware metrics (macro-F1 40.3\% geographic, 43.1\% IID): it mainly separates the extreme classes and almost never predicts }\textit{\DIFadd{Medio}} \DIFadd{correctly (recall 15--17\%), which it confuses with both neighbors (Table~\ref{tab:e6cm}). AirLSTM, which sees a }\DIFaddend 7-day \DIFdelbegin \emph{\DIFdel{persistence}} %DIFAUXCMD
-\DIFdel{(predict for $t{+}7$ the class observed at $t$), the canonical reference in forecasting, which achieves 47.54\%. }%DIFDELCMD < 
-
-%DIFDELCMD < %%%
-\textbf{\DIFdel{AirMLP + FedAvg.}} %DIFAUXCMD
-\DIFdelend \DIFaddbegin \DIFadd{input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1\% geographic, 49.1\% IID; balanced accuracy 48.8--49.4\%) and nearly doubles the recall of }\textit{\DIFadd{Medio}} \DIFadd{(28\%), which remains the hardest class for all models because it is a narrow band between two terciles. The geographic (non-IID) partition costs 1--3pp on every metric for both neural models. The accuracy of AirMLP over real Iroh connections (46.9\% and 49.6\%) matches the values obtained with the in-process transport in the original submission (47.3\% and 49.6\%), a further check that the transport does not alter learning outcomes. The federated Prophet model evaluated over all ten zones (geographic partition) reaches 49.6--49.8\% macro-F1 and 48.9--49.1\% balanced accuracy, on par with AirLSTM and about 6.5pp above persistence; its higher accuracy (56.6--56.8\%) comes largely from the majority class (recall of }\textit{\DIFadd{Bajo}} \DIFadd{79\%, of }\textit{\DIFadd{Alto}} \DIFadd{31\%). }\DIFaddend The \DIFdelbegin \DIFdel{7-day-ahead ICA forecasting task is intrinsically hard for a memoryless MLP: the model receives a single day's measurements at time~$t$ and must predict the ICA class 7~days later, without access to the intervening trajectory. AirMLP reaches 49.63\% accuracy (IID, 95\% CI }%DIFDELCMD < [%%%
-\DIFdel{49.08\%, 50.17\% }%DIFDELCMD < ]%%%
-\DIFdel{) and 47.26\% (geographic, }%DIFDELCMD < [%%%
-\DIFdel{46.38\%, 48.14}\DIFdelend \DIFaddbegin \DIFadd{imbalance-aware metrics also exposed a flaw in our original evaluation: in the IID configuration the Prophet models were scored on the test year of a single zone only. On that zone they almost never predict }\textit{\DIFadd{Alto}} \DIFadd{(recall below 1\%) and reach only 35.7--35.8}\DIFaddend \% \DIFdelbegin %DIFDELCMD < ]%%%
-\DIFdel{) }\DIFdelend \DIFaddbegin \DIFadd{macro-F1, so the 57.9\% accuracy reported for Prophet-IID in the original submission is not comparable with the other configurations and should not be read as an improvement over persistence. We keep these rows for transparency and base all comparisons on the geographic runs.
+\textbf{\DIFadd{Imbalance-aware results.}} \DIFadd{Accuracy alone overstates the difficulty gap between models and hides how they fail. The 7-day persistence forecaster reaches 47.5\% accuracy but only 43.1\% macro-F1 and balanced accuracy. The memoryless AirMLP does not beat it on the imbalance-aware metrics (macro-F1 40.3\% geographic, 43.1\% IID): it mainly separates the extreme classes and almost never predicts }\textit{\DIFadd{Medio}} \DIFadd{correctly (recall 15--17\%), which it confuses with both neighbors (Table~\ref{tab:e6cm}). AirLSTM, which sees a 7-day input window, improves every metric over persistence by about 5--6pp }\DIFaddend (\DIFdelbegin \DIFdel{geographic and IID), ProphetWrapper }\DIFdelend \DIFaddbegin \DIFadd{macro-F1 48.1\% geographic, 49.1\% IID; balanced accuracy 48.8--49.4\%) and nearly doubles the recall of }\textit{\DIFadd{Medio}} \DIFadd{(28\%), which remains the hardest class for all models because it is a narrow band between two terciles. The geographic (non-IID) partition costs 1--3pp on every metric for both neural models. The accuracy of AirMLP over real Iroh connections (46.9\% and 49.6\%) matches the values obtained with the in-process transport in the original submission (47.3\% and 49.6\%), a further check that the transport does not alter learning outcomes. The federated Prophet model evaluated over all ten zones (geographic partition) reaches 49.4--49.9\% macro-F1 and 48.7--49.2\% balanced accuracy, on par with AirLSTM and about 6.5pp above persistence; its higher accuracy (56.4--56.8\%) comes largely from the majority class (recall of }\textit{\DIFadd{Bajo}} \DIFadd{79\%, of }\textit{\DIFadd{Alto}} \DIFadd{31\%). The imbalance-aware metrics also exposed a flaw in our original evaluation: in the IID configuration the Prophet models were scored on the test year of a single zone only. On that zone they almost never predict }\textit{\DIFadd{Alto}} \DIFadd{(recall below 1\%) and reach only 35.6--35.8\% macro-F1, so the 57.9\% accuracy reported for Prophet-IID in the original submission is not comparable with the other configurations and should not be read as an improvement over persistence. We keep these rows for transparency and base all comparisons on the geographic runs.
 }
 
-\textbf{\DIFadd{FedGAM case study.}} \DIFadd{Switching from FedAvg to FedGAM requires a single server-side change (}\texttt{\DIFadd{aggregator\_fn}}\DIFadd{); the same Iroh channels carry AirMLP tensors (1}{\DIFadd{,}}\DIFadd{987 parameters) and Prophet Fourier coefficients (27 parameters). Prophet+FedGAM and Prophet+FedAvg are indistinguishable on every metric (geographic: 49.82\% vs.\ 49.61\% macro-F1, 49.07\% vs.\ 48.87\% balanced accuracy; IID: 35.78\% vs.\ 35.67\% macro-F1). With eight years of local history each zone can estimate its own trend, so restricting aggregation to the seasonal terms brings no measurable benefit here; FedGAM is therefore presented as an example of a model-specific aggregation rule deployed without transport changes, not as a performance contribution}\DIFaddend .
-\DIFdelbegin \DIFdel{Measured against the persistence baseline, AirMLP-IID improves by only $+$2.1pp and the geographic configuration is statistically indistinguishable from persistence---the memoryless MLP essentially matches, but does not beat, }\DIFdelend \DIFaddbegin 
+\textbf{\DIFadd{FedGAM case study.}} \DIFadd{Switching from FedAvg to FedGAM requires a single server-side change (}\texttt{\DIFadd{aggregator\_fn}}\DIFadd{); the same Iroh channels carry AirMLP tensors (1}{\DIFadd{,}}\DIFadd{987 parameters) and Prophet Fourier coefficients (27 parameters). Prophet}\DIFaddend +FedGAM \DIFdelbegin \DIFdel{, and ProphetWrapper }\DIFdelend \DIFaddbegin \DIFadd{and Prophet}\DIFaddend +FedAvg \DIFdelbegin \DIFdel{(}\DIFdelend \DIFaddbegin \DIFadd{are practically indistinguishable (geographic: 49.94\% vs.\ 49.42\% macro-F1, 49.18\% vs.\ 48.70\% balanced accuracy; IID: 35.77\% vs.\ 35.63\% macro-F1). We also tested the regime in which partial aggregation might matter most, with only one year of local history per zone: both rules then fail on this task (}\DIFaddend geographic \DIFdelbegin \DIFdel{and IID). Multi-seed replication ($n{=}5$) provides 95\% confidence intervals}\DIFdelend \DIFaddbegin \DIFadd{macro-F1 18.5\% with FedGAM and 16.7\% with FedAvg, predicting mostly }\textit{\DIFadd{Alto}}\DIFadd{), so partial aggregation does not rescue short histories here either. With eight years of local history each zone can estimate its own trend, so restricting aggregation to the seasonal terms brings no measurable benefit here; FedGAM is therefore presented as an example of a model-specific aggregation rule deployed without transport changes, not as a performance contribution}\DIFaddend .
 
-\subsection{\DIFadd{E8: Forced Relay, Outages and Network Switches}}
+\DIFdelbegin %DIFDELCMD < \begin{table}[t]
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \subsection{\DIFaddFL{E8: Forced Relay, Outages and Network Switches}}
 \label{sec:e8}
 
-\DIFadd{E8 exercises the relay and the recovery paths on real hardware. A long-lived client on the Raspberry Pi sends a 1~MB update every 5~s to a long-lived server; every transfer re-dials the server by node ID, as the FL data plane does, and the path, active address, retries and local IP addresses are logged per transfer. Perturbations are injected on the Raspberry Pi: blocking all outgoing UDP except DNS with an nftables rule (hole punching becomes impossible and only the relay, which uses HTTPS over TCP, remains), taking the Wi-Fi interface down, and switching between networks with NetworkManager. Throughout E8--E11 a second nftables rule prevents Iroh from using the Tailscale overlay addresses present on the test devices, so that a ``direct'' path is always an Iroh hole-punched path; every transfer is additionally audited for overlay addresses.
+\DIFaddFL{E8 exercises the relay and the recovery paths on real hardware. A long-lived client on the Raspberry Pi sends a 1~MB update every 5~s to a long-lived server; every transfer re-dials the server by node ID, as the FL data plane does, and the path, active address, retries and local IP addresses are logged per transfer. Perturbations are injected on the Raspberry Pi: blocking all outgoing UDP except DNS with an nftables rule (hole punching becomes impossible and only the relay, which uses HTTPS over TCP, remains), taking the Wi-Fi interface down, and switching between networks with NetworkManager. Throughout E8--E11 a second nftables rule prevents Iroh from using the Tailscale overlay addresses present on the test devices, so that a ``direct'' path is always an Iroh hole-punched path; every transfer is additionally audited for overlay addresses.
 }
 
 \begin{table*}[t]
-\centering
-\caption{\DIFaddFL{E8: delivery and path per phase (Raspberry Pi on N2 mobile CGNAT $\to$ PC on N1; 1~MB every 5~s; medians)}}
+\DIFaddendFL \centering
+\DIFdelbeginFL %DIFDELCMD < \caption{%
+{%DIFAUXCMD
+\DIFdelFL{E6: 7-Day-Ahead ICA Forecasting ($K{=}10$, $R{=}50$, test 2019, $n{=}5$ seeds)}}
+%DIFAUXCMD
+%DIFDELCMD < \label{tab:e6}
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \caption{\DIFaddFL{E8: delivery and path per phase (Raspberry Pi on N2 mobile CGNAT $\to$ PC on N1; 1~MB every 5~s; medians)}}
 \label{tab:e8}
-\scriptsize
-\setlength{\tabcolsep}{6pt}
+\DIFaddendFL \scriptsize
+\DIFdelbeginFL %DIFDELCMD < \setlength{\tabcolsep}{3.5pt}
+%DIFDELCMD < \begin{tabular}{l l r r}
+%DIFDELCMD < \toprule
+%DIFDELCMD < \textbf{Model} & \textbf{Partition} & \textbf{Test Acc.} & \textbf{95\% CI} \\
+%DIFDELCMD < \midrule
+%DIFDELCMD < Majority class (train)      & ---        & 22.94\% & (deterministic) \\
+%DIFDELCMD < Persistence (class at $t{-}7$) & ---     & 47.54\% & (deterministic) \\
+%DIFDELCMD < \midrule
+%DIFDELCMD < AirMLP (FedAvg)             & Geographic & 47.26\% & [46.38\%, 48.14\%] \\
+%DIFDELCMD < AirMLP (FedAvg)             & IID        & 49.63\% & [49.08\%, 50.17\%] \\
+%DIFDELCMD < \midrule
+%DIFDELCMD < ProphetWrapper (FedGAM)     & Geographic & 56.78\% & (deterministic) \\
+%DIFDELCMD < ProphetWrapper (FedGAM)     & IID        & 57.93\% & [57.31\%, 58.55\%] \\
+%DIFDELCMD < ProphetWrapper (FedAvg)     & Geographic & 56.59\% & (deterministic) \\
+%DIFDELCMD < ProphetWrapper (FedAvg)     & IID        & 57.66\% & [57.26\%, 58.06\%] \\
+%DIFDELCMD < \bottomrule
+%DIFDELCMD < \end{tabular}
+%DIFDELCMD < \vspace{0.5em}
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \setlength{\tabcolsep}{6pt}
 \begin{tabular}{@{}l r r r r r@{}}
 \toprule
 \textbf{Phase} & \textbf{Sent} & \textbf{Delivered} & \textbf{Direct} & \textbf{Relay-carried} & \textbf{Goodput (Mbps)} \\
@@ -1130,14 +1113,30 @@ UDP blocked (2 windows)      & 190 & 190 (100\%)  & 2$^{*}$ & 188 & 1.85 \\
 \bottomrule
 \end{tabular}
 \vspace{0.3em}
+\DIFaddendFL 
 
-{\scriptsize \DIFaddFL{$^{*}$Classified at the moment of unblocking; one carried a Tailscale address and is excluded from direct counts.}}
+\DIFdelbeginFL \emph{\DIFdelFL{7-day-ahead ICA forecasting on outdoor CyL stations, test year 2019 (class distribution 49.3/27.8/22.9\%; labels from training-set NO$_2$ terciles $T_1{=}7.5$, $T_2{=}13.0~\mu$g/m$^3$, balanced in-sample only). Trivial baselines: majority class fitted on train (}\textit{\DIFdelFL{Alto}}%DIFAUXCMD
+\DIFdelFL{) and 7-day persistence (predict the class observed at $t{-}7$; 3,551 of 3,561 test rows have the $t{-}7$ observation available). Geographic non-IID: 10 natural zone partitions. Prophet geographic runs are deterministic MAP fits: the five seeds coincide, so no meaningful CI exists (effectively $n{=}1$). Accuracy values are on the held-out 2019 test set.}}
+%DIFAUXCMD
+%DIFDELCMD < \end{table}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin {\scriptsize \DIFadd{$^{*}$Classified at the moment of unblocking; one carried a Tailscale address and is excluded from direct counts.}}
 \end{table*}
+\DIFaddend 
 
-\textbf{\DIFadd{Forced relay (Table~\ref{tab:e8}).}} \DIFadd{With UDP blocked, all 190 transfers were delivered over the relay, at the same goodput as the direct path because the 4G uplink, not the relay, was the bottleneck. The switch to the relay took about 28~s, during which the in-flight transfer stalled but was not lost; on unblocking, the path returned to direct within 4~s. On this mobile CGNAT the direct path was less reliable than the relay: 5.3\% of direct transfers were interrupted mid-stream at the start of the run and 19--27\% after the UDP block was lifted, while none of the relay-carried transfers failed. This observation motivated the transfer-level retry of \S\ref{sec:transport}.
-}
+\DIFdelbegin \textbf{\DIFdel{Trivial baselines.}} %DIFAUXCMD
+\DIFdel{Two deterministic baselines calibrate the difficulty of the task on the 2019 test year. A majority-class predictor fitted on the training data (}\textit{\DIFdel{Alto}}%DIFAUXCMD
+\DIFdel{) achieves only 22.94\%---}\emph{\DIFdel{below}} %DIFAUXCMD
+\DIFdel{the nominal 33.3\% of a balanced random guess---because the class distribution shifts between the training window and 2019. The stronger trivial baseline is 7-day }\emph{\DIFdel{persistence}} %DIFAUXCMD
+\DIFdel{(predict for $t{+}7$ the class observed at $t$), the canonical reference in forecasting, which achieves 47.54\%. }\DIFdelend \DIFaddbegin \textbf{\DIFadd{Forced relay (Table~\ref{tab:e8}).}} \DIFadd{With UDP blocked, all 190 transfers were delivered over the relay, at the same goodput as the direct path because the 4G uplink, not the relay, was the bottleneck. The switch to the relay took about 28~s, during which the in-flight transfer stalled but was not lost; on unblocking, the path returned to direct within 4~s. On this mobile CGNAT the direct path was less reliable than the relay: 5.3\% of direct transfers were interrupted mid-stream at the start of the run and 19--27\% after the UDP block was lifted, while none of the relay-carried transfers failed. This observation motivated the transfer-level retry of \S\ref{sec:transport}.
+}\DIFaddend 
 
-\textbf{\DIFadd{Outages and network switches.}} \DIFadd{With transfer retry enabled, a second 30-minute run on N2 delivered 49 of 50 transfers in the first window (two delivered on a retry) and 202 of 213 overall. A 60~s Wi-Fi outage lost no transfer: the in-flight transfer waited and completed, and }\DIFaddend the \DIFdelbegin \DIFdel{trivial forecaster. Its role in this study is therefore that of a reproducible, low-resource }\emph{\DIFdel{system}} %DIFAUXCMD
+\DIFdelbegin \textbf{\DIFdel{AirMLP + FedAvg.}} %DIFAUXCMD
+\DIFdel{The 7-day-ahead ICA forecasting task is intrinsically hard for a memoryless MLP: the model receives a single day's measurements at time~$t$ and must predict the ICA class 7~days later, without access to the intervening trajectory. AirMLP reaches 49.63\% accuracy (IID, 95\% CI }%DIFDELCMD < [%%%
+\DIFdel{49.08\%, 50.17\% }%DIFDELCMD < ]%%%
+\DIFdel{) and 47.26\% (geographic, }%DIFDELCMD < [%%%
+\DIFdel{46.38\%, 48.14\%}%DIFDELCMD < ]%%%
+\DIFdel{) . Measured against the persistence baseline, AirMLP-IID improves by only $+$2.1pp and the geographic configuration is statistically indistinguishable from persistence---the memoryless MLP essentially matches, but does not beat, }\DIFdelend \DIFaddbegin \textbf{\DIFadd{Outages and network switches.}} \DIFadd{With transfer retry enabled, a second 30-minute run on N2 delivered 49 of 50 transfers in the first window (two delivered on a retry) and 202 of 213 overall. A 60~s Wi-Fi outage lost no transfer: the in-flight transfer waited and completed, and }\DIFaddend the \DIFdelbegin \DIFdel{trivial forecaster. Its role in this study is therefore that of a reproducible, low-resource }\emph{\DIFdel{system}} %DIFAUXCMD
 \DIFdel{baseline (it exercises the FL transport with realistic tensors), not a competitive forecasting model.
 The 2.4pp gap between IID and geographic partitions confirms that zone-level non-IID costs accuracy---Ponferrada (industrial, coal-fired) vs. ~rural Soria exhibit different NO$_2$ distributions---though FedAvg converges without divergence.
 }\DIFdelend \DIFaddbegin \DIFadd{first new transfer succeeded 15.6~s after the link came back. During a 120~s outage two transfers timed out, and delivery resumed immediately after the link returned. Switching from 4G to the office Wi-Fi (N2$\to$N1; new local address, new NAT mapping) restored delivery after 4.3~s, now over a direct LAN path to the PC. The opposite switch (N1$\to$N2) did not recover within the remaining five minutes: the Iroh endpoint stopped establishing connections until the process was restarted, even though the 4G link itself was working. We added the endpoint watchdog of \S\ref{sec:transport} as a mitigation (restart with the same key after consecutive failures; covered by the test suite); validating it with repeated network switches in the field remains future work.
@@ -1439,7 +1438,8 @@ The following limitations should be noted:
 \textbf{\DIFdel{No federation admission control.}} %DIFAUXCMD
 \DIFdel{The prototype does not implement client authorization. In a real deployment, the server must verify that a client's Iroh node ID belongs to the authorized federation. The node ID is a persistent public key and provides a suitable cryptographic basis for this access control}\DIFdelend .
 
-\textbf{\DIFdelbegin \DIFdel{Model Selection Trade-Offs in E6}\DIFdelend \DIFaddbegin \DIFadd{FedGAM}\DIFaddend .} \DIFdelbegin \DIFdel{The E6 results demonstrate that Prophet GAM models outperform AirMLP by +8--9pp, but this advantage stems from the model's internal time-series decomposition (trend + Fourier seasonality), not from the aggregation rule. The same-model ablation (Prophet+FedGAM vs. Prophet+FedAvg) shows no statistically significant difference ($\Delta{<}0.3$pp, $p{=}0.35$), confirming that FedGAM 's partial aggregation offers no measurable benefit over naive FedAvgwhen sufficient local training data (8 years) is available. Future work should investigate whether FedGAM provides advantages in low-data regimes or with shorter training windows (e.g., 1 year), where federated seasonality may compensate for insufficient local trend estimation}\DIFdelend \DIFaddbegin \DIFadd{With eight years of local data FedGAM brings no benefit over FedAvg; whether partial aggregation helps with short local histories is untested}\DIFaddend .
+\textbf{\DIFdelbegin \DIFdel{Model Selection Trade-Offs in E6}\DIFdelend \DIFaddbegin \DIFadd{FedGAM}\DIFaddend .\DIFdelbegin %DIFDELCMD < \MBLOCKRIGHTBRACE %%%
+\DIFdel{The E6 results demonstrate that Prophet GAM models outperform AirMLP by +8--9pp, but this advantage stems from the model's internal time-series decomposition (trend + Fourier seasonality), not from the aggregation rule. The same-model ablation (Prophet+FedGAM vs. Prophet+FedAvg) shows no statistically significant difference ($\Delta{<}0.3$pp, $p{=}0.35$), confirming that FedGAM 's partial aggregation offers }\DIFdelend \DIFaddbegin } \DIFadd{FedGAM brings }\DIFaddend no measurable benefit over \DIFdelbegin \DIFdel{naive FedAvg when sufficient local training data(8 years) is available. Future work should investigate whether FedGAM provides advantages in low-data regimes or with shorter training windows (e.g., 1 year ), where federated seasonality may compensate for insufficient local trend estimation}\DIFdelend \DIFaddbegin \DIFadd{FedAvg with eight years of local data, and with one year of data both rules fail on this task; when, if ever, partial aggregation helps federated GAMs remains open}\DIFaddend .
 
 \subsection{Deployment Considerations}
 
