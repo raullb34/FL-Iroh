@@ -1,7 +1,7 @@
 %% FL-Iroh -- Elsevier CAS (cas-dc) double-column manuscript (ANONYMOUS FOR BLIND REVIEW)
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL fl-iroh-cas-dc_anonymous.tex      Wed Oct  7 18:23:43 2026
-%DIF ADD fl-iroh-cas-dc_R1_anonymous.tex   Wed Oct  7 18:23:43 2026
+%DIF DEL fl-iroh-cas-dc_anonymous.tex      Wed Oct  7 22:19:35 2026
+%DIF ADD fl-iroh-cas-dc_R1_anonymous.tex   Wed Oct  7 22:19:35 2026
 %% Ported from paper.tex (IEEEtran). English only.
 %% Compile from this directory so the cas-dc.cls / cas-common.sty are found.
 
@@ -336,7 +336,7 @@ Fedstellar~\cite{martinezbeltran2024} & Platform for decentralized FL & Configur
 FedCoRE~\cite{djamaa2025} & FL on MCU-class AIoT & FL over CoAP with quantization & 256~KB-RAM devices & Up to 60\% less communication & Local network; no NAT/P2P \\
 TDMiL~\cite{gulati2024} & Tiny distributed ML on MCUs & CoAP aggregator + embedded runtimes & COTS boards, open testbed & Straggler mitigation compared & Single site; no WAN \\
 \midrule
-\textbf{FL-Iroh (this work)} & FL across NAT/CGNAT without public IPs & QUIC P2P data plane with public-key addressing, admission control and relay fallback; CoAP RD control plane & Real hardware across 5 RFC~4787-classified networks incl.\ mobile CGNAT; WAN federation on RPi~3B; netem sweep; 5{,}000-endpoint discovery & Connectivity in all new sessions; relay 190/190 without UDP; 29/30 WAN rounds; 19~ms RD lookup at 5{,}000 & Python/PyTorch runtime too heavy for MCUs; small physical federation; cold starts often relay-carried \\
+\textbf{FL-Iroh (this work)} & FL across NAT/CGNAT without public IPs & QUIC P2P data plane with public-key addressing, admission control and relay fallback; CoAP RD control plane & Real hardware across 3 RFC~4787-classified networks incl.\ mobile CGNAT; WAN federation on RPi~3B; netem sweep; 5{,}000-endpoint discovery & Connectivity in all new sessions; relay 190/190 without UDP; 29/30 WAN rounds; 19~ms RD lookup at 5{,}000 & Python/PyTorch runtime too heavy for MCUs; small physical federation; cold starts often relay-carried \\
 \bottomrule
 \end{tabular}
 \end{table*}

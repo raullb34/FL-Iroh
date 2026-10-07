@@ -1,4 +1,4 @@
-%% FL-Iroh -- Elsevier CAS (cas-dc) double-column manuscript
+%% FL-Iroh -- Elsevier CAS (cas-dc) double-column manuscript (ANONYMOUS FOR BLIND REVIEW)
 %% Ported from paper.tex (IEEEtran). English only.
 %% Compile from this directory so the cas-dc.cls / cas-common.sty are found.
 
@@ -14,7 +14,7 @@
 \usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
-\graphicspath{{../../../img/}}
+\graphicspath{{./}}
 
 % Absorb minor overfull \hbox boxes in the narrow two-column measure
 \emergencystretch=3em
@@ -26,50 +26,12 @@
 \def\textpagefraction{.001}
 
 \shorttitle{FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT}
-\shortauthors{R.~L\'{o}pez-Blanco et~al.}
+\shortauthors{Anonymous}
 
 \title[mode = title]{FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT via QUIC P2P Transport and CoAP Service Discovery}
 
-% ---- Authors --------------------------------------------------------------
-\author[1,4]{Ra\'{u}l L\'{o}pez-Blanco}[orcid=0000-0002-8856-4008]
-\cormark[1]
-\ead{raullb@usal.es}
-
-\affiliation[1]{organization={BISITE Research Group, University of Salamanca},
-            addressline={Edificio I+D+i, Calle del Espejo 2},
-            city={Salamanca},
-            postcode={37006},
-            state={Castile and Le\'on},
-            country={Spain}}
-
-\author[2,3,4]{Ricardo S.~Alonso}[orcid=0000-0002-6599-0186]
-\ead{ralonso@air-institute.com}
-
-\affiliation[2]{organization={AIR Institute -- Deep tech lab, IoT Digital Innovation Hub},
-            addressline={Paseo de Bel\'{e}n 9A},
-            city={Valladolid},
-            postcode={47011},
-            state={Castile and Le\'on},
-            country={Spain}}
-
-\author[3]{Tiago Pinto}[orcid=0000-0001-8248-080X]
-\ead{tiago.m.pinto@gmail.com}
-
-\author[1]{Javier Prieto}[orcid=0000-0001-8175-2201]
-\ead{javierp@usal.es}
-
-\affiliation[3]{organization={University of Tr\'{a}s-os-Montes and Alto Douro},
-            city={Vila Real},
-            country={Portugal}}
-
-\affiliation[4]{organization={UNIR, International University of La Rioja},
-            addressline={Av. de la Paz, 137},
-            city={Logroño},
-            postcode={26006},
-            state={La Rioja},
-            country={Spain}}
-
-\cortext[1]{Corresponding author}
+% ---- Authors (Anonymous for blind review) --------------------------------
+\author{Anonymous Submission}
 
 % ---- Abstract -------------------------------------------------------------
 \begin{abstract}
@@ -420,7 +382,7 @@ C1--C5 & Earlier cross-ISP campaign: base, ``full-cone'', ``symmetric'', CGNAT (
 
 \textbf{Software and data.} FL experiments use $K{=}10$ clients unless stated, FedAvg (or FedGAM for the Prophet case study), $E{=}1$ local epoch, SGD (lr$=$0.01, momentum 0.9, weight decay $10^{-4}$), and $R{=}100$ rounds for E2 and E4, $R{=}50$ for E6, $R{=}20$ for E9 and $R{=}30$ for E11. E2 uses SimpleCNN (three Conv--BN--ReLU blocks of 32/64/128 channels, global average pooling and a linear head; 94{,}762 parameters) on CIFAR-10~\cite{cifar2009}. The Crop Recommendation dataset~\cite{cropdataset} contains 2{,}200 records across 22 classes, partitioned IID or with Dirichlet $\alpha \in \{0.1, 0.5, 1.0\}$. The E6 air-quality dataset covers 10 Castilla y Le\'on monitoring zones over 2011--2019 (train: 2011--2018, test: 2019) with a geographic partition (one client per zone) and an IID baseline. Multi-seed runs use a fixed seed registry ($n{=}5$); 95\% confidence intervals use the Student-$t$ distribution.
 
-\textbf{Transport in each experiment.} E2 and E4 study learning dynamics (non-IID data, partial participation) and were run with an in-process loopback transport that delivers the same serialized payloads without the network stack; we report them as statistical experiments and evaluate all transport behavior on real Iroh connections in E1, E3, E6 and E8--E11. Code, per-run results and analysis scripts are available at \url{https://github.com/raullb34/FL-Iroh}.
+\textbf{Transport in each experiment.} E2 and E4 study learning dynamics (non-IID data, partial participation) and were run with an in-process loopback transport that delivers the same serialized payloads without the network stack; we report them as statistical experiments and evaluate all transport behavior on real Iroh connections in E1, E3, E6 and E8--E11. Code, per-run results and analysis scripts are available at the anonymized project repository (URL withheld for double-blind review).
 
 \subsection{E1: Transport Throughput}
 \label{sec:e1}
@@ -921,18 +883,13 @@ Long term (research) & Trustworthy FL & Secure aggregation and differential priv
 \end{table*}
 
 
-% ---- Elsevier back matter ------------------------------------------------
-\section*{CRediT authorship contribution statement}
-\textbf{Ra\'ul L\'opez-Blanco}: Conceptualization, Methodology, Software, Investigation, Data curation, Writing -- original draft. \textbf{Ricardo S.~Alonso}: Conceptualization, Methodology, Writing -- review \& editing, Supervision. \textbf{Tiago Pinto}: Writing -- review \& editing, Supervision. \textbf{Javier Prieto}: Writing -- review \& editing, Supervision, Funding acquisition.
-
+% ---- Elsevier back matter (anonymized) ------------------------------------
 \section*{Declaration of competing interest}
 The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
 \section*{Data availability}
-The source code of FL-Iroh, the experiment harness, the per-run results backing every table, and the processed air-quality dataset are available at \url{https://github.com/raullb34/FL-Iroh}. The Crop Recommendation dataset is publicly available on Kaggle~\cite{cropdataset}; the raw air-quality and meteorological data are available from the open-data portals of the Junta de Castilla y Le\'on~\cite{cyl2023airquality} and AEMET~\cite{aemet2023}.
+The source code of FL-Iroh, the experiment harness, the per-run results backing every table, and the processed air-quality dataset are available at an anonymized project repository (URL withheld for double-blind review; will be disclosed upon acceptance). The Crop Recommendation dataset is publicly available on Kaggle~\cite{cropdataset}; the raw air-quality and meteorological data are available from the open-data portals of the Junta de Castilla y Le\'on~\cite{cyl2023airquality} and AEMET~\cite{aemet2023}.
 
-\section*{Acknowledgements}
-This work has been supported by the OSTARA project under the Partnership for Research and Innovation in the Mediterranean Area (PRIMA), the MICIU/AEI/10.13039/501100011033, and the European Union (grant number PCI2026-177466-1).
 % =========================================================================
 \section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
 During the preparation of this work, the authors used Claude (Anthropic), through the Claude Code agent, to assist with the development and debugging of the experiment software and analysis scripts, and with drafting and language editing of parts of the manuscript. The authors designed the study and the experiments, operated the hardware testbed, verified the reported results against the raw experimental data, reviewed and edited the output as needed and take full responsibility for the content of the published article.
