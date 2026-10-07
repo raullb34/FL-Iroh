@@ -1,0 +1,18 @@
+{
+  "condition": "rate_10mbit",
+  "netem": "delay 10ms rate 10mbit",
+  "fl_wall_s": 213.1,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 2.132,
+  "round_s_max": 68.875,
+  "test_acc_final": 0.4686885706262286,
+  "macro_f1": 0.4117298387498534,
+  "balanced_accuracy": 0.4257513876449577,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 231.8,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 1103.6,
+  "xfer_10000kB_ok": "10/10",
+  "xfer_10000kB_ms_median": 9771.8
+}

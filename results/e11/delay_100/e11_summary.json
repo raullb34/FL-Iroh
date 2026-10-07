@@ -1,0 +1,18 @@
+{
+  "condition": "delay_100",
+  "netem": "delay 100ms",
+  "fl_wall_s": 168.0,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 2.272,
+  "round_s_max": 53.888,
+  "test_acc_final": 0.4630721707385566,
+  "macro_f1": 0.38366948886941477,
+  "balanced_accuracy": 0.4197162609976685,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 1074.2,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 1859.6,
+  "xfer_10000kB_ok": "10/10",
+  "xfer_10000kB_ms_median": 4566.6
+}

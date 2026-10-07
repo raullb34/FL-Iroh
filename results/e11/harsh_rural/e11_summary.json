@@ -1,0 +1,18 @@
+{
+  "condition": "harsh_rural",
+  "netem": "delay 75ms 25ms loss 10% rate 1mbit",
+  "fl_wall_s": 268.2,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 6.473,
+  "round_s_max": 52.869,
+  "test_acc_final": 0.4658803706823926,
+  "macro_f1": 0.38499712633694516,
+  "balanced_accuracy": 0.41755496333694236,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 2033.7,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 26179.4,
+  "xfer_10000kB_ok": "0/10",
+  "xfer_10000kB_ms_median": null
+}

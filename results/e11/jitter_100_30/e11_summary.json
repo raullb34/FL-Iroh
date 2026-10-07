@@ -1,0 +1,18 @@
+{
+  "condition": "jitter_100_30",
+  "netem": "delay 100ms 30ms rate 1gbit",
+  "fl_wall_s": 282.9,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 2.719,
+  "round_s_max": 57.14,
+  "test_acc_final": 0.468407750631845,
+  "macro_f1": 0.38060367044973265,
+  "balanced_accuracy": 0.4198194478989277,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 1111.0,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 1999.8,
+  "xfer_10000kB_ok": "10/10",
+  "xfer_10000kB_ms_median": 6995.6
+}

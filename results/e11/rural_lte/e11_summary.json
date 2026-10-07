@@ -1,0 +1,18 @@
+{
+  "condition": "rural_lte",
+  "netem": "delay 30ms 10ms loss 2% rate 5mbit",
+  "fl_wall_s": 219.5,
+  "rounds_ok": 20,
+  "rounds": 20,
+  "round_s_median": 4.113,
+  "round_s_max": 51.925,
+  "test_acc_final": 0.468407750631845,
+  "macro_f1": 0.38253123123014504,
+  "balanced_accuracy": 0.42287488260337175,
+  "xfer_100kB_ok": "10/10",
+  "xfer_100kB_ms_median": 568.7,
+  "xfer_1000kB_ok": "10/10",
+  "xfer_1000kB_ms_median": 2135.2,
+  "xfer_10000kB_ok": "10/10",
+  "xfer_10000kB_ms_median": 27165.8
+}
