@@ -6,6 +6,9 @@ root = here.parent
 orig = (root / "fl-iroh-cas-dc.tex").read_text(encoding="utf-8").split("\n")
 
 
+AI = (here / "ai_declaration.tex").read_text(encoding="utf-8")
+
+
 def r(name: str) -> str:
     return (here / name).read_text(encoding="utf-8")
 
@@ -38,6 +41,7 @@ doc = "\n".join([
     r("s5_flower_discussion.tex"), r("s6_conclusion.tex"), "",
     back, r("bib_new.tex"), r("bib_agent.tex"), tail,
 ])
-assert "All 320 rounds" in doc and "Earlier cross-ISP" in doc and "Table~\\ref{alg:round}" in doc
+doc = doc.replace("\\begin{thebibliography}{99}", AI + "\\begin{thebibliography}{99}", 1)
+assert "Declaration of generative AI" in doc and "All 320 rounds" in doc and "Earlier cross-ISP" in doc and "Table~\\ref{alg:round}" in doc
 (root / "fl-iroh-cas-dc_R1.tex").write_text(doc, encoding="utf-8", newline="\n")
 print("lines:", len(doc.split("\n")))

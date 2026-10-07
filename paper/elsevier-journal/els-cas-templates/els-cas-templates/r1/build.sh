@@ -20,7 +20,7 @@ PY
 cd "$B"
 sed -i 's#\\graphicspath{{../../../img/}}#\\graphicspath{{img/}}#' fl-iroh-cas-dc.tex fl-iroh-cas-dc_anonymous.tex fl-iroh-cas-dc_R1.tex fl-iroh-cas-dc_R1_anonymous.tex
 if [[ "${1:-}" == "diff" ]]; then
-    latexdiff --type=UNDERLINE --math-markup=whole --config="PICTUREENV=(?:picture|DIFnomarkup|tabular|tikzpicture)[wd*@]*" fl-iroh-cas-dc_anonymous.tex fl-iroh-cas-dc_R1_anonymous.tex > fl-iroh-cas-dc_R1_diff.tex
+    latexdiff --type=UNDERLINE --math-markup=whole --exclude-textcmd=textbf --config="PICTUREENV=(?:picture|DIFnomarkup|tabular|tikzpicture)[wd*@]*" fl-iroh-cas-dc_anonymous.tex fl-iroh-cas-dc_R1_anonymous.tex > fl-iroh-cas-dc_R1_diff.tex
     targets=(fl-iroh-cas-dc_R1.tex fl-iroh-cas-dc_R1_anonymous.tex fl-iroh-cas-dc_R1_diff.tex response_to_reviewers.tex response_to_reviewers_es.tex)
 else
     targets=(fl-iroh-cas-dc_R1.tex response_to_reviewers.tex)

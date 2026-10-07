@@ -101,7 +101,7 @@ FL-Iroh's transport security rests on Iroh's QUIC/TLS~1.3 channel: every byte ex
 \subsection{Limitations}
 \label{sec:limitations}
 
-\textbf{Connectivity sample.} The hardware evaluation covers one client device, one aggregator machine, five probed networks in Spain and the five configured scenarios of the original campaign. It does not characterize NAT behavior across operators and countries, many peers behind the same CGNAT, or IPv6-only networks. The aggregator ran inside WSL2, whose additional NAT affected direct-path formation toward it (E3, E11); a native Linux aggregator would remove that layer.
+\textbf{Connectivity sample.} The hardware evaluation covers one client device, one aggregator machine, three probed networks in Spain (four NAT vantage points) and the five configured scenarios of the original campaign. It does not characterize NAT behavior across operators and countries, many peers behind the same CGNAT, or IPv6-only networks. The aggregator ran inside WSL2, whose additional NAT affected direct-path formation toward it (E3, E11); a native Linux aggregator would remove that layer.
 
 \textbf{Endpoint recovery.} After a Wi-Fi$\to$4G switch the Iroh endpoint did not recover by itself (E8). The watchdog that restarts it with the same key is covered by automated tests but has not yet been validated with repeated network switches in the field.
 
