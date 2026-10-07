@@ -248,7 +248,9 @@ async def _run_client(
         node_id            = node_id,
         model              = model,
         train_dataset      = my_partition,
-        val_dataset        = test_ds,
+        # Per-round client-side evaluation on the full test set (off with
+        # FL_CLIENT_EVAL=0, e.g. when the server evaluates centrally, as Flower does).
+        val_dataset        = test_ds if os.environ.get("FL_CLIENT_EVAL", "1") != "0" else None,
         capabilities       = caps,
         dataset_descriptor = ds_desc,
         coap_port          = coap_port,
