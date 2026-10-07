@@ -288,15 +288,21 @@ async def _run_client(
 
     # A client that missed rounds (e.g. while disconnected) keeps participating
     # in later ones; it stops once the server sends no model for the idle timeout.
+    # Only completed rounds count towards --rounds, so a failed round does not
+    # make the client stop before the server; the client also stops when the
+    # server sends no model for the idle timeout (the federation is over).
     client._receive_timeout = float(os.environ.get("FL_CLIENT_IDLE_TIMEOUT_S", 1800))
-    for r in range(1, rounds + 1):
+    completed = attempts = 0
+    while completed < rounds and attempts < 2 * rounds:
+        attempts += 1
         try:
-            await client.run_round(r)
+            await client.run_round(completed + 1)
+            completed += 1
         except asyncio.TimeoutError:
             log.info("No model received for %.0fs — federation finished", client._receive_timeout)
             break
         except Exception as exc:
-            log.error("Round %d failed: %s", r, exc)
+            log.error("Round %d failed: %s", completed + 1, exc)
 
     await client.stop()
     exported = client.metrics.export_csv()
