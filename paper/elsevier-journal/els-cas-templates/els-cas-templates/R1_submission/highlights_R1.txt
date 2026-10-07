@@ -1,0 +1,7 @@
+Highlights
+
+- FL transport with built-in NAT traversal, public-key addressing and admission control
+- RFC 4787-classified networks incl. mobile CGNAT; relay delivers 100% without UDP
+- Real WAN federation with a Raspberry Pi 3B client; CPU, memory and energy per round
+- CoAP resource directory: multi-tag discovery over 5,000 endpoints in tens of ms
+- All rounds complete under loss, latency and bandwidth limits typical of rural links

@@ -1,0 +1,266 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\newenvironment{comment}{\par\medskip\noindent\begin{minipage}{\linewidth}\color{blue!45!black}\itshape}{\end{minipage}\par}
+\newcommand{\reply}{\par\smallskip\noindent\textbf{Respuesta.}~}
+\newcommand{\changes}{\par\smallskip\noindent\textbf{Cambios en el manuscrito.}~}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Respuesta a los revisores}\\[0.4em]
+Manuscrito: \emph{FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT via QUIC P2P Transport and CoAP Service Discovery}\\
+Revista: \emph{Internet of Things} (Elsevier)\\[0.3em]
+{\small (Versión en español para uso interno; los comentarios de los revisores se citan en su idioma original.)}
+\end{center}
+
+Estimado editor, estimados revisores:
+
+Agradecemos a ambos revisores su lectura atenta y sus comentarios constructivos. Nos han llevado a realizar un conjunto amplio de experimentos nuevos sobre hardware real y a corregir el análisis de nuestros resultados originales de conectividad. En resumen, la revisión:
+
+\begin{itemize}[leftmargin=1.3em,itemsep=0.15em]
+\item añade experimentos nuevos: clasificación RFC~4787 de todas las redes nuevas, incluido un CGNAT de operador móvil (Tabla~6); relay forzado, cortes de enlace y cambios de red en una Raspberry Pi (E8); un barrido de pérdida, latencia y ancho de banda con 320 rondas federadas (E9); control de admisión por clave pública en loopback y en WAN (E10); una federación completa sobre WAN con un cliente Raspberry Pi y CPU, memoria y energía por ronda (E11); una comparación en vivo con Flower sobre Tailscale en el mismo hardware (\S4.12); y el escalado del descubrimiento CoAP hasta 5{.}000 endpoints con un resource directory (E5, sustituido);
+\item implementa y evalúa el control de admisión a la federación, un canal de control autenticado que atraviesa NAT, el reintento de transferencias y la recuperación del endpoint;
+\item \textbf{corrige} la clasificación de rutas de los resultados originales de NAT traversal. El estado ``mixed'' de Iroh, que habíamos contado como ruta directa, en realidad va por el relay. Las cifras corregidas se presentan en E3 y se han eliminado las afirmaciones de ``0\,\% relay'';
+\item \textbf{corrige} la evaluación de la configuración Prophet-IID, que se puntuaba sobre una sola zona y no es comparable con el resto de filas (E6). Corrige también la descripción del hardware: el dispositivo de borde es una Raspberry Pi~3 Modelo~B, no una Raspberry Pi~4B;
+\item replantea FedGAM como caso de estudio, acota las afirmaciones sobre privacidad y agnosticismo, y añade una tabla comparativa del trabajo relacionado, 19 referencias recientes (2023--2026), una lista de abreviaturas, una sección de arquitectura ampliada con diagrama de secuencia y algoritmo de ronda, y una hoja de ruta de investigación.
+\end{itemize}
+
+A continuación respondemos a cada comentario. Los números de sección, tabla y experimento se refieren al manuscrito revisado. Se adjunta además una versión con todos los cambios marcados. Todo el código, los resultados de cada ejecución y los scripts de análisis están en el repositorio público (rama \texttt{revision-r1}).
+
+% ============================================================================
+\section*{Revisor 1}
+
+\begin{comment}
+1) My first concern is the generalizability of the NAT-traversal results. Although 96.7\% direct-path rate over 150 cold-start attempts is encouraging, all of these experiments ultimately come from a single PC--Raspberry Pi hardware pair and one ISP pairing, and the NAT types were not independently verified using RFC 4787-style mapping/filtering tests. You should repeat the experiment across several routers, mobile operators, ISPs, and geographically separated peers before making broad claims about NAT/CGNAT transparency.
+\end{comment}
+\reply Estamos de acuerdo. Atender este comentario nos llevó a la corrección más importante de la revisión.
+
+(a)~\emph{Clasificación de NAT.} Hemos implementado un clasificador basado en STUN según RFC~4787/RFC~5780 (\texttt{scripts/\allowbreak nat\_classify.py}). Se ejecuta en el propio dispositivo: consulta cinco servidores STUN con IPs distintas desde un único puerto local para clasificar el mapping, y usa pruebas CHANGE-REQUEST para clasificar el filtering. Hemos clasificado todas las redes de los experimentos nuevos: una red corporativa de oficina, un operador móvil 4G a través del hotspot de un teléfono (dos capas de NAT) y una red residencial de fibra, vista desde el sistema anfitrión y desde WSL2 (Tabla~6). Las cuatro presentan mapping independiente del endpoint y filtering dependiente de la dirección; el operador móvil y WSL2 no preservan el puerto. Los escenarios de la campaña original no se sondearon en su momento, y ahora los describimos como topologías configuradas.
+
+(b)~\emph{Redes y pares adicionales.} Los experimentos nuevos usan tres redes más: oficina, CGNAT móvil y residencial, en ubicaciones distintas, con ISPs distintos y un operador móvil. También añaden dos emparejamientos nuevos (Raspberry Pi en la oficina o en 4G $\leftrightarrow$ PC en la oficina o en casa), además del par original entre ISPs distintos separado 300~km.
+
+(c)~\emph{Corrección de los resultados originales.} Al diseñar el experimento de relay forzado (comentario~2) descubrimos que, con todo el UDP bloqueado y por tanto sin posibilidad de hole punching, Iroh informa la ruta como ``mixed'' y no como ``relay''. En el estado mixed el relay transporta el tráfico mientras se conserva un candidato directo no validado. Nuestro clasificador original contaba ``mixed'' como directo. Hemos reanalizado los logs de depuración de los 150 arranques en frío originales, que registran si algún candidato directo llegó a validarse. Con el criterio estricto, 115 de los 120 arranques en WAN se establecieron (95,8\,\%), pero solo 64 (53,3\,\%) sobre una ruta directa validada en menos de 5~s. El escenario de puerto 443 fue íntegramente por relay, y el etiquetado como NAT simétrico fue por relay en la mitad de los casos (Tabla~9). Hemos eliminado del resumen, los highlights, los resultados y la conclusión las afirmaciones de 98,3\,\%/96,7\,\% ``directo'' y ``0\,\% relay'', y explicamos la corrección en E3. En sesiones de larga duración, que es el régimen propio del FL, la ruta estable entre NATs con mapping independiente del endpoint es directa: 138/140 transferencias en 4G y 60/60 de casa a la oficina (E8).
+
+(d)~\emph{Límites que persisten.} Seguimos cubriendo un único dispositivo cliente, cinco redes sondeadas en España y los escenarios originales. Lo indicamos en las limitaciones, y las campañas con varios operadores y países son el primer punto de la hoja de ruta. Hemos moderado en consecuencia todas las afirmaciones generales de ``transparencia NAT/CGNAT''.
+
+\changes Resumen; highlights; \S1; \S4.1 y Tabla~6 (redes y clasificación RFC~4787); \S4.4/E3 reescrita, con la Tabla~9 (arranques en frío clasificados con criterio estricto) en lugar de la antigua tabla por transferencia; \S4.8/E8; \S5.1; limitaciones; conclusión.
+
+\begin{comment}
+2) Relay is described as a guaranteed fallback, yet interestingly it was never actually selected in the 150 cold-start experiments. [...] create a network configuration in which UDP hole-punching cannot succeed and then evaluate relay establishment latency, reliability, throughput, and recovery behavior.
+\end{comment}
+\reply Hecho (nuevo E8). En una Raspberry Pi conectada a través de un CGNAT móvil bloqueamos todo el UDP saliente salvo DNS con una regla de nftables, lo que impide el hole punching. El relay usa HTTPS sobre TCP y sigue disponible. Alternamos periodos bloqueados y abiertos durante una ejecución de 40 minutos con transferencias de 1~MB cada 5~s. Resultados (Tabla~14):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Fiabilidad.} Con el UDP bloqueado, las 190 transferencias se entregaron a través del relay.
+\item \textbf{Latencia de fallback.} Tras el bloqueo, la primera entrega por el relay llegó a los 28~s aproximadamente. La transferencia en curso se detuvo, pero no se perdió.
+\item \textbf{Throughput.} El relay entregó 1,85~Mbps, igual que la ruta directa en ese enlace (1,88~Mbps), porque el cuello de botella era la subida del 4G.
+\item \textbf{Recuperación.} Al desbloquear, la ruta volvió a ser directa en 1,9--3,8~s.
+\end{itemize}
+El análisis corregido del comentario~1 muestra además que el relay sí se usó en la campaña original: los 30 arranques del escenario de puerto 443 fueron por relay. Por último, en la federación completa sobre WAN (E11), 56 de las 58 transferencias de la Raspberry Pi fueron por relay, porque el agregador estaba detrás de un NAT adicional, y todas las rondas se completaron. Hemos eliminado la palabra ``garantizado'' y describimos el relay como un componente operativo cuya capacidad importa.
+
+Un hallazgo inesperado es que, en el CGNAT móvil, la ruta directa fue \emph{menos} fiable que el relay: entre el 5 y el 27\,\% de las transferencias directas se interrumpieron a mitad de flujo, frente a 0 de 190 por relay. Esto motivó el reintento a nivel de transferencia, que ahora forma parte del sistema (\S3.3).
+
+\changes Nuevo \S4.8 (E8) y Tabla~14; \S3.3; \S5.1.
+
+\begin{comment}
+3) Table 8 is essentially an architectural comparison, while the accuracy experiment uses an in-process Flower-compatible harness rather than a real Flower deployment over an actual Tailscale mesh. [...] a live head-to-head comparison on the same hardware would be much more persuasive.
+\end{comment}
+\reply Hecho. Ejecutamos ambos sistemas en vivo sobre las mismas máquinas y la misma red: agregador en el PC, la Raspberry Pi~3B y dos clientes en el PC, la tarea de calidad del aire, 30 rondas y evaluación en el servidor en ambos casos. Con Flower~1.21 la Raspberry Pi llegaba al servidor a través de Tailscale; con FL-Iroh se registraba por clave pública. Resultados (nueva Tabla~20):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Rondas y precisión.} Ambos completaron 30/30 rondas con precisión final similar (48,4\,\% Flower, 49,6\,\% FL-Iroh).
+\item \textbf{Duración de ronda.} La mediana fue de 8,4~s con Flower sobre Tailscale y de 2,2~s con FL-Iroh (p95: 13,8 frente a 3,3~s). No hemos perfilado el origen de las rondas más largas de Flower, así que presentamos la diferencia sin atribuirla.
+\item \textbf{Recursos en la Raspberry Pi} (cliente FL más \texttt{tailscaled} en ambas ejecuciones): tiempo de CPU por ronda de 5,5 frente a 6,1~s; memoria de 440/445 frente a 432/479~MB (mediana/pico); energía estimada por ronda de 18,0 frente a 10,3~J, sobre todo porque las rondas fueron más cortas.
+\item \textbf{Puesta en marcha.} Como el servidor Flower estaba detrás del NAT del anfitrión, hacerlo accesible por la tailnet exigió que un administrador añadiera una regla de reenvío de puertos y una excepción en el cortafuegos; FL-Iroh no necesitó ninguna configuración de red.
+\end{itemize}
+La ejecución en vivo destapó además una condición de carrera en nuestro reintento de transferencias que podía entregar un modelo dos veces. La corregimos antes de las ejecuciones finales (\S4.11).
+
+\changes \S4.12 (comparación en vivo) y nueva Tabla~20; Tabla~18.
+
+\begin{comment}
+4) [...] there are currently no measurements of CPU utilization, memory consumption, or energy use on the Raspberry Pi. [...]
+\end{comment}
+\reply Añadido (E11, Tabla~17). Hemos implementado un monitor de recursos que registra por fase el tiempo de CPU, la memoria residente, la carga del sistema y la potencia, y lo hemos usado en la Raspberry Pi~3B durante una federación completa sobre WAN. Por ronda (medianas sobre 29 rondas):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Entrenamiento local:} 1,02~s de tiempo real y 2,79~s de CPU.
+\item \textbf{Fases de comunicación:} recibir y enviar ocupan 3,1--3,5~s de tiempo real, pero solo 0,1--0,2~s de CPU.
+\item \textbf{Memoria:} el runtime de Python/PyTorch ocupa 255--419~MB, alrededor del 40\,\% de la RAM del dispositivo.
+\end{itemize}
+Por tanto, la restricción determinante es la memoria, no el cómputo. Esto respalda nuestra recomendación de un runtime de cliente nativo (\S5.3).
+
+La Raspberry Pi~3B no tiene sensor de potencia, así que la energía se \emph{estima} con un modelo de utilización basado en la potencia publicada de la placa en reposo y a plena carga (1,4/3,7~W). La presentamos explícitamente como estimación: unos 2,9~J para el entrenamiento y 4,5--5,2~J para las fases de comunicación, dominadas por la espera. El monitor lee sensores de hardware cuando existen (un medidor INA219/INA226 vía \texttt{hwmon} de Linux, o el PMIC de una Raspberry Pi~5), y la medición real de energía figura en la hoja de ruta.
+
+Sobre eliminar el demonio del sistema: la comparación en vivo del comentario~3 midió el cliente FL junto con \texttt{tailscaled} en la misma Raspberry Pi. La CPU y la memoria fueron similares en ambos sistemas (FL-Iroh usó un 10\,\% más de CPU por ronda, porque la pila QUIC se ejecuta dentro del proceso cliente), así que eliminar el demonio no supone, por sí solo, un ahorro de recursos medible en este dispositivo. Lo indicamos explícitamente en el artículo. La energía estimada por ronda fue menor con FL-Iroh (10,3 frente a 18,0~J) porque sus rondas fueron más cortas. La ventaja de FL-Iroh es, por tanto, operativa (sin demonio con privilegios, sin cuenta y sin reenvío de puertos) y de latencia de ronda, no de CPU ni de memoria.
+
+\changes Nuevo \S4.11 (E11) y Tabla~17; \S4.12 y Tabla~20; \S5.5 (limitaciones, energía).
+
+\begin{comment}
+5) [...] most of the FL experiments themselves are executed on a 16-core Xeon HPC system [...] run complete multi-round FL training on multiple Raspberry Pi-class devices [...]
+\end{comment}
+\reply Hemos ejecutado una federación completa de varias rondas sobre WAN (E11). El agregador estaba en un PC en una ubicación (red residencial) y la Raspberry Pi~3B en otra (red de oficina). Ambos se registraron por clave pública a través del canal de control que atraviesa NAT, sin reenvío de puertos, VPN ni IP pública. Otros dos clientes se ejecutaban en el PC. La Raspberry Pi se unió tras la primera ronda y participó en todas las siguientes: se completaron 29 de 30 rondas, 27 de ellas con los tres clientes, con una mediana de 7,9~s por ronda. La ronda 30 falló por una condición de carrera en nuestro reintento de transferencias, que descubrimos en este experimento y corregimos: podía entregar un modelo dos veces y desincronizar a los clientes. Tras la corrección, la comparación en vivo sobre el mismo hardware (comentario~3) completó 30 de 30 rondas con todos los clientes.
+
+Durante el periodo de revisión solo dispusimos de una Raspberry Pi, por lo que la federación incluye un único dispositivo de borde físico. Lo indicamos como limitación. Los experimentos estadísticos (E2, E4 y E6 con cinco semillas) siguen ejecutándose en el servidor. Ahora indicamos explícitamente que estudian la dinámica de aprendizaje y que todo el comportamiento del transporte se evalúa sobre conexiones Iroh reales (E1, E3, E6, E8--E11).
+
+En este experimento descubrimos también que el paquete de PyTorch que PyPI ofrece por defecto para ARM de 64 bits falla con un error de instrucción ilegal en placas Cortex-A53/A72. Documentamos este problema de despliegue y su solución.
+
+\changes \S4.1 (``Transport in each experiment''); nuevo \S4.11 (E11); limitaciones.
+
+\begin{comment}
+6) Also, expand the related work with `ieeexplore.ieee.org/document/11549842' [...]
+\end{comment}
+\reply Hemos leído el artículo (Bayraktar y Bakirci, ICIEAM~2026). Ahora se cita en la nueva subsección sobre FL eficiente en comunicación y consciente de los recursos, como ejemplo de sincronización comprimida y consciente de la energía y la latencia para participantes intermitentes edge--cloud. También figura en la tabla comparativa (Tabla~2), donde lo contrastamos con FL-Iroh: ese trabajo reduce lo que se envía, mientras que FL-Iroh resuelve si el agregador es alcanzable.
+
+\changes \S2.2; Tabla~2.
+
+\begin{comment}
+7) Current churn experiment models dropout by simply withholding randomly selected clients [...] physically interrupting client connectivity during training, changing its IP/NAT mapping, and then measuring reconnection time and whether the client can safely rejoin subsequent rounds.
+\end{comment}
+\reply Añadido (E8 y E11). Hemos renombrado E4 como ``robustez frente a la desconexión de clientes (simulada)'' y explicamos qué mide y qué no. Después, en la Raspberry Pi, apagamos físicamente la interfaz Wi-Fi durante 60~s y 120~s y alternamos entre la red 4G y la red de la oficina, lo que cambia la dirección local y el mapping NAT.
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Corte de 60~s:} no se perdió ninguna transferencia, y la entrega se reanudó 15,6~s después de recuperar el enlace.
+\item \textbf{Corte de 120~s:} dos transferencias agotaron su tiempo durante el corte, y la entrega se reanudó inmediatamente después.
+\item \textbf{Cambio de 4G a la oficina:} la entrega se reanudó a los 4,3~s, por una ruta directa.
+\item \textbf{Cambio de la oficina a 4G:} el endpoint de Iroh no se recuperó por sí solo. Lo indicamos abiertamente y hemos añadido un watchdog que lo reinicia con la misma clave, de modo que se conserva el identificador del nodo. El watchdog está cubierto por tests automáticos, pero su validación en campo queda como trabajo futuro.
+\end{itemize}
+La reincorporación a nivel de FL se demuestra en E11, donde la Raspberry Pi se unió a una federación en marcha y se incluyó desde la ronda siguiente. El agregador acepta como máximo una actualización por identificador seleccionado y ronda, así que un cliente que se reincorpora no puede contar dos veces.
+
+\changes \S4.5 (alcance de E4); nuevo \S4.8 (E8); \S4.11 (E11); \S3.3 (watchdog); limitaciones.
+
+\begin{comment}
+8) I would also like to see degraded-network experiments. [...] A controlled packet-loss/latency sweep would be particularly useful for showing when QUIC's behavior begins to affect FL round duration or convergence.
+\end{comment}
+\reply Añadido (E9, Tabla~15). Ejecutamos la carga federada completa (10 clientes, 20 rondas) y un benchmark de transferencias (100~KB, 1~MB, 10~MB) sobre conexiones Iroh reales, dentro de un espacio de red aislado con \texttt{tc-netem}. Las condiciones fueron: retardo en un sentido de 25--250~ms, jitter, pérdidas del 1--20\,\%, límites de ancho de banda de 10~Mbit/s a 512~kbit/s y dos perfiles rurales combinados. Se completaron las 320 rondas de las 16 condiciones. Con actualizaciones de modelos de borde de 14~KB, las degradaciones alargan las rondas (de 1,4~s a 3,7~s con 250~ms de retardo, 8,7~s con un 20\,\% de pérdidas y 10,7~s con 512~kbit/s), pero no cambian la precisión ni el macro-F1. La excepción es el 20\,\% de pérdidas: las actualizaciones tardías redujeron la participación en dos rondas, y la última ronda agregó solo cinco clientes.
+
+El comportamiento de QUIC se hace visible con el tamaño de la carga. Las transferencias de 10~MB llegan a 9,5~s con 250~ms de retardo y a 167~s con 512~kbit/s, y fallan por completo con el perfil rural más duro (75$\pm$25~ms, 10\,\% de pérdidas, 1~Mbit/s). Un perfil de jitter que reordena mucho los paquetes bloqueó las transferencias; lo indicamos y lo excluimos.
+
+\changes Nuevo \S4.9 (E9) y Tabla~15.
+
+\begin{comment}
+9) Scalability experiment for CoAP discovery stops at 100 nodes [...] What happens at 500, 1,000, or several thousand endpoints, especially if multiple capability tags and simultaneous registrations are involved?
+\end{comment}
+\reply Hemos rehecho y ampliado E5 (Tabla~11). Primero detectamos y corregimos un fallo en la medición original: consultaba repetidamente un único servidor y extrapolaba los bytes. El nuevo experimento ejecuta un servidor CoAP real por endpoint, hasta 1{.}000. Además añade un resource directory al estilo de RFC~9176, en el que cada endpoint se registra una vez con varias etiquetas de capacidad y el agregador responde a una única consulta con filtrado en el servidor, hasta 5{.}000 endpoints.
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Descubrimiento por sondeo:} crece linealmente, 0,8--1,0~s y 460--580~KB con 1{.}000 nodos, independientemente de cuántos coincidan.
+\item \textbf{Resource directory:} el coste depende del número de nodos que coinciden; una consulta con tres etiquetas sobre 5{.}000 endpoints tarda 18,9~ms y ocupa 19,6~KB.
+\item \textbf{Registro concurrente:} los 5{.}000 endpoints se registraron sin fallos (mediana de 220~ms por registro).
+\end{itemize}
+
+\changes \S3.5 (resource directory); \S4.6 (E5) y Tabla~11 sustituida.
+
+\begin{comment}
+10) [...] the current implementation does not enforce an allow-list [...] implement and experimentally evaluate this mechanism, including unauthorized-client attempts.
+\end{comment}
+\reply Implementado y evaluado (\S3.2, E10).
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Identidad persistente.} Cada nodo tiene ahora una identidad Ed25519 persistente.
+\item \textbf{Comprobación en el transporte.} El agregador compara la clave autenticada de cada conexión entrante con una allow-list \emph{antes} de leer ningún dato, y rechaza los registros de claves desconocidas.
+\item \textbf{Vinculación del endpoint.} El canal de control que atraviesa NAT exige que el endpoint registrado pertenezca al emisor autenticado.
+\item \textbf{Vinculación por ronda.} Cada ronda acepta como máximo una actualización por miembro seleccionado.
+\end{itemize}
+Resultados (Tabla~16): en loopback y en WAN no se aceptó ninguna de las 30 cargas no autorizadas. Los 30 intentos se rechazaron y registraron, en 10~ms en loopback y 0,33~s en WAN. La allow-list no añade latencia medible a las transferencias autorizadas (11,0 frente a 11,1~ms), y se rechazó un registro suplantado.
+
+\changes \S3.2; \S4.10 (E10) y Tabla~16; \S5.4; Tabla~18.
+
+\begin{comment}
+11) Privacy claims should also be phrased carefully. [...] You should avoid broadly describing the overall learning system as privacy-preserving.
+\end{comment}
+\reply Estamos de acuerdo y hemos revisado la redacción en todo el texto. FL-Iroh se describe ahora como un sistema que mantiene los datos en bruto en el dispositivo y cifra las actualizaciones en tránsito, no como un sistema de aprendizaje que preserva la privacidad. El modelo de amenazas (\S5.4) incluye un párrafo explícito sobre el alcance de la privacidad. En él se indica que el agregador recibe las actualizaciones individuales en claro, lo que puede filtrar información mediante inversión de gradientes o inferencia de pertenencia, y que no se aplica privacidad diferencial ni agregación segura. También se indica que el control de admisión no protege frente a actualizaciones envenenadas por parte de los miembros. La agregación segura, la privacidad diferencial y la agregación robusta forman parte ahora de la hoja de ruta.
+
+\changes \S1; \S5.4; conclusión; Tabla~21.
+
+\begin{comment}
+12) Air-quality experiment [...] Report macro-F1, per-class precision/recall, balanced accuracy, and a confusion matrix.
+\end{comment}
+\reply Añadido. El código guarda ahora todas las predicciones y calcula accuracy, balanced accuracy, macro-F1 y F1 ponderado, precisión, recall y F1 por clase, y la matriz de confusión. La Tabla~12 recoge estas métricas para todos los modelos y los baselines triviales con cinco semillas. Por ejemplo, el baseline de clase mayoritaria alcanza un 22,9\,\% de accuracy, pero solo un 33,3\,\% de balanced accuracy y un 12,4\,\% de macro-F1. Las métricas nuevas cambian la lectura de forma informativa:
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Baseline de persistencia.} Alcanza un 47,5\,\% de accuracy, pero solo un 43,1\,\% de macro-F1.
+\item \textbf{AirMLP} no supera a la persistencia en macro-F1 (40,3\,\% geográfico, 43,1\,\% IID). Casi nunca acierta la clase intermedia \textit{Medio} (recall del 15--17\,\%).
+\item \textbf{AirLSTM}, añadido en esta revisión con una ventana de entrada de 7 días, mejora todas las métricas respecto a la persistencia en unos 5--6 puntos (macro-F1 del 48,1--49,1\,\%) y casi duplica el recall de \textit{Medio} (28\,\%). \textit{Medio} sigue siendo la clase más difícil para todos los modelos.
+\item \textbf{Prophet}, evaluado sobre las diez zonas, alcanza un macro-F1 del 49,6--49,8\,\%, a la par que AirLSTM y por encima de la persistencia. Su mayor accuracy (56,7\,\%) se debe en gran parte a la clase mayoritaria.
+\item \textbf{Una corrección.} Estas métricas revelaron un fallo en nuestra evaluación original: en la configuración IID, los modelos Prophet se puntuaban sobre el año de test de una sola zona. Ahí solo alcanzan un 35,7--35,8\,\% de macro-F1 y casi nunca predicen la clase \textit{Alto}. Por tanto, el 57,9\,\% de accuracy que publicamos para Prophet-IID no es comparable con las demás configuraciones. Ahora lo indicamos explícitamente, mantenemos esas filas por transparencia y basamos todas las comparaciones en la evaluación sobre todas las zonas.
+\item \textbf{FedGAM frente a FedAvg.} Siguen siendo indistinguibles en todas las métricas (49,8 frente a 49,6\,\% de macro-F1).
+\end{itemize}
+Añadimos también matrices de confusión normalizadas por filas (Tabla~13). Los informes completos por clase y las matrices de confusión de cada configuración y semilla están en el repositorio.
+
+\changes \S4.7 (E6), Tabla~12 y nueva Tabla~13.
+
+\begin{comment}
+13) FedGAM [...] I wonder whether FedGAM is mature enough to be presented as a substantive contribution in its current form.
+\end{comment}
+\reply Estamos de acuerdo. FedGAM ya no figura como contribución. Se presenta como caso de estudio de una regla de agregación específica de un modelo que funciona sobre el transporte sin cambios, y la ablación con el mismo modelo se presenta como lo que es: sin beneficio con ocho años de historia local. Además damos su regla de actualización de forma formal (Ec.~2).
+
+\changes \S1 (contribuciones); \S3.7; \S4.7; limitaciones.
+
+\begin{comment}
+14) A relevant effort that should also be discussed is `10.18280/ts.400524' by Bakirci [...]
+\end{comment}
+\reply Hemos leído el artículo (Bakirci, \emph{Traitement du Signal} 40(5), 2023). Presenta un sistema de enjambre de UAV con detección de objetos a bordo y una red mallada consciente de la congestión entre nodos Raspberry Pi/Jetson. No aborda el aprendizaje federado ni la conectividad a escala de Internet, por lo que lo citamos brevemente en la subsección de trabajo relacionado sobre redes descentralizadas entre plataformas de borde con recursos limitados (\S2.7).
+
+\changes \S2.7.
+
+\begin{comment}
+15) [...] You should distinguish more carefully between model/aggregation agnosticism and runtime/platform agnosticism.
+\end{comment}
+\reply Estamos de acuerdo y hemos añadido una subsección específica (\S5.3). El transporte es agnóstico respecto a la regla de agregación y al modelo, pero no respecto al runtime ni a la plataforma del cliente. El prototipo serializa con \texttt{torch.save} y necesita Python/PyTorch en un sistema Linux de 64 bits, lo que ocupa cerca del 40\,\% de la memoria de la Raspberry Pi~3B (E11) y deja fuera a los microcontroladores. Explicamos qué haría falta para un cliente que no sea Python: una codificación de tensores neutral respecto al framework y un cliente nativo que hable los tres protocolos ALPN, algo viable gracias a la implementación nativa en Rust de Iroh. Solo afirmamos el agnosticismo respecto a la agregación y al modelo.
+
+\changes \S1; \S3.4; nueva \S5.3; Tabla~21.
+
+% ============================================================================
+\section*{Revisor 2}
+
+\begin{comment}
+1. [...] compare the recent studies in the aspects of problem statements, innovations, methodology, results, and the research gaps [...] add your paper in the last row [...]
+\end{comment}
+\reply Añadido (Tabla~2, \S2.8). La tabla compara 14 trabajos recientes (2023--2026) exactamente en esos aspectos, con FL-Iroh en la última fila. El texto identifica tres carencias recurrentes que FL-Iroh aborda: se da por supuesta la alcanzabilidad; la conectividad se evalúa en simulación o en una sola red local; y el descubrimiento y la pertenencia a la federación no forman parte del sistema. También indica el coste que asume FL-Iroh: un runtime de cliente más pesado que el de los sistemas CoAP orientados a microcontroladores.
+
+\changes Nuevo \S2.8 y Tabla~2.
+
+\begin{comment}
+2. You use the older sources in your topic. It is important to add the most recent works [...]
+\end{comment}
+\reply Hemos añadido 19 referencias de 2023--2026, organizadas en subsecciones nuevas o ampliadas del trabajo relacionado. Cubren el FL para agricultura y monitorización ambiental; el FL eficiente en comunicación y consciente de los recursos en hardware de borde; las comparaciones de transportes para aprendizaje distribuido con interrupciones; el FL basado en CoAP en dispositivos limitados; y las plataformas de FL descentralizado. También hemos añadido los estándares pertinentes (RFC~4787 y RFC~9176). Todas las referencias se han verificado contra su DOI.
+
+\changes \S2; Tabla~2; referencias.
+
+\begin{comment}
+3. Add the abbreviations to the first of your paper.
+\end{comment}
+\reply Añadido como Tabla~1 (``Abbreviations'') al principio del artículo.
+
+\begin{comment}
+4. the explications of architecture is not sufficient and I think it needs more details.
+\end{comment}
+\reply Hemos ampliado sustancialmente la Sección~3. Ahora incluye:
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item una tabla de los componentes de software y sus responsabilidades;
+\item una subsección sobre identidad de los nodos y control de admisión;
+\item una descripción detallada de la selección de ruta de Iroh, incluida la distinción entre rutas direct, mixed y relay, y del reintento de transferencias y el watchdog del endpoint;
+\item el formato de trama y la semántica de confirmación;
+\item el plano de control CoAP y el resource directory, con una consulta de ejemplo;
+\item un diagrama de secuencia de una ronda (Fig.~4) y el algoritmo de ronda del agregador (Algoritmo~1, Tabla~4);
+\item la regla de actualización formal de FedGAM (Ec.~2).
+\end{itemize}
+
+\changes \S3 (Tablas~3--4, Fig.~4, Ec.~2).
+
+\begin{comment}
+5. You can add a research road map to the conclusion section [...]
+\end{comment}
+\reply Añadido. La conclusión termina ahora con una hoja de ruta de investigación (Tabla~21) organizada por horizontes. A corto plazo, en ingeniería: amplitud de las mediciones, baselines operativos y medición real de energía. A medio plazo, en sistemas: runtimes ligeros, eficiencia en la comunicación, y asincronía e intermitencia. A largo plazo, en investigación: FL confiable, topologías descentralizadas y modelos de dominio. Cada punto enumera oportunidades concretas para otros investigadores.
+
+\changes \S6 y Tabla~21.
+
+\bigskip
+Esperamos que el manuscrito revisado responda satisfactoriamente a todos los comentarios y agradecemos de nuevo a los revisores su ayuda para mejorar el artículo.
+
+Atentamente,\\
+Los autores
+
+\end{document}

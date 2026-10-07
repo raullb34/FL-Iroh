@@ -8,7 +8,6 @@
 \usepackage{hyperref}
 \setlength{\parskip}{0.5em}
 \setlength{\parindent}{0pt}
-\newcommand{\TBD}[1]{\textcolor{red}{[TBD#1]}}
 \newenvironment{comment}{\par\medskip\noindent\begin{minipage}{\linewidth}\color{blue!45!black}\itshape}{\end{minipage}\par}
 \newcommand{\reply}{\par\smallskip\noindent\textbf{Response.}~}
 \newcommand{\changes}{\par\smallskip\noindent\textbf{Changes in the manuscript.}~}
@@ -26,10 +25,10 @@ Dear Editor, dear Reviewers,
 We thank both reviewers for their careful reading and constructive comments. They led us to run a substantial set of new experiments on real hardware and to correct the analysis of our original connectivity results. In summary, the revision:
 
 \begin{itemize}[leftmargin=1.3em,itemsep=0.15em]
-\item adds six new experiments: RFC~4787 classification of all new networks, including a mobile-carrier CGNAT (Table~6); forced relay, link outages and network switches on a Raspberry Pi (E8); a packet-loss/latency/bandwidth sweep with 320 federated rounds (E9); public-key admission control on loopback and over the WAN (E10); a complete federation over the WAN with a Raspberry Pi client and per-round CPU, memory and energy (E11); and CoAP discovery scaling to 5{,}000 endpoints with a resource directory (E5, replaced);
+\item adds new experiments: RFC~4787 classification of all new networks, including a mobile-carrier CGNAT (Table~6); forced relay, link outages and network switches on a Raspberry Pi (E8); a packet-loss/latency/bandwidth sweep with 320 federated rounds (E9); public-key admission control on loopback and over the WAN (E10); a complete federation over the WAN with a Raspberry Pi client and per-round CPU, memory and energy (E11); a live head-to-head comparison with Flower over Tailscale on the same hardware (\S4.12); and CoAP discovery scaling to 5{,}000 endpoints with a resource directory (E5, replaced);
 \item implements and evaluates federation admission control, an authenticated control channel that traverses NAT, transfer retry and endpoint recovery;
 \item \textbf{corrects} the path classification of the original NAT-traversal results. Iroh's ``mixed'' state, which we had counted as a direct path, is relay-carried. The corrected figures are reported in E3, and the ``0\% relay'' statements have been removed;
-\item corrects the hardware description: the edge device is a Raspberry Pi~3 Model~B, not a Raspberry Pi~4B;
+\item \textbf{corrects} the evaluation of the Prophet-IID configuration, which had been scored on a single zone and is not comparable with the other rows (E6), and the hardware description: the edge device is a Raspberry Pi~3 Model~B, not a Raspberry Pi~4B;
 \item reframes FedGAM as a case study, restricts the privacy and agnosticism claims, and adds a related-work comparison table, 19 recent references (2023--2026), an abbreviation list, an expanded architecture section with a sequence diagram and the round algorithm, and a research roadmap.
 \end{itemize}
 
@@ -43,7 +42,7 @@ Below we answer each comment. Section, table and experiment numbers refer to the
 \end{comment}
 \reply We agree, and addressing this comment led to the most important correction in the revision.
 
-(a)~\emph{NAT classification.} We implemented an RFC~4787/RFC~5780 STUN-based classifier (\texttt{scripts/\allowbreak nat\_classify.py}). It runs on the device itself, queries five STUN servers on different IPs from one local port to classify mapping, and uses CHANGE-REQUEST tests to classify filtering. We classified every network used in the new experiments: an enterprise office network, a mobile 4G carrier reached through a phone hotspot (two NAT layers), and a residential fixed-line network seen from the host OS and from WSL2 (Table~4). All four show endpoint-independent mapping and address-dependent filtering; the mobile carrier and WSL2 do not preserve ports. The scenarios of the original campaign were not probed at the time, and we now describe them as configured topologies.
+(a)~\emph{NAT classification.} We implemented an RFC~4787/RFC~5780 STUN-based classifier (\texttt{scripts/\allowbreak nat\_classify.py}). It runs on the device itself, queries five STUN servers on different IPs from one local port to classify mapping, and uses CHANGE-REQUEST tests to classify filtering. We classified every network used in the new experiments: an enterprise office network, a mobile 4G carrier reached through a phone hotspot (two NAT layers), and a residential fixed-line network seen from the host OS and from WSL2 (Table~6). All four show endpoint-independent mapping and address-dependent filtering; the mobile carrier and WSL2 do not preserve ports. The scenarios of the original campaign were not probed at the time, and we now describe them as configured topologies.
 
 (b)~\emph{Additional networks and peers.} The new experiments use three further networks: office, mobile CGNAT and residential, in different locations and with different ISPs and one mobile operator. They also add two new peer pairings (Raspberry Pi in the office or on 4G $\leftrightarrow$ PC in the office or at home), on top of the original cross-ISP pair 300~km apart.
 
@@ -103,7 +102,7 @@ On removing the system daemon: the live comparison of comment~3 measured the FL 
 \begin{comment}
 5) [...] most of the FL experiments themselves are executed on a 16-core Xeon HPC system [...] run complete multi-round FL training on multiple Raspberry Pi-class devices [...]
 \end{comment}
-\reply We ran a complete multi-round federation over the WAN (E11). The aggregator ran on a PC at one site (residential network) and the Raspberry Pi~3B at another (office network). Both registered by public key over the NAT-traversing control channel, without port forwarding, VPN or public IP. Two further clients ran on the PC. The Raspberry Pi joined after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 of them with all three clients, at a median of 7.9~s per round. The 30th round failed because of a round-counting artefact on the client side, which we explain in the paper.
+\reply We ran a complete multi-round federation over the WAN (E11). The aggregator ran on a PC at one site (residential network) and the Raspberry Pi~3B at another (office network). Both registered by public key over the NAT-traversing control channel, without port forwarding, VPN or public IP. Two further clients ran on the PC. The Raspberry Pi joined after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 of them with all three clients, at a median of 7.9~s per round. The 30th round failed because of a race in our transfer retry, which we found in this experiment and fixed: it could deliver a model twice and desynchronize clients. After the fix, the live comparison on the same hardware (comment~3) completed 30 of 30 rounds with all clients.
 
 We had access to only one Raspberry Pi during the revision period, so the federation includes one physical edge device. We state this as a limitation. The statistical experiments (E2, E4, and E6 with five seeds) remain on the server. We now say explicitly that they study learning dynamics, and that all transport behavior is evaluated on real Iroh connections (E1, E3, E6, E8--E11).
 
@@ -182,7 +181,9 @@ Results (Table~16): on loopback and over the WAN, 0 of 30 unauthorized payloads 
 \item \textbf{Persistence baseline.} It reaches 47.5\% accuracy but only 43.1\% macro-F1.
 \item \textbf{AirMLP} does not beat persistence on macro-F1 (40.3\% geographic, 43.1\% IID). It almost never predicts the middle class \textit{Medio} correctly (recall 15--17\%).
 \item \textbf{AirLSTM}, added in this revision with a 7-day input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1--49.1\%) and nearly doubles the recall of \textit{Medio} (28\%). \textit{Medio} remains the hardest class for all models.
-\item \TBD{Prophet: one sentence once the HPC multi-seed run is available.}
+\item \textbf{Prophet}, evaluated over all ten zones, reaches 49.6--49.8\% macro-F1, on par with AirLSTM and above persistence. Its higher accuracy (56.7\%) comes largely from the majority class.
+\item \textbf{A correction.} These metrics exposed a flaw in our original evaluation: in the IID configuration the Prophet models were scored on the test year of a single zone. There they reach only 35.7--35.8\% macro-F1 and almost never predict the class \textit{Alto}. The 57.9\% accuracy we reported for Prophet-IID is therefore not comparable with the other configurations. We now state this explicitly, keep the rows for transparency, and base all comparisons on the evaluation over all zones.
+\item \textbf{FedGAM vs.\ FedAvg.} The two remain indistinguishable on every metric (49.8\% vs.\ 49.6\% macro-F1).
 \end{itemize}
 We also add row-normalized confusion matrices (Table~13). Full per-class reports and confusion matrices for every configuration and seed are in the repository.
 

@@ -15,11 +15,6 @@ i_credit = next(i for i, l in enumerate(orig) if l.startswith(r"% ---- Elsevier 
 i_endbib = next(i for i, l in enumerate(orig) if l.startswith(r"\end{thebibliography}"))
 
 head = "\n".join(orig[: i_cortext + 1])
-head = head.replace(
-    r"\usepackage{pgfplots}",
-    r"\usepackage{pgfplots}" + "\n"
-    + r"\newcommand{\TBD}[1]{\textcolor{red}{[TBD#1]}}  % R1: pending values; remove before submission",
-)
 back = "\n".join(orig[i_credit:i_endbib])
 tail = "\n".join(orig[i_endbib:])
 
