@@ -181,9 +181,9 @@ Results (Table~16): on loopback and over the WAN, 0 of 30 unauthorized payloads 
 \item \textbf{Persistence baseline.} It reaches 47.5\% accuracy but only 43.1\% macro-F1.
 \item \textbf{AirMLP} does not beat persistence on macro-F1 (40.3\% geographic, 43.1\% IID). It almost never predicts the middle class \textit{Medio} correctly (recall 15--17\%).
 \item \textbf{AirLSTM}, added in this revision with a 7-day input window, improves every metric over persistence by about 5--6pp (macro-F1 48.1--49.1\%) and nearly doubles the recall of \textit{Medio} (28\%). \textit{Medio} remains the hardest class for all models.
-\item \textbf{Prophet}, evaluated over all ten zones, reaches 49.6--49.8\% macro-F1, on par with AirLSTM and above persistence. Its higher accuracy (56.7\%) comes largely from the majority class.
-\item \textbf{A correction.} These metrics exposed a flaw in our original evaluation: in the IID configuration the Prophet models were scored on the test year of a single zone. There they reach only 35.7--35.8\% macro-F1 and almost never predict the class \textit{Alto}. The 57.9\% accuracy we reported for Prophet-IID is therefore not comparable with the other configurations. We now state this explicitly, keep the rows for transparency, and base all comparisons on the evaluation over all zones.
-\item \textbf{FedGAM vs.\ FedAvg.} The two remain indistinguishable on every metric (49.8\% vs.\ 49.6\% macro-F1).
+\item \textbf{Prophet}, evaluated over all ten zones, reaches 49.4--49.9\% macro-F1, on par with AirLSTM and above persistence. Its higher accuracy (56.4--56.8\%) comes largely from the majority class.
+\item \textbf{A correction.} These metrics exposed a flaw in our original evaluation: in the IID configuration the Prophet models were scored on the test year of a single zone. There they reach only 35.6--35.8\% macro-F1 and almost never predict the class \textit{Alto}. The 57.9\% accuracy we reported for Prophet-IID is therefore not comparable with the other configurations. We now state this explicitly, keep the rows for transparency, and base all comparisons on the evaluation over all zones.
+\item \textbf{FedGAM vs.\ FedAvg.} The two remain practically indistinguishable (49.9\% vs.\ 49.4\% macro-F1).
 \end{itemize}
 We also add row-normalized confusion matrices (Table~13). Full per-class reports and confusion matrices for every configuration and seed are in the repository.
 
@@ -192,7 +192,7 @@ We also add row-normalized confusion matrices (Table~13). Full per-class reports
 \begin{comment}
 13) FedGAM [...] I wonder whether FedGAM is mature enough to be presented as a substantive contribution in its current form.
 \end{comment}
-\reply We agree. FedGAM is no longer listed as a contribution. It is now presented as a case study of a model-specific aggregation rule that runs over the transport without changes, and the same-model ablation is reported as showing no benefit with eight years of local history. We also give its update rule formally (Eq.~2).
+\reply We agree. FedGAM is no longer listed as a contribution. It is now presented as a case study of a model-specific aggregation rule that runs over the transport without changes, and the same-model ablation is reported as showing no benefit with eight years of local history (49.9\% vs.\ 49.4\% macro-F1). We also tested the short-history regime in which partial aggregation might matter most: with one year of local data, both rules fail on this task (macro-F1 18.5\% vs.\ 16.7\%). We report this as a negative result and give the update rule formally (Eq.~2).
 
 \changes \S1 (contributions); \S3.7; \S4.7; Limitations.
 

@@ -113,7 +113,7 @@ FL-Iroh's transport security rests on Iroh's QUIC/TLS~1.3 channel: every byte ex
 
 \textbf{Dropout model.} E4 simulates per-round dropout; real outages and network switches were measured at the transport level (E8) and a late join in a real federation (E11), but multi-day disconnections with local data accumulation would require asynchronous FL (e.g., FedBuff~\cite{fedbuff2022}).
 
-\textbf{FedGAM.} With eight years of local data FedGAM brings no benefit over FedAvg; whether partial aggregation helps with short local histories is untested.
+\textbf{FedGAM.} FedGAM brings no measurable benefit over FedAvg with eight years of local data, and with one year of data both rules fail on this task; when, if ever, partial aggregation helps federated GAMs remains open.
 
 \subsection{Deployment Considerations}
 

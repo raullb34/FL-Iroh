@@ -183,9 +183,9 @@ Resultados (Tabla~16): en loopback y en WAN no se aceptó ninguna de las 30 carg
 \item \textbf{Baseline de persistencia.} Alcanza un 47,5\,\% de accuracy, pero solo un 43,1\,\% de macro-F1.
 \item \textbf{AirMLP} no supera a la persistencia en macro-F1 (40,3\,\% geográfico, 43,1\,\% IID). Casi nunca acierta la clase intermedia \textit{Medio} (recall del 15--17\,\%).
 \item \textbf{AirLSTM}, añadido en esta revisión con una ventana de entrada de 7 días, mejora todas las métricas respecto a la persistencia en unos 5--6 puntos (macro-F1 del 48,1--49,1\,\%) y casi duplica el recall de \textit{Medio} (28\,\%). \textit{Medio} sigue siendo la clase más difícil para todos los modelos.
-\item \textbf{Prophet}, evaluado sobre las diez zonas, alcanza un macro-F1 del 49,6--49,8\,\%, a la par que AirLSTM y por encima de la persistencia. Su mayor accuracy (56,7\,\%) se debe en gran parte a la clase mayoritaria.
-\item \textbf{Una corrección.} Estas métricas revelaron un fallo en nuestra evaluación original: en la configuración IID, los modelos Prophet se puntuaban sobre el año de test de una sola zona. Ahí solo alcanzan un 35,7--35,8\,\% de macro-F1 y casi nunca predicen la clase \textit{Alto}. Por tanto, el 57,9\,\% de accuracy que publicamos para Prophet-IID no es comparable con las demás configuraciones. Ahora lo indicamos explícitamente, mantenemos esas filas por transparencia y basamos todas las comparaciones en la evaluación sobre todas las zonas.
-\item \textbf{FedGAM frente a FedAvg.} Siguen siendo indistinguibles en todas las métricas (49,8 frente a 49,6\,\% de macro-F1).
+\item \textbf{Prophet}, evaluado sobre las diez zonas, alcanza un macro-F1 del 49,4--49,9\,\%, a la par que AirLSTM y por encima de la persistencia. Su mayor accuracy (56,4--56,8\,\%) se debe en gran parte a la clase mayoritaria.
+\item \textbf{Una corrección.} Estas métricas revelaron un fallo en nuestra evaluación original: en la configuración IID, los modelos Prophet se puntuaban sobre el año de test de una sola zona. Ahí solo alcanzan un 35,6--35,8\,\% de macro-F1 y casi nunca predicen la clase \textit{Alto}. Por tanto, el 57,9\,\% de accuracy que publicamos para Prophet-IID no es comparable con las demás configuraciones. Ahora lo indicamos explícitamente, mantenemos esas filas por transparencia y basamos todas las comparaciones en la evaluación sobre todas las zonas.
+\item \textbf{FedGAM frente a FedAvg.} Siguen siendo prácticamente indistinguibles (49,9 frente a 49,4\,\% de macro-F1).
 \end{itemize}
 Añadimos también matrices de confusión normalizadas por filas (Tabla~13). Los informes completos por clase y las matrices de confusión de cada configuración y semilla están en el repositorio.
 
@@ -194,7 +194,7 @@ Añadimos también matrices de confusión normalizadas por filas (Tabla~13). Los
 \begin{comment}
 13) FedGAM [...] I wonder whether FedGAM is mature enough to be presented as a substantive contribution in its current form.
 \end{comment}
-\reply Estamos de acuerdo. FedGAM ya no figura como contribución. Se presenta como caso de estudio de una regla de agregación específica de un modelo que funciona sobre el transporte sin cambios, y la ablación con el mismo modelo se presenta como lo que es: sin beneficio con ocho años de historia local. Además damos su regla de actualización de forma formal (Ec.~2).
+\reply Estamos de acuerdo. FedGAM ya no figura como contribución. Se presenta como caso de estudio de una regla de agregación específica de un modelo que funciona sobre el transporte sin cambios, y la ablación con el mismo modelo se presenta como lo que es: sin beneficio con ocho años de historia local (49,9 frente a 49,4\,\% de macro-F1). Hemos probado además el régimen de historia corta, que es donde la agregación parcial podría aportar más: con un solo año de datos locales, ambas reglas fracasan en esta tarea (macro-F1 del 18,5 frente al 16,7\,\%). Lo presentamos como resultado negativo y damos la regla de actualización de forma formal (Ec.~2).
 
 \changes \S1 (contribuciones); \S3.7; \S4.7; limitaciones.
 
