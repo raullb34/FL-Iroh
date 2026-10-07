@@ -628,12 +628,19 @@ class IrohTransportNode:
         except asyncio.TimeoutError:
             log.warning("peer did not acknowledge stream within %.0fs", STREAM_ACK_TIMEOUT_SEC)
         except Exception as exc:  # noqa: BLE001
+            # The close reason may not be populated yet when stopped() fails:
+            # wait briefly for the connection to finish closing, then read it.
             reason = ""
             try:
-                reason = str(connection.close_reason() or "")
+                reason = str(await asyncio.wait_for(connection.closed(), timeout=3) or "")
             except Exception:  # noqa: BLE001
                 pass
-            if "not authorized" in reason:
+            if not reason:
+                try:
+                    reason = str(connection.close_reason() or "")
+                except Exception:  # noqa: BLE001
+                    pass
+            if "not authorized" in reason or str(ADMISSION_DENIED_CODE) in reason:
                 # Rejected by the peer's allow-list: retrying cannot help.
                 raise PermissionError(f"rejected by peer: {reason}") from exc
             raise ConnectionError(
