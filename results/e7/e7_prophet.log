@@ -1,0 +1,2612 @@
+15:37:37 [INFO] E7 configs to run: ['prophet_fedgam_geographic', 'prophet_fedgam_iid', 'prophet_fedavg_geographic', 'prophet_fedavg_iid', 'prophet_fedgam_1yr_geographic', 'prophet_fedgam_1yr_iid', 'prophet_fedavg_1yr_geographic', 'prophet_fedavg_1yr_iid']
+15:37:37 [INFO] === E7 ProphetWrapper + FEDGAM — geographic (max_train_years=None) ===
+15:37:37 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:37:37 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:37:37 [INFO] ProphetWrapper FEDGAM round 1/10
+15:37:38 [ERROR] Importing plotly failed. Interactive plots will not work.
+15:37:38 [INFO] Chain [1] start processing
+15:37:39 [INFO] Chain [1] done processing
+15:37:39 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:37:39 [INFO] Chain [1] start processing
+15:37:39 [INFO] Chain [1] done processing
+15:37:39 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:37:39 [INFO] Chain [1] start processing
+15:37:39 [INFO] Chain [1] done processing
+15:37:39 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:37:40 [INFO] Chain [1] start processing
+15:37:40 [INFO] Chain [1] done processing
+15:37:40 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:37:40 [INFO] Chain [1] start processing
+15:37:40 [INFO] Chain [1] done processing
+15:37:40 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:37:41 [INFO] Chain [1] start processing
+15:37:41 [INFO] Chain [1] done processing
+15:37:41 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.031
+15:37:41 [INFO] Chain [1] start processing
+15:37:41 [INFO] Chain [1] done processing
+15:37:41 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:37:41 [INFO] Chain [1] start processing
+15:37:42 [INFO] Chain [1] done processing
+15:37:42 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:37:42 [INFO] Chain [1] start processing
+15:37:42 [INFO] Chain [1] done processing
+15:37:42 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:37:43 [INFO] Chain [1] start processing
+15:37:43 [INFO] Chain [1] done processing
+15:37:43 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:37:44 [INFO] Round 1 — test accuracy: 0.564  (3561 samples)
+15:37:44 [INFO] ProphetWrapper FEDGAM round 2/10
+15:37:44 [INFO] Chain [1] start processing
+15:37:44 [INFO] Chain [1] done processing
+15:37:44 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:37:45 [INFO] Chain [1] start processing
+15:37:45 [INFO] Chain [1] done processing
+15:37:45 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:37:45 [INFO] Chain [1] start processing
+15:37:45 [INFO] Chain [1] done processing
+15:37:45 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:37:45 [INFO] Chain [1] start processing
+15:37:46 [INFO] Chain [1] done processing
+15:37:46 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:37:46 [INFO] Chain [1] start processing
+15:37:46 [INFO] Chain [1] done processing
+15:37:46 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:37:46 [INFO] Chain [1] start processing
+15:37:46 [INFO] Chain [1] done processing
+15:37:46 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:37:47 [INFO] Chain [1] start processing
+15:37:47 [INFO] Chain [1] done processing
+15:37:47 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:37:47 [INFO] Chain [1] start processing
+15:37:47 [INFO] Chain [1] done processing
+15:37:47 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:37:47 [INFO] Chain [1] start processing
+15:37:48 [INFO] Chain [1] done processing
+15:37:48 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:37:48 [INFO] Chain [1] start processing
+15:37:48 [INFO] Chain [1] done processing
+15:37:48 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.016 cos_year_1=0.059
+15:37:49 [INFO] Round 2 — test accuracy: 0.564  (3561 samples)
+15:37:49 [INFO] ProphetWrapper FEDGAM round 3/10
+15:37:50 [INFO] Chain [1] start processing
+15:37:50 [INFO] Chain [1] done processing
+15:37:50 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:37:50 [INFO] Chain [1] start processing
+15:37:50 [INFO] Chain [1] done processing
+15:37:50 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:37:50 [INFO] Chain [1] start processing
+15:37:50 [INFO] Chain [1] done processing
+15:37:50 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:37:51 [INFO] Chain [1] start processing
+15:37:51 [INFO] Chain [1] done processing
+15:37:51 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:37:51 [INFO] Chain [1] start processing
+15:37:51 [INFO] Chain [1] done processing
+15:37:51 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:37:51 [INFO] Chain [1] start processing
+15:37:52 [INFO] Chain [1] done processing
+15:37:52 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:37:52 [INFO] Chain [1] start processing
+15:37:52 [INFO] Chain [1] done processing
+15:37:52 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:37:52 [INFO] Chain [1] start processing
+15:37:52 [INFO] Chain [1] done processing
+15:37:52 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:37:53 [INFO] Chain [1] start processing
+15:37:53 [INFO] Chain [1] done processing
+15:37:53 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:37:53 [INFO] Chain [1] start processing
+15:37:53 [INFO] Chain [1] done processing
+15:37:53 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:37:54 [INFO] Round 3 — test accuracy: 0.565  (3561 samples)
+15:37:54 [INFO] ProphetWrapper FEDGAM round 4/10
+15:37:55 [INFO] Chain [1] start processing
+15:37:55 [INFO] Chain [1] done processing
+15:37:55 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:37:55 [INFO] Chain [1] start processing
+15:37:55 [INFO] Chain [1] done processing
+15:37:55 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:37:55 [INFO] Chain [1] start processing
+15:37:55 [INFO] Chain [1] done processing
+15:37:55 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:37:56 [INFO] Chain [1] start processing
+15:37:56 [INFO] Chain [1] done processing
+15:37:56 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:37:56 [INFO] Chain [1] start processing
+15:37:56 [INFO] Chain [1] done processing
+15:37:56 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:37:56 [INFO] Chain [1] start processing
+15:37:56 [INFO] Chain [1] done processing
+15:37:57 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:37:57 [INFO] Chain [1] start processing
+15:37:57 [INFO] Chain [1] done processing
+15:37:57 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:37:57 [INFO] Chain [1] start processing
+15:37:57 [INFO] Chain [1] done processing
+15:37:57 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:37:58 [INFO] Chain [1] start processing
+15:37:58 [INFO] Chain [1] done processing
+15:37:58 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:37:58 [INFO] Chain [1] start processing
+15:37:58 [INFO] Chain [1] done processing
+15:37:58 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:37:59 [INFO] Round 4 — test accuracy: 0.567  (3561 samples)
+15:37:59 [INFO] ProphetWrapper FEDGAM round 5/10
+15:38:00 [INFO] Chain [1] start processing
+15:38:00 [INFO] Chain [1] done processing
+15:38:00 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:38:00 [INFO] Chain [1] start processing
+15:38:00 [INFO] Chain [1] done processing
+15:38:00 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:00 [INFO] Chain [1] start processing
+15:38:00 [INFO] Chain [1] done processing
+15:38:00 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:01 [INFO] Chain [1] start processing
+15:38:01 [INFO] Chain [1] done processing
+15:38:01 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:01 [INFO] Chain [1] start processing
+15:38:01 [INFO] Chain [1] done processing
+15:38:01 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:01 [INFO] Chain [1] start processing
+15:38:02 [INFO] Chain [1] done processing
+15:38:02 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.032
+15:38:02 [INFO] Chain [1] start processing
+15:38:02 [INFO] Chain [1] done processing
+15:38:02 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:02 [INFO] Chain [1] start processing
+15:38:03 [INFO] Chain [1] done processing
+15:38:03 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:03 [INFO] Chain [1] start processing
+15:38:03 [INFO] Chain [1] done processing
+15:38:03 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:03 [INFO] Chain [1] start processing
+15:38:03 [INFO] Chain [1] done processing
+15:38:03 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:05 [INFO] Round 5 — test accuracy: 0.568  (3561 samples)
+15:38:05 [INFO] ProphetWrapper FEDGAM round 6/10
+15:38:05 [INFO] Chain [1] start processing
+15:38:05 [INFO] Chain [1] done processing
+15:38:05 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:38:05 [INFO] Chain [1] start processing
+15:38:05 [INFO] Chain [1] done processing
+15:38:05 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:05 [INFO] Chain [1] start processing
+15:38:06 [INFO] Chain [1] done processing
+15:38:06 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:06 [INFO] Chain [1] start processing
+15:38:06 [INFO] Chain [1] done processing
+15:38:06 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:06 [INFO] Chain [1] start processing
+15:38:07 [INFO] Chain [1] done processing
+15:38:07 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:07 [INFO] Chain [1] start processing
+15:38:07 [INFO] Chain [1] done processing
+15:38:07 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.032
+15:38:07 [INFO] Chain [1] start processing
+15:38:07 [INFO] Chain [1] done processing
+15:38:07 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:08 [INFO] Chain [1] start processing
+15:38:08 [INFO] Chain [1] done processing
+15:38:08 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:08 [INFO] Chain [1] start processing
+15:38:08 [INFO] Chain [1] done processing
+15:38:08 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:08 [INFO] Chain [1] start processing
+15:38:09 [INFO] Chain [1] done processing
+15:38:09 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:10 [INFO] Round 6 — test accuracy: 0.568  (3561 samples)
+15:38:10 [INFO] ProphetWrapper FEDGAM round 7/10
+15:38:10 [INFO] Chain [1] start processing
+15:38:10 [INFO] Chain [1] done processing
+15:38:10 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:38:10 [INFO] Chain [1] start processing
+15:38:11 [INFO] Chain [1] done processing
+15:38:11 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:11 [INFO] Chain [1] start processing
+15:38:11 [INFO] Chain [1] done processing
+15:38:11 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:11 [INFO] Chain [1] start processing
+15:38:11 [INFO] Chain [1] done processing
+15:38:11 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:11 [INFO] Chain [1] start processing
+15:38:12 [INFO] Chain [1] done processing
+15:38:12 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:12 [INFO] Chain [1] start processing
+15:38:12 [INFO] Chain [1] done processing
+15:38:12 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.032
+15:38:12 [INFO] Chain [1] start processing
+15:38:12 [INFO] Chain [1] done processing
+15:38:12 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:12 [INFO] Chain [1] start processing
+15:38:13 [INFO] Chain [1] done processing
+15:38:13 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:13 [INFO] Chain [1] start processing
+15:38:13 [INFO] Chain [1] done processing
+15:38:13 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:13 [INFO] Chain [1] start processing
+15:38:13 [INFO] Chain [1] done processing
+15:38:13 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:15 [INFO] Round 7 — test accuracy: 0.568  (3561 samples)
+15:38:15 [INFO] ProphetWrapper FEDGAM round 8/10
+15:38:15 [INFO] Chain [1] start processing
+15:38:15 [INFO] Chain [1] done processing
+15:38:15 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:38:15 [INFO] Chain [1] start processing
+15:38:15 [INFO] Chain [1] done processing
+15:38:15 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:16 [INFO] Chain [1] start processing
+15:38:16 [INFO] Chain [1] done processing
+15:38:16 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:16 [INFO] Chain [1] start processing
+15:38:16 [INFO] Chain [1] done processing
+15:38:16 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:16 [INFO] Chain [1] start processing
+15:38:16 [INFO] Chain [1] done processing
+15:38:16 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:17 [INFO] Chain [1] start processing
+15:38:17 [INFO] Chain [1] done processing
+15:38:17 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:38:17 [INFO] Chain [1] start processing
+15:38:17 [INFO] Chain [1] done processing
+15:38:17 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:18 [INFO] Chain [1] start processing
+15:38:18 [INFO] Chain [1] done processing
+15:38:18 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:18 [INFO] Chain [1] start processing
+15:38:18 [INFO] Chain [1] done processing
+15:38:18 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:18 [INFO] Chain [1] start processing
+15:38:18 [INFO] Chain [1] done processing
+15:38:18 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:20 [INFO] Round 8 — test accuracy: 0.566  (3561 samples)
+15:38:20 [INFO] ProphetWrapper FEDGAM round 9/10
+15:38:20 [INFO] Chain [1] start processing
+15:38:20 [INFO] Chain [1] done processing
+15:38:20 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:38:20 [INFO] Chain [1] start processing
+15:38:20 [INFO] Chain [1] done processing
+15:38:20 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:21 [INFO] Chain [1] start processing
+15:38:21 [INFO] Chain [1] done processing
+15:38:21 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:21 [INFO] Chain [1] start processing
+15:38:21 [INFO] Chain [1] done processing
+15:38:21 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:21 [INFO] Chain [1] start processing
+15:38:22 [INFO] Chain [1] done processing
+15:38:22 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:22 [INFO] Chain [1] start processing
+15:38:22 [INFO] Chain [1] done processing
+15:38:22 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:38:22 [INFO] Chain [1] start processing
+15:38:22 [INFO] Chain [1] done processing
+15:38:22 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:23 [INFO] Chain [1] start processing
+15:38:23 [INFO] Chain [1] done processing
+15:38:23 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:23 [INFO] Chain [1] start processing
+15:38:23 [INFO] Chain [1] done processing
+15:38:23 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:23 [INFO] Chain [1] start processing
+15:38:23 [INFO] Chain [1] done processing
+15:38:23 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:25 [INFO] Round 9 — test accuracy: 0.569  (3561 samples)
+15:38:25 [INFO] ProphetWrapper FEDGAM round 10/10
+15:38:25 [INFO] Chain [1] start processing
+15:38:25 [INFO] Chain [1] done processing
+15:38:25 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.001 cos_year_1=0.043
+15:38:25 [INFO] Chain [1] start processing
+15:38:25 [INFO] Chain [1] done processing
+15:38:25 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:38:26 [INFO] Chain [1] start processing
+15:38:26 [INFO] Chain [1] done processing
+15:38:26 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:38:26 [INFO] Chain [1] start processing
+15:38:26 [INFO] Chain [1] done processing
+15:38:26 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:38:27 [INFO] Chain [1] start processing
+15:38:27 [INFO] Chain [1] done processing
+15:38:27 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:38:27 [INFO] Chain [1] start processing
+15:38:27 [INFO] Chain [1] done processing
+15:38:27 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.032
+15:38:27 [INFO] Chain [1] start processing
+15:38:27 [INFO] Chain [1] done processing
+15:38:27 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:38:28 [INFO] Chain [1] start processing
+15:38:28 [INFO] Chain [1] done processing
+15:38:28 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:38:28 [INFO] Chain [1] start processing
+15:38:28 [INFO] Chain [1] done processing
+15:38:28 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:38:28 [INFO] Chain [1] start processing
+15:38:29 [INFO] Chain [1] done processing
+15:38:29 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:38:30 [INFO] Round 10 — test accuracy: 0.568  (3561 samples)
+15:38:30 [INFO] ProphetWrapper FEDGAM prophet_fedgam_geographic done. Final acc=0.568  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedgam_geographic_fl_metrics.csv
+15:38:30 [INFO] === E7 ProphetWrapper + FEDGAM — iid (max_train_years=None) ===
+15:38:30 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:38:30 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:38:30 [INFO] ProphetWrapper FEDGAM round 1/10
+15:38:30 [INFO] Chain [1] start processing
+15:38:30 [INFO] Chain [1] done processing
+15:38:30 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:31 [INFO] Chain [1] start processing
+15:38:31 [INFO] Chain [1] done processing
+15:38:31 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:31 [INFO] Chain [1] start processing
+15:38:31 [INFO] Chain [1] done processing
+15:38:31 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:38:31 [INFO] Chain [1] start processing
+15:38:32 [INFO] Chain [1] done processing
+15:38:32 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:32 [INFO] Chain [1] start processing
+15:38:32 [INFO] Chain [1] done processing
+15:38:32 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:32 [INFO] Chain [1] start processing
+15:38:33 [INFO] Chain [1] done processing
+15:38:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:33 [INFO] Chain [1] start processing
+15:38:33 [INFO] Chain [1] done processing
+15:38:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:38:33 [INFO] Chain [1] start processing
+15:38:33 [INFO] Chain [1] done processing
+15:38:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:34 [INFO] Chain [1] start processing
+15:38:34 [INFO] Chain [1] done processing
+15:38:34 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:38:34 [INFO] Chain [1] start processing
+15:38:34 [INFO] Chain [1] done processing
+15:38:34 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:38:36 [INFO] Round 1 — test accuracy: 0.571  (3580 samples)
+15:38:36 [INFO] ProphetWrapper FEDGAM round 2/10
+15:38:36 [INFO] Chain [1] start processing
+15:38:36 [INFO] Chain [1] done processing
+15:38:36 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:36 [INFO] Chain [1] start processing
+15:38:36 [INFO] Chain [1] done processing
+15:38:36 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:37 [INFO] Chain [1] start processing
+15:38:37 [INFO] Chain [1] done processing
+15:38:37 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:38:37 [INFO] Chain [1] start processing
+15:38:37 [INFO] Chain [1] done processing
+15:38:37 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:37 [INFO] Chain [1] start processing
+15:38:38 [INFO] Chain [1] done processing
+15:38:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:38 [INFO] Chain [1] start processing
+15:38:38 [INFO] Chain [1] done processing
+15:38:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:38 [INFO] Chain [1] start processing
+15:38:38 [INFO] Chain [1] done processing
+15:38:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:38:39 [INFO] Chain [1] start processing
+15:38:39 [INFO] Chain [1] done processing
+15:38:39 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:38:39 [INFO] Chain [1] start processing
+15:38:39 [INFO] Chain [1] done processing
+15:38:39 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:38:39 [INFO] Chain [1] start processing
+15:38:39 [INFO] Chain [1] done processing
+15:38:39 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:38:41 [INFO] Round 2 — test accuracy: 0.568  (3580 samples)
+15:38:41 [INFO] ProphetWrapper FEDGAM round 3/10
+15:38:41 [INFO] Chain [1] start processing
+15:38:41 [INFO] Chain [1] done processing
+15:38:41 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:41 [INFO] Chain [1] start processing
+15:38:42 [INFO] Chain [1] done processing
+15:38:42 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:42 [INFO] Chain [1] start processing
+15:38:42 [INFO] Chain [1] done processing
+15:38:42 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.017 cos_year_1=0.041
+15:38:42 [INFO] Chain [1] start processing
+15:38:42 [INFO] Chain [1] done processing
+15:38:42 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:43 [INFO] Chain [1] start processing
+15:38:43 [INFO] Chain [1] done processing
+15:38:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:43 [INFO] Chain [1] start processing
+15:38:43 [INFO] Chain [1] done processing
+15:38:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:43 [INFO] Chain [1] start processing
+15:38:43 [INFO] Chain [1] done processing
+15:38:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:38:44 [INFO] Chain [1] start processing
+15:38:44 [INFO] Chain [1] done processing
+15:38:44 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:38:44 [INFO] Chain [1] start processing
+15:38:44 [INFO] Chain [1] done processing
+15:38:44 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:38:44 [INFO] Chain [1] start processing
+15:38:45 [INFO] Chain [1] done processing
+15:38:45 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:38:46 [INFO] Round 3 — test accuracy: 0.570  (3580 samples)
+15:38:46 [INFO] ProphetWrapper FEDGAM round 4/10
+15:38:46 [INFO] Chain [1] start processing
+15:38:46 [INFO] Chain [1] done processing
+15:38:46 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:47 [INFO] Chain [1] start processing
+15:38:47 [INFO] Chain [1] done processing
+15:38:47 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:47 [INFO] Chain [1] start processing
+15:38:47 [INFO] Chain [1] done processing
+15:38:47 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.017 cos_year_1=0.041
+15:38:48 [INFO] Chain [1] start processing
+15:38:48 [INFO] Chain [1] done processing
+15:38:48 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:48 [INFO] Chain [1] start processing
+15:38:48 [INFO] Chain [1] done processing
+15:38:48 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:48 [INFO] Chain [1] start processing
+15:38:48 [INFO] Chain [1] done processing
+15:38:48 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:49 [INFO] Chain [1] start processing
+15:38:49 [INFO] Chain [1] done processing
+15:38:49 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:38:49 [INFO] Chain [1] start processing
+15:38:49 [INFO] Chain [1] done processing
+15:38:49 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:38:49 [INFO] Chain [1] start processing
+15:38:50 [INFO] Chain [1] done processing
+15:38:50 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:38:50 [INFO] Chain [1] start processing
+15:38:50 [INFO] Chain [1] done processing
+15:38:50 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:38:51 [INFO] Round 4 — test accuracy: 0.570  (3580 samples)
+15:38:51 [INFO] ProphetWrapper FEDGAM round 5/10
+15:38:52 [INFO] Chain [1] start processing
+15:38:52 [INFO] Chain [1] done processing
+15:38:52 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:52 [INFO] Chain [1] start processing
+15:38:52 [INFO] Chain [1] done processing
+15:38:52 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:52 [INFO] Chain [1] start processing
+15:38:52 [INFO] Chain [1] done processing
+15:38:52 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:38:53 [INFO] Chain [1] start processing
+15:38:53 [INFO] Chain [1] done processing
+15:38:53 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:53 [INFO] Chain [1] start processing
+15:38:53 [INFO] Chain [1] done processing
+15:38:53 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:53 [INFO] Chain [1] start processing
+15:38:54 [INFO] Chain [1] done processing
+15:38:54 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:54 [INFO] Chain [1] start processing
+15:38:54 [INFO] Chain [1] done processing
+15:38:54 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:38:54 [INFO] Chain [1] start processing
+15:38:55 [INFO] Chain [1] done processing
+15:38:55 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:38:55 [INFO] Chain [1] start processing
+15:38:55 [INFO] Chain [1] done processing
+15:38:55 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:38:55 [INFO] Chain [1] start processing
+15:38:55 [INFO] Chain [1] done processing
+15:38:55 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:38:57 [INFO] Round 5 — test accuracy: 0.568  (3580 samples)
+15:38:57 [INFO] ProphetWrapper FEDGAM round 6/10
+15:38:57 [INFO] Chain [1] start processing
+15:38:57 [INFO] Chain [1] done processing
+15:38:57 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:38:57 [INFO] Chain [1] start processing
+15:38:58 [INFO] Chain [1] done processing
+15:38:58 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:38:58 [INFO] Chain [1] start processing
+15:38:58 [INFO] Chain [1] done processing
+15:38:58 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:38:58 [INFO] Chain [1] start processing
+15:38:58 [INFO] Chain [1] done processing
+15:38:58 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:38:58 [INFO] Chain [1] start processing
+15:38:59 [INFO] Chain [1] done processing
+15:38:59 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:38:59 [INFO] Chain [1] start processing
+15:38:59 [INFO] Chain [1] done processing
+15:38:59 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.014 cos_year_1=0.038
+15:38:59 [INFO] Chain [1] start processing
+15:38:59 [INFO] Chain [1] done processing
+15:38:59 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:38:59 [INFO] Chain [1] start processing
+15:39:00 [INFO] Chain [1] done processing
+15:39:00 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:39:00 [INFO] Chain [1] start processing
+15:39:00 [INFO] Chain [1] done processing
+15:39:00 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:39:00 [INFO] Chain [1] start processing
+15:39:00 [INFO] Chain [1] done processing
+15:39:00 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:39:02 [INFO] Round 6 — test accuracy: 0.566  (3580 samples)
+15:39:02 [INFO] ProphetWrapper FEDGAM round 7/10
+15:39:02 [INFO] Chain [1] start processing
+15:39:02 [INFO] Chain [1] done processing
+15:39:02 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:39:02 [INFO] Chain [1] start processing
+15:39:03 [INFO] Chain [1] done processing
+15:39:03 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:39:03 [INFO] Chain [1] start processing
+15:39:03 [INFO] Chain [1] done processing
+15:39:03 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:39:03 [INFO] Chain [1] start processing
+15:39:03 [INFO] Chain [1] done processing
+15:39:03 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:39:04 [INFO] Chain [1] start processing
+15:39:04 [INFO] Chain [1] done processing
+15:39:04 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:39:04 [INFO] Chain [1] start processing
+15:39:04 [INFO] Chain [1] done processing
+15:39:04 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.014 cos_year_1=0.038
+15:39:04 [INFO] Chain [1] start processing
+15:39:05 [INFO] Chain [1] done processing
+15:39:05 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:39:05 [INFO] Chain [1] start processing
+15:39:05 [INFO] Chain [1] done processing
+15:39:05 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:39:05 [INFO] Chain [1] start processing
+15:39:05 [INFO] Chain [1] done processing
+15:39:05 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:39:05 [INFO] Chain [1] start processing
+15:39:06 [INFO] Chain [1] done processing
+15:39:06 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:39:07 [INFO] Round 7 — test accuracy: 0.566  (3580 samples)
+15:39:07 [INFO] ProphetWrapper FEDGAM round 8/10
+15:39:07 [INFO] Chain [1] start processing
+15:39:07 [INFO] Chain [1] done processing
+15:39:07 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:39:08 [INFO] Chain [1] start processing
+15:39:08 [INFO] Chain [1] done processing
+15:39:08 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:39:08 [INFO] Chain [1] start processing
+15:39:08 [INFO] Chain [1] done processing
+15:39:08 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:39:08 [INFO] Chain [1] start processing
+15:39:09 [INFO] Chain [1] done processing
+15:39:09 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:39:09 [INFO] Chain [1] start processing
+15:39:09 [INFO] Chain [1] done processing
+15:39:09 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:39:09 [INFO] Chain [1] start processing
+15:39:09 [INFO] Chain [1] done processing
+15:39:09 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.014 cos_year_1=0.038
+15:39:10 [INFO] Chain [1] start processing
+15:39:10 [INFO] Chain [1] done processing
+15:39:10 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:39:10 [INFO] Chain [1] start processing
+15:39:10 [INFO] Chain [1] done processing
+15:39:10 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:39:10 [INFO] Chain [1] start processing
+15:39:11 [INFO] Chain [1] done processing
+15:39:11 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:39:11 [INFO] Chain [1] start processing
+15:39:11 [INFO] Chain [1] done processing
+15:39:11 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:39:12 [INFO] Round 8 — test accuracy: 0.569  (3580 samples)
+15:39:12 [INFO] ProphetWrapper FEDGAM round 9/10
+15:39:13 [INFO] Chain [1] start processing
+15:39:13 [INFO] Chain [1] done processing
+15:39:13 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:39:13 [INFO] Chain [1] start processing
+15:39:13 [INFO] Chain [1] done processing
+15:39:13 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:39:13 [INFO] Chain [1] start processing
+15:39:13 [INFO] Chain [1] done processing
+15:39:13 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:39:14 [INFO] Chain [1] start processing
+15:39:14 [INFO] Chain [1] done processing
+15:39:14 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:39:14 [INFO] Chain [1] start processing
+15:39:14 [INFO] Chain [1] done processing
+15:39:14 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:39:14 [INFO] Chain [1] start processing
+15:39:15 [INFO] Chain [1] done processing
+15:39:15 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.014 cos_year_1=0.038
+15:39:15 [INFO] Chain [1] start processing
+15:39:15 [INFO] Chain [1] done processing
+15:39:15 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:39:15 [INFO] Chain [1] start processing
+15:39:16 [INFO] Chain [1] done processing
+15:39:16 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:39:16 [INFO] Chain [1] start processing
+15:39:16 [INFO] Chain [1] done processing
+15:39:16 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:39:16 [INFO] Chain [1] start processing
+15:39:16 [INFO] Chain [1] done processing
+15:39:16 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:39:18 [INFO] Round 9 — test accuracy: 0.564  (3580 samples)
+15:39:18 [INFO] ProphetWrapper FEDGAM round 10/10
+15:39:18 [INFO] Chain [1] start processing
+15:39:18 [INFO] Chain [1] done processing
+15:39:18 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:39:18 [INFO] Chain [1] start processing
+15:39:18 [INFO] Chain [1] done processing
+15:39:18 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:39:19 [INFO] Chain [1] start processing
+15:39:19 [INFO] Chain [1] done processing
+15:39:19 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:39:19 [INFO] Chain [1] start processing
+15:39:19 [INFO] Chain [1] done processing
+15:39:19 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:39:19 [INFO] Chain [1] start processing
+15:39:20 [INFO] Chain [1] done processing
+15:39:20 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:39:20 [INFO] Chain [1] start processing
+15:39:20 [INFO] Chain [1] done processing
+15:39:20 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.014 cos_year_1=0.038
+15:39:20 [INFO] Chain [1] start processing
+15:39:20 [INFO] Chain [1] done processing
+15:39:20 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:39:20 [INFO] Chain [1] start processing
+15:39:21 [INFO] Chain [1] done processing
+15:39:21 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:39:21 [INFO] Chain [1] start processing
+15:39:21 [INFO] Chain [1] done processing
+15:39:21 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:39:21 [INFO] Chain [1] start processing
+15:39:21 [INFO] Chain [1] done processing
+15:39:21 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:39:23 [INFO] Round 10 — test accuracy: 0.564  (3580 samples)
+15:39:23 [INFO] ProphetWrapper FEDGAM prophet_fedgam_iid done. Final acc=0.564  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedgam_iid_fl_metrics.csv
+15:39:23 [INFO] === E7 ProphetWrapper + FEDAVG — geographic (max_train_years=None) ===
+15:39:23 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:39:23 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:39:23 [INFO] ProphetWrapper FEDAVG round 1/10
+15:39:23 [INFO] Chain [1] start processing
+15:39:23 [INFO] Chain [1] done processing
+15:39:23 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:24 [INFO] Chain [1] start processing
+15:39:24 [INFO] Chain [1] done processing
+15:39:24 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:24 [INFO] Chain [1] start processing
+15:39:24 [INFO] Chain [1] done processing
+15:39:24 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:24 [INFO] Chain [1] start processing
+15:39:25 [INFO] Chain [1] done processing
+15:39:25 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.067
+15:39:25 [INFO] Chain [1] start processing
+15:39:25 [INFO] Chain [1] done processing
+15:39:25 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:25 [INFO] Chain [1] start processing
+15:39:26 [INFO] Chain [1] done processing
+15:39:26 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.031
+15:39:26 [INFO] Chain [1] start processing
+15:39:26 [INFO] Chain [1] done processing
+15:39:26 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:26 [INFO] Chain [1] start processing
+15:39:27 [INFO] Chain [1] done processing
+15:39:27 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:27 [INFO] Chain [1] start processing
+15:39:27 [INFO] Chain [1] done processing
+15:39:27 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:27 [INFO] Chain [1] start processing
+15:39:28 [INFO] Chain [1] done processing
+15:39:28 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:39:29 [INFO] Round 1 — test accuracy: 0.564  (3561 samples)
+15:39:29 [INFO] ProphetWrapper FEDAVG round 2/10
+15:39:29 [INFO] Chain [1] start processing
+15:39:29 [INFO] Chain [1] done processing
+15:39:29 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:29 [INFO] Chain [1] start processing
+15:39:30 [INFO] Chain [1] done processing
+15:39:30 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:30 [INFO] Chain [1] start processing
+15:39:30 [INFO] Chain [1] done processing
+15:39:30 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:30 [INFO] Chain [1] start processing
+15:39:31 [INFO] Chain [1] done processing
+15:39:31 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:31 [INFO] Chain [1] start processing
+15:39:31 [INFO] Chain [1] done processing
+15:39:31 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:31 [INFO] Chain [1] start processing
+15:39:32 [INFO] Chain [1] done processing
+15:39:32 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:39:32 [INFO] Chain [1] start processing
+15:39:32 [INFO] Chain [1] done processing
+15:39:32 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:32 [INFO] Chain [1] start processing
+15:39:33 [INFO] Chain [1] done processing
+15:39:33 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:33 [INFO] Chain [1] start processing
+15:39:33 [INFO] Chain [1] done processing
+15:39:33 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:33 [INFO] Chain [1] start processing
+15:39:33 [INFO] Chain [1] done processing
+15:39:33 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:39:35 [INFO] Round 2 — test accuracy: 0.566  (3561 samples)
+15:39:35 [INFO] ProphetWrapper FEDAVG round 3/10
+15:39:35 [INFO] Chain [1] start processing
+15:39:35 [INFO] Chain [1] done processing
+15:39:35 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:35 [INFO] Chain [1] start processing
+15:39:36 [INFO] Chain [1] done processing
+15:39:36 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:36 [INFO] Chain [1] start processing
+15:39:36 [INFO] Chain [1] done processing
+15:39:36 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:36 [INFO] Chain [1] start processing
+15:39:36 [INFO] Chain [1] done processing
+15:39:36 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:37 [INFO] Chain [1] start processing
+15:39:37 [INFO] Chain [1] done processing
+15:39:37 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:37 [INFO] Chain [1] start processing
+15:39:37 [INFO] Chain [1] done processing
+15:39:37 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.031
+15:39:38 [INFO] Chain [1] start processing
+15:39:38 [INFO] Chain [1] done processing
+15:39:38 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:38 [INFO] Chain [1] start processing
+15:39:38 [INFO] Chain [1] done processing
+15:39:38 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:38 [INFO] Chain [1] start processing
+15:39:39 [INFO] Chain [1] done processing
+15:39:39 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:39 [INFO] Chain [1] start processing
+15:39:39 [INFO] Chain [1] done processing
+15:39:39 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:39:40 [INFO] Round 3 — test accuracy: 0.565  (3561 samples)
+15:39:40 [INFO] ProphetWrapper FEDAVG round 4/10
+15:39:41 [INFO] Chain [1] start processing
+15:39:41 [INFO] Chain [1] done processing
+15:39:41 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:41 [INFO] Chain [1] start processing
+15:39:41 [INFO] Chain [1] done processing
+15:39:41 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:41 [INFO] Chain [1] start processing
+15:39:42 [INFO] Chain [1] done processing
+15:39:42 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:42 [INFO] Chain [1] start processing
+15:39:42 [INFO] Chain [1] done processing
+15:39:42 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:42 [INFO] Chain [1] start processing
+15:39:42 [INFO] Chain [1] done processing
+15:39:42 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:43 [INFO] Chain [1] start processing
+15:39:43 [INFO] Chain [1] done processing
+15:39:43 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.031
+15:39:43 [INFO] Chain [1] start processing
+15:39:43 [INFO] Chain [1] done processing
+15:39:43 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:44 [INFO] Chain [1] start processing
+15:39:44 [INFO] Chain [1] done processing
+15:39:44 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:44 [INFO] Chain [1] start processing
+15:39:44 [INFO] Chain [1] done processing
+15:39:44 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:44 [INFO] Chain [1] start processing
+15:39:45 [INFO] Chain [1] done processing
+15:39:45 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.016 cos_year_1=0.059
+15:39:46 [INFO] Round 4 — test accuracy: 0.566  (3561 samples)
+15:39:46 [INFO] ProphetWrapper FEDAVG round 5/10
+15:39:46 [INFO] Chain [1] start processing
+15:39:46 [INFO] Chain [1] done processing
+15:39:46 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:47 [INFO] Chain [1] start processing
+15:39:47 [INFO] Chain [1] done processing
+15:39:47 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:47 [INFO] Chain [1] start processing
+15:39:47 [INFO] Chain [1] done processing
+15:39:47 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:47 [INFO] Chain [1] start processing
+15:39:48 [INFO] Chain [1] done processing
+15:39:48 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:48 [INFO] Chain [1] start processing
+15:39:48 [INFO] Chain [1] done processing
+15:39:48 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:48 [INFO] Chain [1] start processing
+15:39:49 [INFO] Chain [1] done processing
+15:39:49 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:39:49 [INFO] Chain [1] start processing
+15:39:49 [INFO] Chain [1] done processing
+15:39:49 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:50 [INFO] Chain [1] start processing
+15:39:50 [INFO] Chain [1] done processing
+15:39:50 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:50 [INFO] Chain [1] start processing
+15:39:50 [INFO] Chain [1] done processing
+15:39:50 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:50 [INFO] Chain [1] start processing
+15:39:51 [INFO] Chain [1] done processing
+15:39:51 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:39:52 [INFO] Round 5 — test accuracy: 0.565  (3561 samples)
+15:39:52 [INFO] ProphetWrapper FEDAVG round 6/10
+15:39:52 [INFO] Chain [1] start processing
+15:39:52 [INFO] Chain [1] done processing
+15:39:52 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:52 [INFO] Chain [1] start processing
+15:39:53 [INFO] Chain [1] done processing
+15:39:53 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:53 [INFO] Chain [1] start processing
+15:39:53 [INFO] Chain [1] done processing
+15:39:53 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:53 [INFO] Chain [1] start processing
+15:39:54 [INFO] Chain [1] done processing
+15:39:54 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:54 [INFO] Chain [1] start processing
+15:39:54 [INFO] Chain [1] done processing
+15:39:54 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:39:54 [INFO] Chain [1] start processing
+15:39:54 [INFO] Chain [1] done processing
+15:39:54 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.031
+15:39:55 [INFO] Chain [1] start processing
+15:39:55 [INFO] Chain [1] done processing
+15:39:55 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:39:55 [INFO] Chain [1] start processing
+15:39:55 [INFO] Chain [1] done processing
+15:39:55 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:39:55 [INFO] Chain [1] start processing
+15:39:56 [INFO] Chain [1] done processing
+15:39:56 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:39:56 [INFO] Chain [1] start processing
+15:39:56 [INFO] Chain [1] done processing
+15:39:56 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:39:57 [INFO] Round 6 — test accuracy: 0.566  (3561 samples)
+15:39:57 [INFO] ProphetWrapper FEDAVG round 7/10
+15:39:58 [INFO] Chain [1] start processing
+15:39:58 [INFO] Chain [1] done processing
+15:39:58 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:39:58 [INFO] Chain [1] start processing
+15:39:58 [INFO] Chain [1] done processing
+15:39:58 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:39:58 [INFO] Chain [1] start processing
+15:39:59 [INFO] Chain [1] done processing
+15:39:59 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:39:59 [INFO] Chain [1] start processing
+15:39:59 [INFO] Chain [1] done processing
+15:39:59 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:39:59 [INFO] Chain [1] start processing
+15:39:59 [INFO] Chain [1] done processing
+15:39:59 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:40:00 [INFO] Chain [1] start processing
+15:40:00 [INFO] Chain [1] done processing
+15:40:00 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.003 cos_year_1=0.031
+15:40:00 [INFO] Chain [1] start processing
+15:40:00 [INFO] Chain [1] done processing
+15:40:00 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:40:01 [INFO] Chain [1] start processing
+15:40:01 [INFO] Chain [1] done processing
+15:40:01 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:40:01 [INFO] Chain [1] start processing
+15:40:01 [INFO] Chain [1] done processing
+15:40:01 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:40:01 [INFO] Chain [1] start processing
+15:40:02 [INFO] Chain [1] done processing
+15:40:02 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.016 cos_year_1=0.059
+15:40:03 [INFO] Round 7 — test accuracy: 0.564  (3561 samples)
+15:40:03 [INFO] ProphetWrapper FEDAVG round 8/10
+15:40:03 [INFO] Chain [1] start processing
+15:40:03 [INFO] Chain [1] done processing
+15:40:03 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:40:04 [INFO] Chain [1] start processing
+15:40:04 [INFO] Chain [1] done processing
+15:40:04 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:40:04 [INFO] Chain [1] start processing
+15:40:04 [INFO] Chain [1] done processing
+15:40:04 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:40:04 [INFO] Chain [1] start processing
+15:40:05 [INFO] Chain [1] done processing
+15:40:05 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:40:05 [INFO] Chain [1] start processing
+15:40:05 [INFO] Chain [1] done processing
+15:40:05 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:40:05 [INFO] Chain [1] start processing
+15:40:05 [INFO] Chain [1] done processing
+15:40:06 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:40:06 [INFO] Chain [1] start processing
+15:40:06 [INFO] Chain [1] done processing
+15:40:06 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:40:06 [INFO] Chain [1] start processing
+15:40:06 [INFO] Chain [1] done processing
+15:40:06 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:40:07 [INFO] Chain [1] start processing
+15:40:07 [INFO] Chain [1] done processing
+15:40:07 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:40:07 [INFO] Chain [1] start processing
+15:40:07 [INFO] Chain [1] done processing
+15:40:07 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:40:09 [INFO] Round 8 — test accuracy: 0.566  (3561 samples)
+15:40:09 [INFO] ProphetWrapper FEDAVG round 9/10
+15:40:09 [INFO] Chain [1] start processing
+15:40:09 [INFO] Chain [1] done processing
+15:40:09 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:40:09 [INFO] Chain [1] start processing
+15:40:09 [INFO] Chain [1] done processing
+15:40:09 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:40:10 [INFO] Chain [1] start processing
+15:40:10 [INFO] Chain [1] done processing
+15:40:10 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:40:10 [INFO] Chain [1] start processing
+15:40:10 [INFO] Chain [1] done processing
+15:40:10 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:40:10 [INFO] Chain [1] start processing
+15:40:11 [INFO] Chain [1] done processing
+15:40:11 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:40:11 [INFO] Chain [1] start processing
+15:40:11 [INFO] Chain [1] done processing
+15:40:11 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:40:12 [INFO] Chain [1] start processing
+15:40:12 [INFO] Chain [1] done processing
+15:40:12 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:40:12 [INFO] Chain [1] start processing
+15:40:12 [INFO] Chain [1] done processing
+15:40:12 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:40:12 [INFO] Chain [1] start processing
+15:40:13 [INFO] Chain [1] done processing
+15:40:13 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:40:13 [INFO] Chain [1] start processing
+15:40:13 [INFO] Chain [1] done processing
+15:40:13 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:40:14 [INFO] Round 9 — test accuracy: 0.565  (3561 samples)
+15:40:14 [INFO] ProphetWrapper FEDAVG round 10/10
+15:40:15 [INFO] Chain [1] start processing
+15:40:15 [INFO] Chain [1] done processing
+15:40:15 [INFO] ProphetWrapper fitted on 2305 rows — sin_year_1=-0.002 cos_year_1=0.043
+15:40:15 [INFO] Chain [1] start processing
+15:40:15 [INFO] Chain [1] done processing
+15:40:15 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=0.006 cos_year_1=0.036
+15:40:15 [INFO] Chain [1] start processing
+15:40:16 [INFO] Chain [1] done processing
+15:40:16 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.026 cos_year_1=0.039
+15:40:16 [INFO] Chain [1] start processing
+15:40:16 [INFO] Chain [1] done processing
+15:40:16 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.019 cos_year_1=0.068
+15:40:16 [INFO] Chain [1] start processing
+15:40:17 [INFO] Chain [1] done processing
+15:40:17 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.018 cos_year_1=0.028
+15:40:17 [INFO] Chain [1] start processing
+15:40:17 [INFO] Chain [1] done processing
+15:40:17 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.002 cos_year_1=0.032
+15:40:18 [INFO] Chain [1] start processing
+15:40:18 [INFO] Chain [1] done processing
+15:40:18 [INFO] ProphetWrapper fitted on 2911 rows — sin_year_1=-0.019 cos_year_1=0.070
+15:40:18 [INFO] Chain [1] start processing
+15:40:18 [INFO] Chain [1] done processing
+15:40:18 [INFO] ProphetWrapper fitted on 2912 rows — sin_year_1=-0.010 cos_year_1=0.026
+15:40:18 [INFO] Chain [1] start processing
+15:40:19 [INFO] Chain [1] done processing
+15:40:19 [INFO] ProphetWrapper fitted on 2922 rows — sin_year_1=-0.023 cos_year_1=0.069
+15:40:19 [INFO] Chain [1] start processing
+15:40:19 [INFO] Chain [1] done processing
+15:40:19 [INFO] ProphetWrapper fitted on 2854 rows — sin_year_1=-0.015 cos_year_1=0.059
+15:40:20 [INFO] Round 10 — test accuracy: 0.566  (3561 samples)
+15:40:20 [INFO] ProphetWrapper FEDAVG prophet_fedavg_geographic done. Final acc=0.566  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedavg_geographic_fl_metrics.csv
+15:40:20 [INFO] === E7 ProphetWrapper + FEDAVG — iid (max_train_years=None) ===
+15:40:20 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:40:21 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:40:21 [INFO] ProphetWrapper FEDAVG round 1/10
+15:40:21 [INFO] Chain [1] start processing
+15:40:21 [INFO] Chain [1] done processing
+15:40:21 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:21 [INFO] Chain [1] start processing
+15:40:21 [INFO] Chain [1] done processing
+15:40:21 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:22 [INFO] Chain [1] start processing
+15:40:22 [INFO] Chain [1] done processing
+15:40:22 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:40:22 [INFO] Chain [1] start processing
+15:40:22 [INFO] Chain [1] done processing
+15:40:22 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.049
+15:40:22 [INFO] Chain [1] start processing
+15:40:23 [INFO] Chain [1] done processing
+15:40:23 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:23 [INFO] Chain [1] start processing
+15:40:23 [INFO] Chain [1] done processing
+15:40:23 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:23 [INFO] Chain [1] start processing
+15:40:24 [INFO] Chain [1] done processing
+15:40:24 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:24 [INFO] Chain [1] start processing
+15:40:24 [INFO] Chain [1] done processing
+15:40:24 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:24 [INFO] Chain [1] start processing
+15:40:24 [INFO] Chain [1] done processing
+15:40:24 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:25 [INFO] Chain [1] start processing
+15:40:25 [INFO] Chain [1] done processing
+15:40:25 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:26 [INFO] Round 1 — test accuracy: 0.571  (3580 samples)
+15:40:26 [INFO] ProphetWrapper FEDAVG round 2/10
+15:40:26 [INFO] Chain [1] start processing
+15:40:27 [INFO] Chain [1] done processing
+15:40:27 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:27 [INFO] Chain [1] start processing
+15:40:27 [INFO] Chain [1] done processing
+15:40:27 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:27 [INFO] Chain [1] start processing
+15:40:27 [INFO] Chain [1] done processing
+15:40:27 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:40:28 [INFO] Chain [1] start processing
+15:40:28 [INFO] Chain [1] done processing
+15:40:28 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:28 [INFO] Chain [1] start processing
+15:40:28 [INFO] Chain [1] done processing
+15:40:28 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:28 [INFO] Chain [1] start processing
+15:40:29 [INFO] Chain [1] done processing
+15:40:29 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:29 [INFO] Chain [1] start processing
+15:40:29 [INFO] Chain [1] done processing
+15:40:29 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:29 [INFO] Chain [1] start processing
+15:40:29 [INFO] Chain [1] done processing
+15:40:29 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:30 [INFO] Chain [1] start processing
+15:40:30 [INFO] Chain [1] done processing
+15:40:30 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:30 [INFO] Chain [1] start processing
+15:40:30 [INFO] Chain [1] done processing
+15:40:30 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:32 [INFO] Round 2 — test accuracy: 0.569  (3580 samples)
+15:40:32 [INFO] ProphetWrapper FEDAVG round 3/10
+15:40:32 [INFO] Chain [1] start processing
+15:40:32 [INFO] Chain [1] done processing
+15:40:32 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:32 [INFO] Chain [1] start processing
+15:40:32 [INFO] Chain [1] done processing
+15:40:32 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:33 [INFO] Chain [1] start processing
+15:40:33 [INFO] Chain [1] done processing
+15:40:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:40:33 [INFO] Chain [1] start processing
+15:40:33 [INFO] Chain [1] done processing
+15:40:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:33 [INFO] Chain [1] start processing
+15:40:33 [INFO] Chain [1] done processing
+15:40:33 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:34 [INFO] Chain [1] start processing
+15:40:34 [INFO] Chain [1] done processing
+15:40:34 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:34 [INFO] Chain [1] start processing
+15:40:34 [INFO] Chain [1] done processing
+15:40:34 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:34 [INFO] Chain [1] start processing
+15:40:35 [INFO] Chain [1] done processing
+15:40:35 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:35 [INFO] Chain [1] start processing
+15:40:35 [INFO] Chain [1] done processing
+15:40:35 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:35 [INFO] Chain [1] start processing
+15:40:35 [INFO] Chain [1] done processing
+15:40:35 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:37 [INFO] Round 3 — test accuracy: 0.566  (3580 samples)
+15:40:37 [INFO] ProphetWrapper FEDAVG round 4/10
+15:40:37 [INFO] Chain [1] start processing
+15:40:37 [INFO] Chain [1] done processing
+15:40:37 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:38 [INFO] Chain [1] start processing
+15:40:38 [INFO] Chain [1] done processing
+15:40:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:38 [INFO] Chain [1] start processing
+15:40:38 [INFO] Chain [1] done processing
+15:40:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:40:38 [INFO] Chain [1] start processing
+15:40:38 [INFO] Chain [1] done processing
+15:40:38 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:39 [INFO] Chain [1] start processing
+15:40:39 [INFO] Chain [1] done processing
+15:40:39 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:39 [INFO] Chain [1] start processing
+15:40:39 [INFO] Chain [1] done processing
+15:40:39 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:39 [INFO] Chain [1] start processing
+15:40:40 [INFO] Chain [1] done processing
+15:40:40 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:40 [INFO] Chain [1] start processing
+15:40:40 [INFO] Chain [1] done processing
+15:40:40 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:40 [INFO] Chain [1] start processing
+15:40:40 [INFO] Chain [1] done processing
+15:40:40 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:41 [INFO] Chain [1] start processing
+15:40:41 [INFO] Chain [1] done processing
+15:40:41 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:42 [INFO] Round 4 — test accuracy: 0.569  (3580 samples)
+15:40:42 [INFO] ProphetWrapper FEDAVG round 5/10
+15:40:42 [INFO] Chain [1] start processing
+15:40:43 [INFO] Chain [1] done processing
+15:40:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:43 [INFO] Chain [1] start processing
+15:40:43 [INFO] Chain [1] done processing
+15:40:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:43 [INFO] Chain [1] start processing
+15:40:43 [INFO] Chain [1] done processing
+15:40:43 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.017 cos_year_1=0.041
+15:40:44 [INFO] Chain [1] start processing
+15:40:44 [INFO] Chain [1] done processing
+15:40:44 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:44 [INFO] Chain [1] start processing
+15:40:44 [INFO] Chain [1] done processing
+15:40:44 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:44 [INFO] Chain [1] start processing
+15:40:44 [INFO] Chain [1] done processing
+15:40:44 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:45 [INFO] Chain [1] start processing
+15:40:45 [INFO] Chain [1] done processing
+15:40:45 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:45 [INFO] Chain [1] start processing
+15:40:45 [INFO] Chain [1] done processing
+15:40:45 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:45 [INFO] Chain [1] start processing
+15:40:46 [INFO] Chain [1] done processing
+15:40:46 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:46 [INFO] Chain [1] start processing
+15:40:46 [INFO] Chain [1] done processing
+15:40:46 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:48 [INFO] Round 5 — test accuracy: 0.568  (3580 samples)
+15:40:48 [INFO] ProphetWrapper FEDAVG round 6/10
+15:40:48 [INFO] Chain [1] start processing
+15:40:48 [INFO] Chain [1] done processing
+15:40:48 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:48 [INFO] Chain [1] start processing
+15:40:48 [INFO] Chain [1] done processing
+15:40:48 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:49 [INFO] Chain [1] start processing
+15:40:49 [INFO] Chain [1] done processing
+15:40:49 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.017 cos_year_1=0.041
+15:40:49 [INFO] Chain [1] start processing
+15:40:49 [INFO] Chain [1] done processing
+15:40:49 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:49 [INFO] Chain [1] start processing
+15:40:49 [INFO] Chain [1] done processing
+15:40:49 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:50 [INFO] Chain [1] start processing
+15:40:50 [INFO] Chain [1] done processing
+15:40:50 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:50 [INFO] Chain [1] start processing
+15:40:50 [INFO] Chain [1] done processing
+15:40:50 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:51 [INFO] Chain [1] start processing
+15:40:51 [INFO] Chain [1] done processing
+15:40:51 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:51 [INFO] Chain [1] start processing
+15:40:51 [INFO] Chain [1] done processing
+15:40:51 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:51 [INFO] Chain [1] start processing
+15:40:52 [INFO] Chain [1] done processing
+15:40:52 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:53 [INFO] Round 6 — test accuracy: 0.566  (3580 samples)
+15:40:53 [INFO] ProphetWrapper FEDAVG round 7/10
+15:40:53 [INFO] Chain [1] start processing
+15:40:53 [INFO] Chain [1] done processing
+15:40:53 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:54 [INFO] Chain [1] start processing
+15:40:54 [INFO] Chain [1] done processing
+15:40:54 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:40:54 [INFO] Chain [1] start processing
+15:40:54 [INFO] Chain [1] done processing
+15:40:54 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:40:55 [INFO] Chain [1] start processing
+15:40:55 [INFO] Chain [1] done processing
+15:40:55 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:40:55 [INFO] Chain [1] start processing
+15:40:55 [INFO] Chain [1] done processing
+15:40:55 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:40:55 [INFO] Chain [1] start processing
+15:40:55 [INFO] Chain [1] done processing
+15:40:56 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:40:56 [INFO] Chain [1] start processing
+15:40:56 [INFO] Chain [1] done processing
+15:40:56 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:40:56 [INFO] Chain [1] start processing
+15:40:56 [INFO] Chain [1] done processing
+15:40:56 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:40:57 [INFO] Chain [1] start processing
+15:40:57 [INFO] Chain [1] done processing
+15:40:57 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:40:57 [INFO] Chain [1] start processing
+15:40:57 [INFO] Chain [1] done processing
+15:40:57 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:40:59 [INFO] Round 7 — test accuracy: 0.566  (3580 samples)
+15:40:59 [INFO] ProphetWrapper FEDAVG round 8/10
+15:40:59 [INFO] Chain [1] start processing
+15:40:59 [INFO] Chain [1] done processing
+15:40:59 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:40:59 [INFO] Chain [1] start processing
+15:40:59 [INFO] Chain [1] done processing
+15:40:59 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:41:00 [INFO] Chain [1] start processing
+15:41:00 [INFO] Chain [1] done processing
+15:41:00 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:41:00 [INFO] Chain [1] start processing
+15:41:00 [INFO] Chain [1] done processing
+15:41:00 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:41:00 [INFO] Chain [1] start processing
+15:41:00 [INFO] Chain [1] done processing
+15:41:00 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:41:01 [INFO] Chain [1] start processing
+15:41:01 [INFO] Chain [1] done processing
+15:41:01 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:41:01 [INFO] Chain [1] start processing
+15:41:01 [INFO] Chain [1] done processing
+15:41:01 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:41:01 [INFO] Chain [1] start processing
+15:41:02 [INFO] Chain [1] done processing
+15:41:02 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:41:02 [INFO] Chain [1] start processing
+15:41:02 [INFO] Chain [1] done processing
+15:41:02 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:41:02 [INFO] Chain [1] start processing
+15:41:02 [INFO] Chain [1] done processing
+15:41:02 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:41:04 [INFO] Round 8 — test accuracy: 0.571  (3580 samples)
+15:41:04 [INFO] ProphetWrapper FEDAVG round 9/10
+15:41:04 [INFO] Chain [1] start processing
+15:41:04 [INFO] Chain [1] done processing
+15:41:04 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:41:04 [INFO] Chain [1] start processing
+15:41:04 [INFO] Chain [1] done processing
+15:41:04 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:41:05 [INFO] Chain [1] start processing
+15:41:05 [INFO] Chain [1] done processing
+15:41:05 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.017 cos_year_1=0.041
+15:41:05 [INFO] Chain [1] start processing
+15:41:05 [INFO] Chain [1] done processing
+15:41:05 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:41:05 [INFO] Chain [1] start processing
+15:41:06 [INFO] Chain [1] done processing
+15:41:06 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:41:06 [INFO] Chain [1] start processing
+15:41:06 [INFO] Chain [1] done processing
+15:41:06 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:41:06 [INFO] Chain [1] start processing
+15:41:06 [INFO] Chain [1] done processing
+15:41:06 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:41:07 [INFO] Chain [1] start processing
+15:41:07 [INFO] Chain [1] done processing
+15:41:07 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:41:07 [INFO] Chain [1] start processing
+15:41:07 [INFO] Chain [1] done processing
+15:41:07 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:41:08 [INFO] Chain [1] start processing
+15:41:08 [INFO] Chain [1] done processing
+15:41:08 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:41:09 [INFO] Round 9 — test accuracy: 0.569  (3580 samples)
+15:41:09 [INFO] ProphetWrapper FEDAVG round 10/10
+15:41:09 [INFO] Chain [1] start processing
+15:41:10 [INFO] Chain [1] done processing
+15:41:10 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.045
+15:41:10 [INFO] Chain [1] start processing
+15:41:10 [INFO] Chain [1] done processing
+15:41:10 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.009 cos_year_1=0.032
+15:41:10 [INFO] Chain [1] start processing
+15:41:10 [INFO] Chain [1] done processing
+15:41:10 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.016 cos_year_1=0.041
+15:41:11 [INFO] Chain [1] start processing
+15:41:11 [INFO] Chain [1] done processing
+15:41:11 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.048
+15:41:11 [INFO] Chain [1] start processing
+15:41:11 [INFO] Chain [1] done processing
+15:41:11 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.005 cos_year_1=0.048
+15:41:11 [INFO] Chain [1] start processing
+15:41:11 [INFO] Chain [1] done processing
+15:41:11 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.038
+15:41:12 [INFO] Chain [1] start processing
+15:41:12 [INFO] Chain [1] done processing
+15:41:12 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.041
+15:41:12 [INFO] Chain [1] start processing
+15:41:12 [INFO] Chain [1] done processing
+15:41:12 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.015 cos_year_1=0.039
+15:41:13 [INFO] Chain [1] start processing
+15:41:13 [INFO] Chain [1] done processing
+15:41:13 [INFO] ProphetWrapper fitted on 2851 rows — sin_year_1=-0.013 cos_year_1=0.044
+15:41:13 [INFO] Chain [1] start processing
+15:41:13 [INFO] Chain [1] done processing
+15:41:13 [INFO] ProphetWrapper fitted on 2855 rows — sin_year_1=-0.015 cos_year_1=0.040
+15:41:14 [INFO] Round 10 — test accuracy: 0.569  (3580 samples)
+15:41:14 [INFO] ProphetWrapper FEDAVG prophet_fedavg_iid done. Final acc=0.569  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedavg_iid_fl_metrics.csv
+15:41:14 [INFO] === E7 ProphetWrapper + FEDGAM — geographic (max_train_years=1) ===
+15:41:14 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:41:15 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:41:15 [INFO] Limited-history: kept last 1 year(s) per client → sizes=[365, 365, 365, 365, 365, 365, 354, 361, 365, 365]
+15:41:15 [INFO] ProphetWrapper FEDGAM round 1/10
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.185 cos_year_1=0.066
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.046
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.138 cos_year_1=0.075
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.104 cos_year_1=0.085
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.160 cos_year_1=0.067
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.102 cos_year_1=0.097
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.091 cos_year_1=0.073
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.158 cos_year_1=0.050
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.184 cos_year_1=0.091
+15:41:15 [INFO] Chain [1] start processing
+15:41:15 [INFO] Chain [1] done processing
+15:41:15 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.096 cos_year_1=0.053
+15:41:17 [INFO] Round 1 — test accuracy: 0.238  (3561 samples)
+15:41:17 [INFO] ProphetWrapper FEDGAM round 2/10
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.183 cos_year_1=0.066
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.141 cos_year_1=0.046
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.135 cos_year_1=0.075
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.091 cos_year_1=0.086
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.156 cos_year_1=0.068
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.103 cos_year_1=0.097
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.099 cos_year_1=0.073
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.150 cos_year_1=0.050
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.178 cos_year_1=0.091
+15:41:17 [INFO] Chain [1] start processing
+15:41:17 [INFO] Chain [1] done processing
+15:41:17 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.098 cos_year_1=0.053
+15:41:19 [INFO] Round 2 — test accuracy: 0.240  (3561 samples)
+15:41:19 [INFO] ProphetWrapper FEDGAM round 3/10
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.187 cos_year_1=0.066
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.142 cos_year_1=0.047
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.132 cos_year_1=0.075
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.086 cos_year_1=0.086
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.154 cos_year_1=0.067
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.104 cos_year_1=0.098
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.103 cos_year_1=0.073
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.139 cos_year_1=0.050
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.169 cos_year_1=0.091
+15:41:19 [INFO] Chain [1] start processing
+15:41:19 [INFO] Chain [1] done processing
+15:41:19 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.099 cos_year_1=0.054
+15:41:21 [INFO] Round 3 — test accuracy: 0.241  (3561 samples)
+15:41:21 [INFO] ProphetWrapper FEDGAM round 4/10
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.184 cos_year_1=0.066
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.143 cos_year_1=0.046
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.129 cos_year_1=0.075
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.082 cos_year_1=0.086
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.152 cos_year_1=0.067
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.105 cos_year_1=0.098
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.108 cos_year_1=0.073
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.136 cos_year_1=0.049
+15:41:21 [INFO] Chain [1] start processing
+15:41:21 [INFO] Chain [1] done processing
+15:41:21 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.175 cos_year_1=0.092
+15:41:21 [INFO] Chain [1] start processing
+15:41:22 [INFO] Chain [1] done processing
+15:41:22 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.102 cos_year_1=0.054
+15:41:23 [INFO] Round 4 — test accuracy: 0.242  (3561 samples)
+15:41:23 [INFO] ProphetWrapper FEDGAM round 5/10
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.181 cos_year_1=0.066
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.143 cos_year_1=0.047
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.129 cos_year_1=0.075
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.076 cos_year_1=0.086
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.155 cos_year_1=0.066
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.106 cos_year_1=0.097
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.109 cos_year_1=0.073
+15:41:23 [INFO] Chain [1] start processing
+15:41:23 [INFO] Chain [1] done processing
+15:41:23 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.129 cos_year_1=0.050
+15:41:23 [INFO] Chain [1] start processing
+15:41:24 [INFO] Chain [1] done processing
+15:41:24 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.175 cos_year_1=0.092
+15:41:24 [INFO] Chain [1] start processing
+15:41:24 [INFO] Chain [1] done processing
+15:41:24 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.101 cos_year_1=0.054
+15:41:25 [INFO] Round 5 — test accuracy: 0.243  (3561 samples)
+15:41:25 [INFO] ProphetWrapper FEDGAM round 6/10
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.178 cos_year_1=0.066
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.143 cos_year_1=0.047
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.130 cos_year_1=0.075
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.078 cos_year_1=0.086
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.156 cos_year_1=0.067
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.106 cos_year_1=0.098
+15:41:25 [INFO] Chain [1] start processing
+15:41:25 [INFO] Chain [1] done processing
+15:41:25 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.106 cos_year_1=0.073
+15:41:26 [INFO] Chain [1] start processing
+15:41:26 [INFO] Chain [1] done processing
+15:41:26 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.129 cos_year_1=0.050
+15:41:26 [INFO] Chain [1] start processing
+15:41:26 [INFO] Chain [1] done processing
+15:41:26 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.170 cos_year_1=0.092
+15:41:26 [INFO] Chain [1] start processing
+15:41:26 [INFO] Chain [1] done processing
+15:41:26 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.099 cos_year_1=0.054
+15:41:27 [INFO] Round 6 — test accuracy: 0.243  (3561 samples)
+15:41:27 [INFO] ProphetWrapper FEDGAM round 7/10
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.176 cos_year_1=0.066
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.143 cos_year_1=0.047
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.130 cos_year_1=0.075
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.080 cos_year_1=0.086
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.152 cos_year_1=0.068
+15:41:27 [INFO] Chain [1] start processing
+15:41:27 [INFO] Chain [1] done processing
+15:41:27 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.103 cos_year_1=0.098
+15:41:27 [INFO] Chain [1] start processing
+15:41:28 [INFO] Chain [1] done processing
+15:41:28 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.106 cos_year_1=0.074
+15:41:28 [INFO] Chain [1] start processing
+15:41:28 [INFO] Chain [1] done processing
+15:41:28 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.131 cos_year_1=0.050
+15:41:28 [INFO] Chain [1] start processing
+15:41:28 [INFO] Chain [1] done processing
+15:41:28 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.166 cos_year_1=0.092
+15:41:28 [INFO] Chain [1] start processing
+15:41:28 [INFO] Chain [1] done processing
+15:41:28 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.100 cos_year_1=0.054
+15:41:29 [INFO] Round 7 — test accuracy: 0.242  (3561 samples)
+15:41:29 [INFO] ProphetWrapper FEDGAM round 8/10
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.174 cos_year_1=0.066
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.143 cos_year_1=0.046
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.133 cos_year_1=0.075
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.074 cos_year_1=0.086
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.149 cos_year_1=0.067
+15:41:29 [INFO] Chain [1] start processing
+15:41:29 [INFO] Chain [1] done processing
+15:41:29 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.102 cos_year_1=0.097
+15:41:30 [INFO] Chain [1] start processing
+15:41:30 [INFO] Chain [1] done processing
+15:41:30 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.107 cos_year_1=0.073
+15:41:30 [INFO] Chain [1] start processing
+15:41:30 [INFO] Chain [1] done processing
+15:41:30 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.130 cos_year_1=0.050
+15:41:30 [INFO] Chain [1] start processing
+15:41:30 [INFO] Chain [1] done processing
+15:41:30 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.165 cos_year_1=0.092
+15:41:30 [INFO] Chain [1] start processing
+15:41:30 [INFO] Chain [1] done processing
+15:41:30 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.096 cos_year_1=0.054
+15:41:31 [INFO] Round 8 — test accuracy: 0.246  (3561 samples)
+15:41:31 [INFO] ProphetWrapper FEDGAM round 9/10
+15:41:31 [INFO] Chain [1] start processing
+15:41:31 [INFO] Chain [1] done processing
+15:41:31 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.173 cos_year_1=0.066
+15:41:31 [INFO] Chain [1] start processing
+15:41:31 [INFO] Chain [1] done processing
+15:41:31 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.136 cos_year_1=0.046
+15:41:31 [INFO] Chain [1] start processing
+15:41:31 [INFO] Chain [1] done processing
+15:41:31 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.131 cos_year_1=0.075
+15:41:31 [INFO] Chain [1] start processing
+15:41:31 [INFO] Chain [1] done processing
+15:41:31 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.076 cos_year_1=0.086
+15:41:31 [INFO] Chain [1] start processing
+15:41:31 [INFO] Chain [1] done processing
+15:41:31 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.151 cos_year_1=0.067
+15:41:32 [INFO] Chain [1] start processing
+15:41:32 [INFO] Chain [1] done processing
+15:41:32 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.104 cos_year_1=0.097
+15:41:32 [INFO] Chain [1] start processing
+15:41:32 [INFO] Chain [1] done processing
+15:41:32 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.111 cos_year_1=0.073
+15:41:32 [INFO] Chain [1] start processing
+15:41:32 [INFO] Chain [1] done processing
+15:41:32 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.126 cos_year_1=0.050
+15:41:32 [INFO] Chain [1] start processing
+15:41:32 [INFO] Chain [1] done processing
+15:41:32 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.163 cos_year_1=0.092
+15:41:32 [INFO] Chain [1] start processing
+15:41:32 [INFO] Chain [1] done processing
+15:41:32 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.098 cos_year_1=0.053
+15:41:33 [INFO] Round 9 — test accuracy: 0.246  (3561 samples)
+15:41:33 [INFO] ProphetWrapper FEDGAM round 10/10
+15:41:33 [INFO] Chain [1] start processing
+15:41:33 [INFO] Chain [1] done processing
+15:41:33 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.177 cos_year_1=0.066
+15:41:33 [INFO] Chain [1] start processing
+15:41:33 [INFO] Chain [1] done processing
+15:41:33 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.137 cos_year_1=0.046
+15:41:33 [INFO] Chain [1] start processing
+15:41:33 [INFO] Chain [1] done processing
+15:41:33 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.124 cos_year_1=0.075
+15:41:33 [INFO] Chain [1] start processing
+15:41:33 [INFO] Chain [1] done processing
+15:41:33 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.077 cos_year_1=0.086
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.150 cos_year_1=0.067
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.104 cos_year_1=0.097
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.114 cos_year_1=0.073
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.128 cos_year_1=0.050
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.162 cos_year_1=0.092
+15:41:34 [INFO] Chain [1] start processing
+15:41:34 [INFO] Chain [1] done processing
+15:41:34 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.100 cos_year_1=0.054
+15:41:35 [INFO] Round 10 — test accuracy: 0.245  (3561 samples)
+15:41:35 [INFO] ProphetWrapper FEDGAM prophet_fedgam_1yr_geographic done. Final acc=0.245  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedgam_1yr_geographic_fl_metrics.csv
+15:41:35 [INFO] === E7 ProphetWrapper + FEDGAM — iid (max_train_years=1) ===
+15:41:35 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:41:35 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:41:35 [INFO] Limited-history: kept last 1 year(s) per client → sizes=[379, 369, 359, 349, 349, 377, 374, 379, 366, 334]
+15:41:35 [INFO] ProphetWrapper FEDGAM round 1/10
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.101 cos_year_1=0.060
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.051 cos_year_1=0.038
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.007 cos_year_1=0.054
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.229 cos_year_1=0.063
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.109 cos_year_1=0.049
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.061 cos_year_1=0.052
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.096 cos_year_1=0.050
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.065 cos_year_1=0.051
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.113 cos_year_1=0.062
+15:41:36 [INFO] Chain [1] start processing
+15:41:36 [INFO] Chain [1] done processing
+15:41:36 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.132 cos_year_1=0.081
+15:41:38 [INFO] Round 1 — test accuracy: 0.131  (3580 samples)
+15:41:38 [INFO] ProphetWrapper FEDGAM round 2/10
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.102 cos_year_1=0.060
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.055 cos_year_1=0.038
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.001 cos_year_1=0.054
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.219 cos_year_1=0.063
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.110 cos_year_1=0.049
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.065 cos_year_1=0.052
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.101 cos_year_1=0.050
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.071 cos_year_1=0.051
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.110 cos_year_1=0.062
+15:41:38 [INFO] Chain [1] start processing
+15:41:38 [INFO] Chain [1] done processing
+15:41:38 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.144 cos_year_1=0.081
+15:41:40 [INFO] Round 2 — test accuracy: 0.119  (3580 samples)
+15:41:40 [INFO] ProphetWrapper FEDGAM round 3/10
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.060
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.057 cos_year_1=0.037
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.006 cos_year_1=0.054
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.212 cos_year_1=0.063
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.111 cos_year_1=0.049
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.065 cos_year_1=0.053
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.106 cos_year_1=0.050
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.077 cos_year_1=0.052
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.108 cos_year_1=0.062
+15:41:40 [INFO] Chain [1] start processing
+15:41:40 [INFO] Chain [1] done processing
+15:41:40 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.151 cos_year_1=0.081
+15:41:42 [INFO] Round 3 — test accuracy: 0.114  (3580 samples)
+15:41:42 [INFO] ProphetWrapper FEDGAM round 4/10
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.060
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.060 cos_year_1=0.038
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.011 cos_year_1=0.054
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.207 cos_year_1=0.063
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.112 cos_year_1=0.049
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.068 cos_year_1=0.052
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.110 cos_year_1=0.050
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.082 cos_year_1=0.052
+15:41:42 [INFO] Chain [1] start processing
+15:41:42 [INFO] Chain [1] done processing
+15:41:42 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.108 cos_year_1=0.062
+15:41:43 [INFO] Chain [1] start processing
+15:41:43 [INFO] Chain [1] done processing
+15:41:43 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.152 cos_year_1=0.082
+15:41:44 [INFO] Round 4 — test accuracy: 0.109  (3580 samples)
+15:41:44 [INFO] ProphetWrapper FEDGAM round 5/10
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.105 cos_year_1=0.060
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.063 cos_year_1=0.038
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.015 cos_year_1=0.053
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.203 cos_year_1=0.064
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.115 cos_year_1=0.049
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.069 cos_year_1=0.051
+15:41:44 [INFO] Chain [1] start processing
+15:41:44 [INFO] Chain [1] done processing
+15:41:44 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.110 cos_year_1=0.050
+15:41:45 [INFO] Chain [1] start processing
+15:41:45 [INFO] Chain [1] done processing
+15:41:45 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.086 cos_year_1=0.052
+15:41:45 [INFO] Chain [1] start processing
+15:41:45 [INFO] Chain [1] done processing
+15:41:45 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.110 cos_year_1=0.062
+15:41:45 [INFO] Chain [1] start processing
+15:41:45 [INFO] Chain [1] done processing
+15:41:45 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.155 cos_year_1=0.082
+15:41:46 [INFO] Round 5 — test accuracy: 0.102  (3580 samples)
+15:41:46 [INFO] ProphetWrapper FEDGAM round 6/10
+15:41:46 [INFO] Chain [1] start processing
+15:41:46 [INFO] Chain [1] done processing
+15:41:46 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.107 cos_year_1=0.061
+15:41:46 [INFO] Chain [1] start processing
+15:41:46 [INFO] Chain [1] done processing
+15:41:46 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.065 cos_year_1=0.038
+15:41:46 [INFO] Chain [1] start processing
+15:41:46 [INFO] Chain [1] done processing
+15:41:46 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.013 cos_year_1=0.054
+15:41:46 [INFO] Chain [1] start processing
+15:41:46 [INFO] Chain [1] done processing
+15:41:46 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.203 cos_year_1=0.063
+15:41:46 [INFO] Chain [1] start processing
+15:41:46 [INFO] Chain [1] done processing
+15:41:46 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.118 cos_year_1=0.049
+15:41:47 [INFO] Chain [1] start processing
+15:41:47 [INFO] Chain [1] done processing
+15:41:47 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.071 cos_year_1=0.051
+15:41:47 [INFO] Chain [1] start processing
+15:41:47 [INFO] Chain [1] done processing
+15:41:47 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.112 cos_year_1=0.050
+15:41:47 [INFO] Chain [1] start processing
+15:41:47 [INFO] Chain [1] done processing
+15:41:47 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.092 cos_year_1=0.052
+15:41:47 [INFO] Chain [1] start processing
+15:41:47 [INFO] Chain [1] done processing
+15:41:47 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.106 cos_year_1=0.062
+15:41:47 [INFO] Chain [1] start processing
+15:41:47 [INFO] Chain [1] done processing
+15:41:47 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.155 cos_year_1=0.082
+15:41:48 [INFO] Round 6 — test accuracy: 0.101  (3580 samples)
+15:41:48 [INFO] ProphetWrapper FEDGAM round 7/10
+15:41:48 [INFO] Chain [1] start processing
+15:41:48 [INFO] Chain [1] done processing
+15:41:48 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.107 cos_year_1=0.060
+15:41:48 [INFO] Chain [1] start processing
+15:41:48 [INFO] Chain [1] done processing
+15:41:48 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.067 cos_year_1=0.038
+15:41:48 [INFO] Chain [1] start processing
+15:41:48 [INFO] Chain [1] done processing
+15:41:48 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.016 cos_year_1=0.053
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.199 cos_year_1=0.063
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.119 cos_year_1=0.049
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.075 cos_year_1=0.052
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.116 cos_year_1=0.050
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.096 cos_year_1=0.052
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.109 cos_year_1=0.063
+15:41:49 [INFO] Chain [1] start processing
+15:41:49 [INFO] Chain [1] done processing
+15:41:49 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.160 cos_year_1=0.081
+15:41:50 [INFO] Round 7 — test accuracy: 0.100  (3580 samples)
+15:41:50 [INFO] ProphetWrapper FEDGAM round 8/10
+15:41:50 [INFO] Chain [1] start processing
+15:41:50 [INFO] Chain [1] done processing
+15:41:50 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.109 cos_year_1=0.060
+15:41:50 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.069 cos_year_1=0.038
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.019 cos_year_1=0.053
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.195 cos_year_1=0.063
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.118 cos_year_1=0.049
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.073 cos_year_1=0.052
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.115 cos_year_1=0.050
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.099 cos_year_1=0.051
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.108 cos_year_1=0.063
+15:41:51 [INFO] Chain [1] start processing
+15:41:51 [INFO] Chain [1] done processing
+15:41:51 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.161 cos_year_1=0.082
+15:41:52 [INFO] Round 8 — test accuracy: 0.100  (3580 samples)
+15:41:52 [INFO] ProphetWrapper FEDGAM round 9/10
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.108 cos_year_1=0.060
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.071 cos_year_1=0.038
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.020 cos_year_1=0.053
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.193 cos_year_1=0.063
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.119 cos_year_1=0.049
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.076 cos_year_1=0.052
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.114 cos_year_1=0.050
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.102 cos_year_1=0.052
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.109 cos_year_1=0.062
+15:41:53 [INFO] Chain [1] start processing
+15:41:53 [INFO] Chain [1] done processing
+15:41:53 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.163 cos_year_1=0.082
+15:41:55 [INFO] Round 9 — test accuracy: 0.100  (3580 samples)
+15:41:55 [INFO] ProphetWrapper FEDGAM round 10/10
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.109 cos_year_1=0.060
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.069 cos_year_1=0.038
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.022 cos_year_1=0.054
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.188 cos_year_1=0.063
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.119 cos_year_1=0.048
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.078 cos_year_1=0.051
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.117 cos_year_1=0.050
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.103 cos_year_1=0.052
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.110 cos_year_1=0.062
+15:41:55 [INFO] Chain [1] start processing
+15:41:55 [INFO] Chain [1] done processing
+15:41:55 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.164 cos_year_1=0.082
+15:41:57 [INFO] Round 10 — test accuracy: 0.099  (3580 samples)
+15:41:57 [INFO] ProphetWrapper FEDGAM prophet_fedgam_1yr_iid done. Final acc=0.099  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedgam_1yr_iid_fl_metrics.csv
+15:41:57 [INFO] === E7 ProphetWrapper + FEDAVG — geographic (max_train_years=1) ===
+15:41:57 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:41:57 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:41:57 [INFO] Limited-history: kept last 1 year(s) per client → sizes=[365, 365, 365, 365, 365, 365, 354, 361, 365, 365]
+15:41:57 [INFO] ProphetWrapper FEDAVG round 1/10
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.185 cos_year_1=0.066
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.046
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.138 cos_year_1=0.075
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.104 cos_year_1=0.085
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.160 cos_year_1=0.067
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.102 cos_year_1=0.097
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.091 cos_year_1=0.073
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.158 cos_year_1=0.050
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.184 cos_year_1=0.091
+15:41:57 [INFO] Chain [1] start processing
+15:41:57 [INFO] Chain [1] done processing
+15:41:57 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.096 cos_year_1=0.053
+15:41:59 [INFO] Round 1 — test accuracy: 0.238  (3561 samples)
+15:41:59 [INFO] ProphetWrapper FEDAVG round 2/10
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.156 cos_year_1=0.066
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.166 cos_year_1=0.047
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.142 cos_year_1=0.075
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.095 cos_year_1=0.086
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.125 cos_year_1=0.066
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.124 cos_year_1=0.098
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.133 cos_year_1=0.074
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.120 cos_year_1=0.050
+15:41:59 [INFO] Chain [1] start processing
+15:41:59 [INFO] Chain [1] done processing
+15:41:59 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.091
+15:42:00 [INFO] Chain [1] start processing
+15:42:00 [INFO] Chain [1] done processing
+15:42:00 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.111 cos_year_1=0.054
+15:42:01 [INFO] Round 2 — test accuracy: 0.234  (3561 samples)
+15:42:01 [INFO] ProphetWrapper FEDAVG round 3/10
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.153 cos_year_1=0.065
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.159 cos_year_1=0.047
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.136 cos_year_1=0.075
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.092 cos_year_1=0.086
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.122 cos_year_1=0.066
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.120 cos_year_1=0.098
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:01 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.129 cos_year_1=0.073
+15:42:01 [INFO] Chain [1] start processing
+15:42:01 [INFO] Chain [1] done processing
+15:42:02 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.117 cos_year_1=0.050
+15:42:02 [INFO] Chain [1] start processing
+15:42:02 [INFO] Chain [1] done processing
+15:42:02 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.133 cos_year_1=0.091
+15:42:02 [INFO] Chain [1] start processing
+15:42:02 [INFO] Chain [1] done processing
+15:42:02 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.109 cos_year_1=0.054
+15:42:03 [INFO] Round 3 — test accuracy: 0.238  (3561 samples)
+15:42:03 [INFO] ProphetWrapper FEDAVG round 4/10
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.150 cos_year_1=0.066
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.161 cos_year_1=0.047
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.136 cos_year_1=0.075
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.091 cos_year_1=0.086
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.120 cos_year_1=0.066
+15:42:03 [INFO] Chain [1] start processing
+15:42:03 [INFO] Chain [1] done processing
+15:42:03 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.117 cos_year_1=0.098
+15:42:04 [INFO] Chain [1] start processing
+15:42:04 [INFO] Chain [1] done processing
+15:42:04 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.127 cos_year_1=0.073
+15:42:04 [INFO] Chain [1] start processing
+15:42:04 [INFO] Chain [1] done processing
+15:42:04 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.118 cos_year_1=0.049
+15:42:04 [INFO] Chain [1] start processing
+15:42:04 [INFO] Chain [1] done processing
+15:42:04 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.132 cos_year_1=0.091
+15:42:04 [INFO] Chain [1] start processing
+15:42:04 [INFO] Chain [1] done processing
+15:42:04 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.110 cos_year_1=0.054
+15:42:05 [INFO] Round 4 — test accuracy: 0.237  (3561 samples)
+15:42:05 [INFO] ProphetWrapper FEDAVG round 5/10
+15:42:05 [INFO] Chain [1] start processing
+15:42:05 [INFO] Chain [1] done processing
+15:42:05 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.149 cos_year_1=0.066
+15:42:05 [INFO] Chain [1] start processing
+15:42:05 [INFO] Chain [1] done processing
+15:42:05 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.161 cos_year_1=0.047
+15:42:05 [INFO] Chain [1] start processing
+15:42:05 [INFO] Chain [1] done processing
+15:42:05 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.137 cos_year_1=0.075
+15:42:05 [INFO] Chain [1] start processing
+15:42:05 [INFO] Chain [1] done processing
+15:42:05 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.093 cos_year_1=0.086
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.121 cos_year_1=0.066
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.118 cos_year_1=0.098
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.130 cos_year_1=0.074
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.119 cos_year_1=0.050
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.135 cos_year_1=0.091
+15:42:06 [INFO] Chain [1] start processing
+15:42:06 [INFO] Chain [1] done processing
+15:42:06 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.115 cos_year_1=0.054
+15:42:07 [INFO] Round 5 — test accuracy: 0.236  (3561 samples)
+15:42:07 [INFO] ProphetWrapper FEDAVG round 6/10
+15:42:07 [INFO] Chain [1] start processing
+15:42:07 [INFO] Chain [1] done processing
+15:42:07 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.151 cos_year_1=0.066
+15:42:07 [INFO] Chain [1] start processing
+15:42:07 [INFO] Chain [1] done processing
+15:42:07 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.162 cos_year_1=0.047
+15:42:07 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.136 cos_year_1=0.075
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.093 cos_year_1=0.086
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.120 cos_year_1=0.066
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.119 cos_year_1=0.098
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.131 cos_year_1=0.074
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.120 cos_year_1=0.050
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.140 cos_year_1=0.091
+15:42:08 [INFO] Chain [1] start processing
+15:42:08 [INFO] Chain [1] done processing
+15:42:08 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.116 cos_year_1=0.054
+15:42:09 [INFO] Round 6 — test accuracy: 0.236  (3561 samples)
+15:42:09 [INFO] ProphetWrapper FEDAVG round 7/10
+15:42:09 [INFO] Chain [1] start processing
+15:42:09 [INFO] Chain [1] done processing
+15:42:09 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.149 cos_year_1=0.065
+15:42:09 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.161 cos_year_1=0.047
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.138 cos_year_1=0.075
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.094 cos_year_1=0.086
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.122 cos_year_1=0.066
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.119 cos_year_1=0.097
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.131 cos_year_1=0.073
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.121 cos_year_1=0.049
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.134 cos_year_1=0.091
+15:42:10 [INFO] Chain [1] start processing
+15:42:10 [INFO] Chain [1] done processing
+15:42:10 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.116 cos_year_1=0.054
+15:42:11 [INFO] Round 7 — test accuracy: 0.236  (3561 samples)
+15:42:11 [INFO] ProphetWrapper FEDAVG round 8/10
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.158 cos_year_1=0.066
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.162 cos_year_1=0.047
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.075
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.094 cos_year_1=0.086
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.121 cos_year_1=0.066
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.120 cos_year_1=0.097
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.129 cos_year_1=0.073
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.121 cos_year_1=0.050
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.136 cos_year_1=0.092
+15:42:12 [INFO] Chain [1] start processing
+15:42:12 [INFO] Chain [1] done processing
+15:42:12 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.116 cos_year_1=0.054
+15:42:14 [INFO] Round 8 — test accuracy: 0.236  (3561 samples)
+15:42:14 [INFO] ProphetWrapper FEDAVG round 9/10
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.152 cos_year_1=0.066
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.163 cos_year_1=0.047
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.075
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.094 cos_year_1=0.086
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.123 cos_year_1=0.066
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.121 cos_year_1=0.098
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.133 cos_year_1=0.074
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.122 cos_year_1=0.050
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.139 cos_year_1=0.092
+15:42:14 [INFO] Chain [1] start processing
+15:42:14 [INFO] Chain [1] done processing
+15:42:14 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.116 cos_year_1=0.054
+15:42:16 [INFO] Round 9 — test accuracy: 0.236  (3561 samples)
+15:42:16 [INFO] ProphetWrapper FEDAVG round 10/10
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.158 cos_year_1=0.065
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.158 cos_year_1=0.047
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.134 cos_year_1=0.075
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.092 cos_year_1=0.086
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.121 cos_year_1=0.066
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.120 cos_year_1=0.097
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 354 rows — sin_year_1=0.127 cos_year_1=0.073
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 361 rows — sin_year_1=0.117 cos_year_1=0.050
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.133 cos_year_1=0.091
+15:42:16 [INFO] Chain [1] start processing
+15:42:16 [INFO] Chain [1] done processing
+15:42:16 [INFO] ProphetWrapper fitted on 365 rows — sin_year_1=0.108 cos_year_1=0.054
+15:42:18 [INFO] Round 10 — test accuracy: 0.238  (3561 samples)
+15:42:18 [INFO] ProphetWrapper FEDAVG prophet_fedavg_1yr_geographic done. Final acc=0.238  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedavg_1yr_geographic_fl_metrics.csv
+15:42:18 [INFO] === E7 ProphetWrapper + FEDAVG — iid (max_train_years=1) ===
+15:42:18 [INFO] ICA thresholds loaded: Q1=7.50 Q2=13.00 μg/m³
+15:42:18 [INFO] Provinces loaded: ['Avila', 'Burgos', 'León', 'Palencia', 'Ponferrada', 'Salamanca', 'Segovia', 'Soria', 'Valladolid', 'Zamora']
+15:42:18 [INFO] Limited-history: kept last 1 year(s) per client → sizes=[379, 369, 359, 349, 349, 377, 374, 379, 366, 334]
+15:42:18 [INFO] ProphetWrapper FEDAVG round 1/10
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.101 cos_year_1=0.060
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.051 cos_year_1=0.038
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.007 cos_year_1=0.054
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.229 cos_year_1=0.063
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.109 cos_year_1=0.049
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.061 cos_year_1=0.052
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.096 cos_year_1=0.050
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.065 cos_year_1=0.051
+15:42:18 [INFO] Chain [1] start processing
+15:42:18 [INFO] Chain [1] done processing
+15:42:18 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.113 cos_year_1=0.062
+15:42:19 [INFO] Chain [1] start processing
+15:42:19 [INFO] Chain [1] done processing
+15:42:19 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.132 cos_year_1=0.081
+15:42:20 [INFO] Round 1 — test accuracy: 0.131  (3580 samples)
+15:42:20 [INFO] ProphetWrapper FEDAVG round 2/10
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.060
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.083 cos_year_1=0.039
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.018 cos_year_1=0.054
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.262 cos_year_1=0.062
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.108 cos_year_1=0.049
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.101 cos_year_1=0.051
+15:42:20 [INFO] Chain [1] start processing
+15:42:20 [INFO] Chain [1] done processing
+15:42:20 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.110 cos_year_1=0.050
+15:42:21 [INFO] Chain [1] start processing
+15:42:21 [INFO] Chain [1] done processing
+15:42:21 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.095 cos_year_1=0.051
+15:42:21 [INFO] Chain [1] start processing
+15:42:21 [INFO] Chain [1] done processing
+15:42:21 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.096 cos_year_1=0.061
+15:42:21 [INFO] Chain [1] start processing
+15:42:21 [INFO] Chain [1] done processing
+15:42:21 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.182 cos_year_1=0.083
+15:42:22 [INFO] Round 2 — test accuracy: 0.134  (3580 samples)
+15:42:22 [INFO] ProphetWrapper FEDAVG round 3/10
+15:42:22 [INFO] Chain [1] start processing
+15:42:22 [INFO] Chain [1] done processing
+15:42:22 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.114 cos_year_1=0.060
+15:42:22 [INFO] Chain [1] start processing
+15:42:22 [INFO] Chain [1] done processing
+15:42:22 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.101 cos_year_1=0.040
+15:42:22 [INFO] Chain [1] start processing
+15:42:22 [INFO] Chain [1] done processing
+15:42:22 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.007 cos_year_1=0.054
+15:42:22 [INFO] Chain [1] start processing
+15:42:22 [INFO] Chain [1] done processing
+15:42:22 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.244 cos_year_1=0.062
+15:42:22 [INFO] Chain [1] start processing
+15:42:22 [INFO] Chain [1] done processing
+15:42:22 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.117 cos_year_1=0.049
+15:42:22 [INFO] Chain [1] start processing
+15:42:23 [INFO] Chain [1] done processing
+15:42:23 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.113 cos_year_1=0.051
+15:42:23 [INFO] Chain [1] start processing
+15:42:23 [INFO] Chain [1] done processing
+15:42:23 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.117 cos_year_1=0.050
+15:42:23 [INFO] Chain [1] start processing
+15:42:23 [INFO] Chain [1] done processing
+15:42:23 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.107 cos_year_1=0.051
+15:42:23 [INFO] Chain [1] start processing
+15:42:23 [INFO] Chain [1] done processing
+15:42:23 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.104 cos_year_1=0.062
+15:42:23 [INFO] Chain [1] start processing
+15:42:23 [INFO] Chain [1] done processing
+15:42:23 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.181 cos_year_1=0.083
+15:42:24 [INFO] Round 3 — test accuracy: 0.125  (3580 samples)
+15:42:24 [INFO] ProphetWrapper FEDAVG round 4/10
+15:42:24 [INFO] Chain [1] start processing
+15:42:24 [INFO] Chain [1] done processing
+15:42:24 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.122 cos_year_1=0.061
+15:42:24 [INFO] Chain [1] start processing
+15:42:24 [INFO] Chain [1] done processing
+15:42:24 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.110 cos_year_1=0.040
+15:42:24 [INFO] Chain [1] start processing
+15:42:24 [INFO] Chain [1] done processing
+15:42:24 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.005 cos_year_1=0.054
+15:42:24 [INFO] Chain [1] start processing
+15:42:24 [INFO] Chain [1] done processing
+15:42:24 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.256 cos_year_1=0.063
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.126 cos_year_1=0.049
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.065 cos_year_1=0.052
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.125 cos_year_1=0.050
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.115 cos_year_1=0.052
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.113 cos_year_1=0.062
+15:42:25 [INFO] Chain [1] start processing
+15:42:25 [INFO] Chain [1] done processing
+15:42:25 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.192 cos_year_1=0.083
+15:42:26 [INFO] Round 4 — test accuracy: 0.122  (3580 samples)
+15:42:26 [INFO] ProphetWrapper FEDAVG round 5/10
+15:42:26 [INFO] Chain [1] start processing
+15:42:26 [INFO] Chain [1] done processing
+15:42:26 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.123 cos_year_1=0.060
+15:42:26 [INFO] Chain [1] start processing
+15:42:26 [INFO] Chain [1] done processing
+15:42:26 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.051 cos_year_1=0.037
+15:42:26 [INFO] Chain [1] start processing
+15:42:26 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.010 cos_year_1=0.054
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.138 cos_year_1=0.063
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.126 cos_year_1=0.049
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.053 cos_year_1=0.052
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.126 cos_year_1=0.050
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.115 cos_year_1=0.052
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.112 cos_year_1=0.063
+15:42:27 [INFO] Chain [1] start processing
+15:42:27 [INFO] Chain [1] done processing
+15:42:27 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.130 cos_year_1=0.081
+15:42:28 [INFO] Round 5 — test accuracy: 0.137  (3580 samples)
+15:42:28 [INFO] ProphetWrapper FEDAVG round 6/10
+15:42:28 [INFO] Chain [1] start processing
+15:42:28 [INFO] Chain [1] done processing
+15:42:28 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.060
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.092 cos_year_1=0.039
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.001 cos_year_1=0.054
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.253 cos_year_1=0.063
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.108 cos_year_1=0.049
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.104 cos_year_1=0.051
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.107 cos_year_1=0.050
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.094 cos_year_1=0.052
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.094 cos_year_1=0.061
+15:42:29 [INFO] Chain [1] start processing
+15:42:29 [INFO] Chain [1] done processing
+15:42:29 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.187 cos_year_1=0.082
+15:42:30 [INFO] Round 6 — test accuracy: 0.117  (3580 samples)
+15:42:30 [INFO] ProphetWrapper FEDAVG round 7/10
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.119 cos_year_1=0.060
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.052 cos_year_1=0.038
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.011 cos_year_1=0.055
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.251 cos_year_1=0.062
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.122 cos_year_1=0.049
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.061 cos_year_1=0.052
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.122 cos_year_1=0.050
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.110 cos_year_1=0.052
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.110 cos_year_1=0.062
+15:42:31 [INFO] Chain [1] start processing
+15:42:31 [INFO] Chain [1] done processing
+15:42:31 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.126 cos_year_1=0.081
+15:42:33 [INFO] Round 7 — test accuracy: 0.134  (3580 samples)
+15:42:33 [INFO] ProphetWrapper FEDAVG round 8/10
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.114 cos_year_1=0.060
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.050 cos_year_1=0.037
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.007 cos_year_1=0.054
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.259 cos_year_1=0.062
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.118 cos_year_1=0.049
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.077 cos_year_1=0.052
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.118 cos_year_1=0.050
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.052
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.105 cos_year_1=0.062
+15:42:33 [INFO] Chain [1] start processing
+15:42:33 [INFO] Chain [1] done processing
+15:42:33 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.193 cos_year_1=0.084
+15:42:35 [INFO] Round 8 — test accuracy: 0.130  (3580 samples)
+15:42:35 [INFO] ProphetWrapper FEDAVG round 9/10
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.120 cos_year_1=0.061
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.054 cos_year_1=0.038
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=0.004 cos_year_1=0.054
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.255 cos_year_1=0.063
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.125 cos_year_1=0.048
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.063 cos_year_1=0.052
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.125 cos_year_1=0.050
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.111 cos_year_1=0.052
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.111 cos_year_1=0.063
+15:42:35 [INFO] Chain [1] start processing
+15:42:35 [INFO] Chain [1] done processing
+15:42:35 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.131 cos_year_1=0.080
+15:42:37 [INFO] Round 9 — test accuracy: 0.116  (3580 samples)
+15:42:37 [INFO] ProphetWrapper FEDAVG round 10/10
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.114 cos_year_1=0.060
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 369 rows — sin_year_1=0.051 cos_year_1=0.037
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 359 rows — sin_year_1=-0.013 cos_year_1=0.054
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.267 cos_year_1=0.062
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 349 rows — sin_year_1=0.116 cos_year_1=0.049
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 377 rows — sin_year_1=0.063 cos_year_1=0.052
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 374 rows — sin_year_1=0.116 cos_year_1=0.050
+15:42:37 [INFO] Chain [1] start processing
+15:42:37 [INFO] Chain [1] done processing
+15:42:37 [INFO] ProphetWrapper fitted on 379 rows — sin_year_1=0.104 cos_year_1=0.051
+15:42:38 [INFO] Chain [1] start processing
+15:42:38 [INFO] Chain [1] done processing
+15:42:38 [INFO] ProphetWrapper fitted on 366 rows — sin_year_1=0.104 cos_year_1=0.062
+15:42:38 [INFO] Chain [1] start processing
+15:42:38 [INFO] Chain [1] done processing
+15:42:38 [INFO] ProphetWrapper fitted on 334 rows — sin_year_1=0.183 cos_year_1=0.083
+15:42:39 [INFO] Round 10 — test accuracy: 0.134  (3580 samples)
+15:42:39 [INFO] ProphetWrapper FEDAVG prophet_fedavg_1yr_iid done. Final acc=0.134  Saved: /home/raullb/FL-Iroh/results/e7/e7_prophet_fedavg_1yr_iid_fl_metrics.csv
+15:42:39 [INFO] E7 summary saved: /home/raullb/FL-Iroh/results/e7/e7_summary.csv
+15:42:39 [INFO] E7 complete. Results in: /home/raullb/FL-Iroh/results/e7
+
+=== E7 Results Summary (e7_summary.csv) ===
+Config                        Model               Partition     Accuracy
+------------------------------------------------------------------------
+prophet_fedgam_geographic     ProphetWrapper      geographic       0.568
+prophet_fedgam_iid            ProphetWrapper      iid              0.564
+prophet_fedavg_geographic     ProphetWrapper      geographic       0.566
+prophet_fedavg_iid            ProphetWrapper      iid              0.569
+prophet_fedgam_1yr_geographic  ProphetWrapper      geographic       0.245
+prophet_fedgam_1yr_iid        ProphetWrapper      iid              0.099
+prophet_fedavg_1yr_geographic  ProphetWrapper      geographic       0.238
+prophet_fedavg_1yr_iid        ProphetWrapper      iid              0.134
