@@ -90,6 +90,9 @@ def _make_model(dataset: str):
     if dataset == "crop":
         from fl_coap_iroh.models.agri_mlp import AgriMLP
         return AgriMLP()
+    if dataset == "air_quality":
+        from fl_coap_iroh.models.air_mlp import AirMLP
+        return AirMLP()
     from fl_coap_iroh.models.cnn import SimpleCNN
     return SimpleCNN()
 
@@ -556,8 +559,8 @@ def _write_metrics(rows: list[dict], path: Path) -> None:
 def main() -> None:
     p = argparse.ArgumentParser(description="E8 — Flower/Tailscale baseline vs FL-Iroh")
     p.add_argument("--mode", choices=["sim", "server", "client"], default="sim")
-    p.add_argument("--dataset", default="crop", choices=["crop", "cifar10"])
-    p.add_argument("--partition", default="iid", choices=["iid", "noniid"])
+    p.add_argument("--dataset", default="crop", choices=["crop", "cifar10", "air_quality"])
+    p.add_argument("--partition", default="iid", choices=["iid", "noniid", "geographic"])
     p.add_argument("--alpha", type=float, default=0.1)
     p.add_argument("--n-clients", type=int, default=10)
     p.add_argument("--rounds", type=int, default=50)
