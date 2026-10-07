@@ -73,6 +73,7 @@ _OVERHEAD_BYTES     = _LEN_PREFIX_BYTES + _HASH_SUFFIX_BYTES
 MAX_PAYLOAD_BYTES   = 512 * 1024 * 1024   # 512 MB safety cap
 DIRECT_TIMEOUT_SEC  = 5.0         # seconds before relay fallback is attempted
 ADMISSION_DENIED_CODE = 403       # QUIC application close code for rejected peers
+TRANSFER_OK_CODE = 17996          # receiver closes with this code after a verified receipt
 STREAM_ACK_TIMEOUT_SEC = 120.0    # max wait for the peer to read a sent stream
 
 
@@ -268,6 +269,13 @@ def _make_iroh_adapters(
                 active_addr   = active_addr,
                 peer_node_id  = peer_id,
             ))
+            # Explicit receipt: close with a dedicated code so that a sender
+            # whose stopped() races with this close counts the transfer as
+            # delivered instead of retrying it (which duplicated model pushes).
+            try:
+                conn.close(TRANSFER_OK_CODE, b"fl-ok")  # type: ignore[attr-defined]
+            except Exception:  # noqa: BLE001
+                pass
             log.debug(
                 "iroh recv [%r]: %dB conn_type=%s addr=%s in %.0fms",
                 alpn, payload_len, conn_type.value, active_addr, t_done - t_start,
@@ -640,6 +648,9 @@ class IrohTransportNode:
                     reason = str(connection.close_reason() or "")
                 except Exception:  # noqa: BLE001
                     pass
+            if "fl-ok" in reason or f"closed by peer: {TRANSFER_OK_CODE}" in reason \
+                    or f"closed by peer: {TRANSFER_OK_CODE}" in str(exc):
+                return  # receiver verified the payload and closed: delivered
             if "not authorized" in reason or str(ADMISSION_DENIED_CODE) in reason:
                 # Rejected by the peer's allow-list: retrying cannot help.
                 raise PermissionError(f"rejected by peer: {reason}") from exc

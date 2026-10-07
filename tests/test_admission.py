@@ -123,3 +123,23 @@ async def test_watchdog_restart_keeps_nodeid_and_queue(real_iroh):
         assert payload == b"after-restart"
     finally:
         await rx.stop(); await tx.stop()
+
+
+async def test_each_transfer_is_delivered_exactly_once(real_iroh):
+    """Sender retries must not duplicate deliveries when the receiver closes
+    the connection right after a verified receipt."""
+    rx, tx = IrohTransportNode("rx"), IrohTransportNode("tx")
+    rx_ep = await rx.start()
+    await tx.start()
+    try:
+        for i in range(30):
+            await tx._send_bytes(rx_ep, f"msg-{i}".encode(), i, ALPN_FL_UPDATE)
+        got = []
+        for _ in range(30):
+            payload, _ = await rx._receive_bytes(ALPN_FL_UPDATE, timeout=20)
+            got.append(payload)
+        assert sorted(got) == sorted(f"msg-{i}".encode() for i in range(30))
+        with pytest.raises(asyncio.TimeoutError):
+            await rx._receive_bytes(ALPN_FL_UPDATE, timeout=3)
+    finally:
+        await rx.stop(); await tx.stop()
