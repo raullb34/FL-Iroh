@@ -1,0 +1,135 @@
+% =========================================================================
+\section{System Design}
+\label{sec:system}
+
+This section describes the FL-Iroh architecture (control and data planes), node identity and admission control, the Iroh transport and its hardening, the wire format, the CoAP control plane and resource directory, the round protocol, and the application models used in the evaluation. Fig.~\ref{fig:agro} illustrates the target deployment: field sensors feed a single-board FL client that registers with the aggregator and exchanges model parameters over Iroh/QUIC from behind NAT or CGNAT.
+
+\subsection{Architecture Overview}
+
+FL-Iroh is structured as two planes (Fig.~\ref{fig:architecture}) and four software components that run unchanged on the aggregator and on every client (Table~\ref{tab:components}).
+
+\begin{itemize}
+    \item \textbf{Control plane}: registration, discovery and round signaling. Within a site (farm LAN, cooperative network) it uses CoAP/CoRE with CBOR payloads and a resource directory (\S\ref{sec:coap}). Across NATs, where the aggregator's CoAP port is not reachable, the same registration message is carried over an Iroh stream (ALPN \texttt{fl-ctrl/1}) addressed only by the aggregator's public key, so the control plane traverses NAT exactly like the data plane.
+    \item \textbf{Data plane (Iroh/QUIC)}: all tensor data---global model distribution (server$\to$client, ALPN \texttt{fl-model/1}) and local updates (client$\to$server, ALPN \texttt{fl-update/1})---flows over QUIC streams established by Iroh. Each stream carries one length-prefixed, SHA-256-verified payload (\S\ref{sec:wire}).
+\end{itemize}
+
+\begin{table}[t]
+\centering
+\caption{FL-Iroh software components (Python package \texttt{fl\_coap\_iroh})}
+\label{tab:components}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{2.0cm} p{5.9cm}@{}}
+\toprule
+\textbf{Component} & \textbf{Responsibility} \\
+\midrule
+Transport node & Iroh endpoint with persistent Ed25519 key; per-ALPN accept queues; admission check; framed send/receive with integrity check, transfer retry and endpoint watchdog; path classification (direct / mixed / relay). \\
+Admission & Allow-list of authorized node IDs; rejection log; persistent key management (\texttt{fl-keygen}). \\
+CoAP server & Resources \texttt{/fl/*}, \texttt{/iroh/endpoint}, \texttt{/fl/register}; resource directory \texttt{/rd}, \texttt{/rd-lookup/ep} on the aggregator. \\
+FL server / client & Round orchestration, aggregation (pluggable \texttt{aggregator\_fn}), local training, per-round metrics and resource monitoring (CPU, RSS, power/energy). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{FL-Iroh-arch.jpg}
+\caption{FL-Iroh architecture. The FL server (CoAP resource directory + Iroh node) coordinates $K$ sensor clients: solid blue arrows are the control plane (registration, discovery, round signaling and application metadata), while dashed red arrows are the Iroh/QUIC relay path through the DERP relay, used transparently for tensor data whenever a direct hole-punched path cannot be validated.}
+\label{fig:architecture}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{physical-deploy.png}
+\caption{Target deployment of FL-Iroh in agricultural IoT. Field sensors collect agronomic and meteorological measurements that remain within each farm and are processed by a local FL client behind NAT or CGNAT. Clients register with the aggregator, which admits only allow-listed public keys, and exchange global models and local updates over end-to-end-encrypted Iroh/QUIC connections. If a direct hole-punched path cannot be validated, the encrypted traffic is transparently forwarded through the DERP relay.}
+\label{fig:agro}
+\end{figure}
+
+\subsection{Node Identity and Admission Control}
+\label{sec:admission}
+
+Every node owns a persistent 32-byte Ed25519 secret key; its public key is the node ID used to address it. The QUIC/TLS~1.3 handshake proves possession of the secret key, so a peer cannot claim a node ID it does not own. The aggregator keeps an allow-list of authorized client node IDs (one line per member, distributed out of band when a farm joins the federation). Admission is enforced at three points: (i)~on every incoming Iroh connection, \emph{before} any stream is read, the authenticated remote node ID is checked and unknown peers are closed with an application error code; (ii)~registration (CoAP \texttt{/fl/register}, \texttt{/rd}, or \texttt{fl-ctrl/1}) is refused for node IDs outside the allow-list, and over \texttt{fl-ctrl/1} the registered endpoint must belong to the authenticated sender; (iii)~each round, the aggregator accepts at most one update per \emph{selected} node ID, discarding updates from unselected peers and duplicates. Registering an allow-listed node ID one does not own over CoAP gains nothing: models are addressed to that node ID and updates are only accepted from the peer holding its key.
+
+\subsection{Iroh Transport and Path Selection}
+\label{sec:transport}
+
+Iroh~\cite{iroh2024} creates a QUIC endpoint whose \emph{node address} consists of the node ID, a list of candidate direct UDP addresses (local interfaces plus the public mapping discovered via STUN-like probing), and a DERP relay URL. When a node dials another, Iroh (i)~uses the relay for signaling and, immediately, for data; (ii)~probes the candidate direct addresses (hole punching); and (iii)~migrates the QUIC session to a direct path once a probe round trip validates it. Iroh reports the resulting path as \emph{direct} (a validated UDP path), \emph{mixed} (the relay carries traffic while a direct candidate is still being validated) or \emph{relay}. FL-Iroh records this state for every transfer, together with the active address, and we count only \emph{direct} as a hole-punched path; \emph{mixed} transfers are relay-carried.
+
+Two mechanisms harden the transport for unattended operation. \emph{Transfer-level retry}: if a stream is interrupted before the receiver acknowledges it (measured on a 4G CGNAT path in \S\ref{sec:e8}), the sender reopens the connection---letting Iroh re-select a path---and resends, up to a configurable number of attempts; rejections by the peer's allow-list are not retried. \emph{Endpoint watchdog}: after a configurable number of consecutive failed transfers the Iroh endpoint is restarted with the same secret key, so the node ID and pending receivers are preserved. We added the watchdog after observing in hardware tests that, after successive network switches, the endpoint of the Iroh version we use could stop establishing connections until restarted (\S\ref{sec:e8}).
+
+FL-Iroh uses ALPN-based multiplexing: model push, update upload and control messages share a single Iroh endpoint without port allocation, and each ALPN has its own receive queue so that concurrent consumers never block each other.
+
+\subsection{Wire Format}
+\label{sec:wire}
+
+Each QUIC unidirectional stream carries one payload:
+\begin{equation}
+\underbrace{[4\,\text{B}]}_{\text{len}} \;\; \underbrace{[\text{payload}]}_{\text{serialized parameters}} \;\; \underbrace{[32\,\text{B}]}_{\text{SHA-256}}
+\label{eq:wire}
+\end{equation}
+The SHA-256 suffix in Eq.~\eqref{eq:wire} provides integrity verification at the application layer, independent of QUIC's own authentication. The sender waits until the receiver has read the stream to completion before releasing the connection. The framing itself is language-neutral; the prototype serializes PyTorch \texttt{state\_dict} objects with \texttt{torch.save}, and control messages as JSON (\S\ref{sec:agnostic}).
+
+\subsection{CoAP Control Plane and Resource Directory}
+\label{sec:coap}
+
+Every node exposes CoAP resources following the CoRE link format~\cite{rfc6690}: \texttt{/fl/capabilities} (hardware, energy state and capability tags such as sensor types, crop or region), \texttt{/iroh/endpoint}, \texttt{/fl/round}, \texttt{/fl/policy}, \texttt{/fl/metrics}, and \texttt{/fl/register} on the aggregator. Responses are JSON or CBOR~\cite{rfc8949}, negotiated with the CoAP Accept option.
+
+Discovery can be performed in two ways. In \emph{probe} mode the aggregator queries \texttt{/fl/capabilities} of every known node and filters client-side, costing one request per node. In \emph{resource-directory} mode, following RFC~9176~\cite{rfc9176}, each node registers once (POST \texttt{/rd} with its tags, role, energy state, lifetime and Iroh endpoint) and the aggregator answers a single lookup (GET \texttt{/rd-lookup/ep?tag=agri,r3,soil\_moisture\&min\_energy=20}) with server-side filtering on any combination of capability tags, role and energy level, optionally paged. Registrations expire after their lifetime unless refreshed. E5 compares both modes up to 5{,}000 endpoints.
+
+\subsection{Round Protocol}
+\label{sec:round}
+
+Fig.~\ref{fig:sequence} shows the message sequence of one round and Algorithm~\ref{alg:round} the aggregator's logic. A client that misses a round (e.g., while disconnected) simply receives the next global model when it is selected again; late registrations are included from the next round on.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >=Stealth,
+  actor/.style={draw, rounded corners=2pt, fill=gray!10, minimum width=1.6cm, minimum height=0.5cm, align=center}]
+\node[actor] (c) at (0,0) {Client $k$};
+\node[actor] (r) at (3.2,0) {DERP relay};
+\node[actor] (s) at (6.4,0) {Aggregator};
+\foreach \n in {c,r,s} { \draw[gray] (\n.south) -- ++(0,-5.3); }
+\draw[->, blue!70!black] (0,-0.75) -- node[above, pos=0.5] {register (\texttt{fl-ctrl/1} or CoAP \texttt{/rd})} (6.4,-0.75);
+\node[anchor=west, align=left, text width=2.0cm] at (6.5,-1.05) {allow-list check};
+\draw[->, red!70!black, dashed] (6.4,-1.55) -- node[above] {signaling / data while path unvalidated} (0,-1.55);
+\draw[<->, red!70!black] (0,-2.05) -- node[above] {hole punching: probes on candidate UDP addresses} (6.4,-2.05);
+\draw[->] (6.4,-2.65) -- node[above] {global model $w^{t}$ (\texttt{fl-model/1})} (0,-2.65);
+\node[anchor=east, align=right] at (-0.1,-3.2) {local training};
+\draw[->] (0,-3.75) -- node[above] {update $w_k^{t+1}$ (\texttt{fl-update/1})} (6.4,-3.75);
+\node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.1) {bind to selected ID};
+\node[anchor=west, align=left, text width=2.0cm] at (6.5,-4.6) {aggregate, evaluate};
+\draw[->, blue!70!black] (6.4,-5.05) -- node[above] {round state (\texttt{/fl/round})} (0,-5.05);
+\end{tikzpicture}
+\caption{Message sequence of one FL-Iroh round. Model and update streams use a validated direct path when one exists and the end-to-end-encrypted relay otherwise; the application code is identical in both cases.}
+\label{fig:sequence}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Algorithm~1: aggregator round $t$ (FL-Iroh server)}
+\label{alg:round}
+\scriptsize
+\begin{tabular}{@{}r p{7.3cm}@{}}
+\toprule
+1 & $S_t \leftarrow$ select clients among the admitted, registered node IDs (fraction $C$, at least $m$); \\
+2 & \textbf{for} $k \in S_t$ \textbf{in parallel}: send $w^{t}$ to node ID $k$ over \texttt{fl-model/1} (retry; drop $k$ on failure); \\
+3 & \textbf{if} fewer than $m$ sends succeeded \textbf{then} mark round failed and \textbf{return}; \\
+4 & $U \leftarrow \emptyset$; \textbf{until} every sent $k$ answered or timeout $T$: receive $(u, \mathit{id})$ on \texttt{fl-update/1}; \\
+5 & \quad \textbf{if} $\mathit{id} \in S_t$ and $\mathit{id}$ not yet in $U$ \textbf{then} $U \leftarrow U \cup \{(\mathit{id}, u)\}$ \textbf{else} discard; \\
+6 & $w^{t+1} \leftarrow \texttt{aggregator\_fn}(U)$ \quad (FedAvg, FedGAM, \dots); \\
+7 & evaluate $w^{t+1}$; publish round state and model descriptor on CoAP; log per-transfer path and bytes. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Application Models}
+
+\textbf{AgriMLP} (Crop Recommendation). A four-layer MLP $7 \to 64 \to 64 \to 32 \to 22$ with Batch Normalization and Dropout (rate~0.2) on the first two hidden layers; 7{,}734 trainable parameters ($\approx$32~KB serialized). Inputs are z-score normalized soil macro-nutrients (N, P, K), temperature, humidity, pH, and rainfall.
+
+\textbf{AirMLP} (7-Day-Ahead ICA Forecasting, Outdoor). A four-layer network $6 \to 32 \to 32 \to 16 \to 3$ (1{,}987 parameters, $\approx$14~KB serialized) with the same regularization scheme. Inputs are daily outdoor measurements at time~$t$ (NO$_2$, O$_3$, particulate matter, CO) fused with AEMET meteorological predictors (wind speed, precipitation); the target is the ICA class at $t{+}7$ (\S\ref{sec:e6}).
+
+\textbf{ProphetWrapper} (Federated GAM case study). We wrap Facebook Prophet~\cite{taylor2018prophet} in an \texttt{nn.Module} adapter that exposes the Fourier seasonality coefficients (annual: $N{=}10$ sin/cos pairs; weekly: $N{=}3$) and the wind-speed regressor weight as tensors. Under \textbf{FedGAM} only these shared seasonal terms are averaged (weighted by sample count), while each zone keeps its locally fitted trend ($k$, $m$, $\delta$); under FedAvg all parameters are averaged. Formally, with $\theta_k = (\theta_k^{s}, \theta_k^{\tau})$ the seasonal and trend parameters of zone $k$ and $n_k$ its sample count,
+\begin{equation}
+\theta^{s} \leftarrow \sum_k \frac{n_k}{\sum_j n_j}\,\theta_k^{s}, \qquad \theta_k^{\tau} \text{ kept local}.
+\label{eq:fedgam}
+\end{equation}

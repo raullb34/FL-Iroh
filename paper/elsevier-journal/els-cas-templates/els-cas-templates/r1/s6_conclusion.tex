@@ -1,0 +1,32 @@
+% =========================================================================
+\section{Conclusion and Research Roadmap}
+\label{sec:conclusion}
+
+We presented FL-Iroh, a federated learning system for agricultural and environmental IoT that embeds NAT traversal in the application transport, addresses and admits peers by public key, and coordinates them through a lightweight CoAP control plane with a resource directory. On real hardware across five networks with RFC~4787-classified NAT behavior, including a mobile-carrier CGNAT, the system kept clients and aggregator mutually reachable without static IPs, port forwarding or VPN overlays: long-lived sessions used validated direct paths, the encrypted relay delivered every transfer when UDP was blocked, and transfers resumed after link outages and network switches. A complete federation over the WAN ran on a Raspberry Pi~3B client at about one second of training and 0.4~GB of memory per round, all rounds of a loss/latency/bandwidth sweep completed with unchanged accuracy for edge-sized models, unauthorized peers were rejected before any payload was read, and resource-directory discovery remained in the tens of milliseconds for 5{,}000 endpoints. The evaluation also delimits the system: cold-start connections are often relay-carried during their first seconds, direct paths through mobile CGNAT can be less reliable than the relay, the Python/PyTorch runtime is heavy for the smallest devices, and partial aggregation for GAMs brings no benefit when local history is long. FL-Iroh keeps raw data on the device and encrypts updates in transit; it is not, by itself, a privacy-preserving learning system.
+
+Table~\ref{tab:roadmap} organizes the open problems into a research roadmap, from engineering steps that build directly on the released artifact to open research questions for the community.
+
+\begin{table*}[t]
+\centering
+\caption{Research roadmap for NAT-transparent federated learning in agricultural and environmental IoT}
+\label{tab:roadmap}
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{2.4cm} p{5.6cm} p{7.4cm}}
+\toprule
+\textbf{Horizon} & \textbf{Direction} & \textbf{Concrete opportunities} \\
+\midrule
+Short term (engineering) & Measurement breadth & Multi-operator, multi-country connectivity campaigns with RFC~4787 probes; many clients behind one CGNAT; IPv6-only networks; native (non-WSL) aggregators; field validation of endpoint recovery. \\
+ & Operational baselines & Live Flower-over-Tailscale (and other overlay) comparisons on identical hardware, including daemon CPU/memory/energy; self-hosted relays and their capacity. \\
+ & Measured energy & Shunt-monitor or PMIC-based energy per round on solar-powered nodes; energy-aware client selection using the capability tags of the resource directory. \\
+\midrule
+Medium term (systems) & Lightweight runtimes & Framework-neutral tensor encoding; native Rust/C clients for MCU-class devices; integer and sparse update formats. \\
+ & Communication efficiency & Update compression and quantization tuned to relay versus direct paths; path-aware scheduling (e.g., large transfers over the relay on mobile CGNAT). \\
+ & Asynchrony and intermittency & Asynchronous and buffered aggregation for multi-day disconnections; server-driven termination and rejoin semantics. \\
+\midrule
+Long term (research) & Trustworthy FL & Secure aggregation and differential privacy over P2P transports; robust aggregation against poisoned updates; key revocation and rotation for federations. \\
+ & Decentralized topologies & Gossip or hierarchical FL over public-key addressed peers without a central aggregator; relay placement as an optimization problem. \\
+ & Domain models & Federated time-series models (GAMs, state-space models) with short local histories, where partial aggregation may matter; concept drift in multi-year sensor data. \\
+\bottomrule
+\end{tabular}
+\end{table*}

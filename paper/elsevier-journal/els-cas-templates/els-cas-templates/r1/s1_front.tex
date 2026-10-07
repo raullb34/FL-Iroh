@@ -1,0 +1,82 @@
+% ---- Abstract -------------------------------------------------------------
+\begin{abstract}
+Federated Learning (FL) for agricultural and environmental IoT faces a connectivity barrier: edge devices behind Network Address Translators (NAT) and Carrier-Grade NAT (CGNAT) cannot host or reliably reach an aggregation endpoint without static IPs, VPN overlays, or cloud relays. We present FL-Iroh, an open-source FL system that embeds NAT traversal in the application transport, coupling the Iroh QUIC peer-to-peer transport---in which peers are addressed and authenticated by an Ed25519 public key rather than an IP address---with a CoAP/CoRE control plane and a resource directory for capability-based discovery. Federation membership is enforced by a public-key allow-list, and model exchange falls back to an end-to-end-encrypted relay whenever no direct path can be validated. We evaluate the system on real hardware across five networks whose NAT behavior we classify with RFC~4787 probes, including a mobile-carrier CGNAT, and on a Raspberry Pi~3B client. Every cold-start connection attempt on the new office--home path (30/30) and 95.8\% of 120 earlier WAN attempts were established; long-lived sessions ran over validated direct paths (60/60 transfers office--home), while with all UDP blocked the relay delivered 190/190 transfers and the path returned to direct within 4~s of unblocking. A complete federation over the WAN completed 29 of 30 rounds with the Raspberry Pi~3B training in every round it joined (1.0~s and 2.8~CPU-s per round, 419~MB peak memory), unauthorized peers were rejected in 0.3~s, all 320 rounds of a packet-loss/latency/bandwidth sweep completed, and CoAP discovery through the resource directory resolved multi-tag queries over 5{,}000 registered endpoints in 19~ms. The transport is aggregation-agnostic: the same channel carries neural networks and a federated Prophet model, which we evaluate with imbalance-aware metrics on a seven-day-ahead air-quality forecasting task.
+\end{abstract}
+
+\begin{highlights}
+\item FL transport with built-in NAT traversal, public-key addressing and admission control
+\item RFC~4787-classified networks incl.\ mobile CGNAT; relay keeps 100\% delivery without UDP
+\item Real WAN federation with a Raspberry Pi~3B client; CPU, memory and energy per round
+\item CoAP resource directory: multi-tag discovery over 5{,}000 endpoints in tens of ms
+\item All rounds complete under loss, latency and bandwidth limits typical of rural links
+\end{highlights}
+
+\begin{keywords}
+Federated Learning \sep NAT Traversal \sep QUIC \sep CoAP \sep Edge Computing \sep Smart Agriculture
+\end{keywords}
+
+\maketitle
+
+% ---- Abbreviations (R2.3) -------------------------------------------------
+\begin{table}[!t]
+\caption{Abbreviations used in this paper}
+\label{tab:abbrev}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}l p{2.9cm} l p{2.9cm}@{}}
+\toprule
+ALPN & Application-Layer Protocol Negotiation & ICA & \'Indice de Calidad del Aire (Spanish air-quality index) \\
+CBOR & Concise Binary Object Representation & IID & Independent and identically distributed \\
+CGNAT & Carrier-Grade NAT & IoT & Internet of Things \\
+CoAP & Constrained Application Protocol & MLP & Multilayer perceptron \\
+CoRE & Constrained RESTful Environments & NAT & Network Address Translation \\
+DERP & Designated Encrypted Relay for Packets & QUIC & QUIC transport protocol (RFC~9000) \\
+DP & Differential privacy & RD & Resource Directory (RFC~9176) \\
+EIM & Endpoint-independent mapping & RSS & Resident set size (memory) \\
+FedAvg & Federated Averaging & RTT & Round-trip time \\
+FedGAM & Partial aggregation for GAMs & STUN & Session Traversal Utilities for NAT \\
+FL & Federated Learning & TLS & Transport Layer Security \\
+GAM & Generalized Additive Model & UDP & User Datagram Protocol \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Introduction}
+\label{sec:introduction}
+
+Precision agriculture increasingly relies on distributed IoT sensor networks to collect soil chemistry, microclimate, and crop health data. Federated Learning (FL)~\cite{mcmahan2017} offers an appealing paradigm for this domain: individual farms can collaboratively train shared crop recommendation or disease detection models without transmitting raw agronomic data off-site, which keeps raw data local and saves bandwidth on typically constrained rural links.
+
+However, a practical infrastructure barrier stands in the way: the vast majority of agricultural IoT deployments operate behind NAT or CGNAT, with no publicly reachable IP address. Mainstream FL frameworks such as Flower~\cite{flower2022}, TensorFlow Federated~\cite{tff2019}, and FedML~\cite{fedml2020} follow a client-initiated star topology, so NAT-constrained \emph{clients} can participate---but the aggregation \emph{server} must remain publicly reachable. A rented cloud VPS can provide such an endpoint; what it cannot provide is (i)~an aggregator hosted on-premises (e.g., at a farm or cooperative) behind CGNAT, as data-sovereignty and cost considerations often demand; (ii)~a stable server identity that survives IP churn on rural fixed and cellular links; or (iii)~operation without a third-party host that must be provisioned, paid for, secured, and kept alive. For unattended, solar-powered deployments with no administrator on site, these operational requirements---rather than the monthly price of a VPS---are the obstacle.
+
+The \emph{hole-punching} technique~\cite{ford2005}, used by consumer P2P applications, can establish direct UDP connections between NATted peers without dedicated infrastructure. With QUIC~\cite{rfc9000} as the transport, a hole-punched path also carries encrypted, multiplexed streams. Its success depends on how each NAT maps and filters traffic (RFC~4787~\cite{rfc4787}): endpoint-independent mappings are readily traversed, while address- and port-dependent mappings---common in mobile and shared rural broadband---may defeat it. A \emph{relay} with a public IP is therefore needed as a fallback. Unlike a conventional proxy, the DERP (Designated Encrypted Relay for Packets) relay used by Iroh forwards only end-to-end-encrypted traffic, so it never sees model parameters in plaintext. Fig.~\ref{fig:holepunch} illustrates both paths. Existing FL systems provide no integrated mechanism for this fallback.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{NAT-hole-punching.png}
+\caption{NAT hole-punching between two peers on private addresses. \textcircled{\scriptsize 1}~Both peers register with a public signaling/rendezvous server through their NATs; \textcircled{\scriptsize 2}~the server relays to each peer the other's public NAT mapping (address:port); \textcircled{\scriptsize 3}~simultaneous outbound packets open pinholes in both NATs and traffic then flows directly between the peers' public endpoints. In FL-Iroh the rendezvous role is played by the DERP relay, which additionally carries the end-to-end-encrypted traffic whenever a direct path cannot be validated; the application is unaware of which path is active (\S\ref{sec:e3}, \S\ref{sec:e8}).}
+\label{fig:holepunch}
+\end{figure}
+
+We address this gap with \textbf{FL-Iroh}, a system that integrates:
+
+\begin{enumerate}
+    \item \textbf{Iroh}~\cite{iroh2024}, a QUIC-based P2P transport library that implements the DERP relay protocol~\cite{tailscale2023}: hole-punching is attempted first; while no direct path is validated, traffic is relayed through a DERP server with end-to-end encryption, and the session migrates to the direct path once it is validated.
+    \item \textbf{CoAP/CoRE}~\cite{rfc7252} as a lightweight control plane with an RFC~9176-style resource directory~\cite{rfc9176} for capability-based client discovery and round coordination, using CBOR serialization on constrained links; for peers that are not mutually reachable at the IP level, registration is carried over an authenticated Iroh control stream instead.
+    \item \textbf{Public-key federation membership}: every node is identified by a persistent Ed25519 key, and the aggregator admits only allow-listed keys at the transport level, before any model exchange.
+\end{enumerate}
+
+The data plane is independent of IP addressing and of the aggregation rule: it carries the serialized parameters of any model without interpreting them, so changing the aggregation (FedAvg, partial aggregation for GAMs, or others) requires no transport change. It is not, however, independent of the client runtime: the current client requires a Python/PyTorch environment on Cortex-A class devices (\S\ref{sec:agnostic}).
+
+Our primary application domain is agricultural and environmental IoT: soil-based crop recommendation and seven-day-ahead outdoor air-quality forecasting with lightweight models suited to single-board edge computers such as the Raspberry Pi~3B used in our hardware experiments.
+
+\noindent\textbf{Contributions:}
+\begin{enumerate}
+    \item We design and implement FL-Iroh, an open-source FL architecture that embeds NAT traversal in the application-level transport---an Iroh\slash QUIC data plane with public-key addressing, transport-level admission control, transfer retry and endpoint recovery---coordinated by a CoAP\slash CBOR control plane with a resource directory (\S\ref{sec:system}). The NAT-traversal machinery is provided by the Iroh library~\cite{iroh2024}; our contribution is its integration into, hardening for, and evaluation as an FL substrate.
+    \item We provide an empirical connectivity characterization on real hardware across five networks with RFC~4787-classified NAT behavior---including a mobile-carrier CGNAT---covering cold-start establishment, path validation in long-lived sessions, forced relay operation, link outages and network switches (\S\ref{sec:e3}, \S\ref{sec:e8}). We distinguish validated direct paths from relay-carried ones, a distinction that our earlier analysis had conflated.
+    \item We evaluate FL-Iroh end to end: convergence and churn (E2, E4), CoAP discovery scaling to 5{,}000 endpoints (E5), a two-domain application study with imbalance-aware metrics (E6), a packet-loss/latency/bandwidth sweep (E9), admission control (E10), and a complete federation over the WAN with a Raspberry Pi~3B client, including per-round CPU, memory and energy (E11).
+\end{enumerate}
+
+We also include a case study of a partial-aggregation rule for Prophet GAMs (FedGAM). A same-model ablation shows that it is statistically indistinguishable from FedAvg on our data, so we present it as an illustration of aggregation-agnostic transport rather than as a contribution in its own right (\S\ref{sec:e6}).
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:system} presents the FL-Iroh architecture and protocols. Section~\ref{sec:evaluation} reports the experimental evaluation. Section~\ref{sec:discussion} discusses implications, the security model, and limitations. Section~\ref{sec:conclusion} concludes and outlines a research roadmap.

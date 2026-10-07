@@ -1,0 +1,152 @@
+% =========================================================================
+\section{Experimental Evaluation}
+\label{sec:evaluation}
+
+We report eleven experiments (Table~\ref{tab:explist}) followed by an operational comparison with Flower-over-Tailscale (\S\ref{sec:flower}). Throughout, we distinguish three connectivity outcomes for every transfer or connection attempt: \emph{direct} (carried over a validated hole-punched UDP path), \emph{relay-carried} (Iroh state \emph{relay} or \emph{mixed}, i.e., the DERP relay carries the traffic while no direct path is validated), and \emph{failed}.
+
+\begin{table}[t]
+\centering
+\caption{Experiments, research questions and reviewer-requested additions in this revision}
+\label{tab:explist}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}l p{4.1cm} l l@{}}
+\toprule
+\textbf{Exp.} & \textbf{Question} & \textbf{Platform} & \textbf{Transport} \\
+\midrule
+E1 & Transport throughput (relay path) & PC, RPi & real Iroh \\
+E2 & Convergence under non-IID data & HPC & in-process \\
+E3 & Connection establishment across classified NATs & PC, RPi & real Iroh \\
+E4 & Robustness to client dropout (simulated) & HPC & in-process \\
+E5 & CoAP discovery scaling to 5{,}000 endpoints & PC & CoAP \\
+E6 & Air-quality forecasting, imbalance-aware metrics & HPC, PC & real Iroh \\
+E7 & (reserved for the operational comparison, \S\ref{sec:flower}) & --- & --- \\
+E8 & Forced relay, outages, network switches & RPi, PC & real Iroh \\
+E9 & Loss / latency / bandwidth sweep & PC (netem) & real Iroh \\
+E10 & Public-key admission control & PC, RPi & real Iroh \\
+E11 & Full federation over WAN; RPi resources & RPi, PC & real Iroh \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experimental Setup}
+\label{sec:setup}
+
+\textbf{Hardware.} The edge client is a Raspberry Pi~3 Model~B (quad-core Cortex-A53 at 1.2~GHz, 1~GB RAM; Raspberry Pi OS based on Debian~13, Python~3.13, PyTorch~2.12 CPU build). The aggregator is a laptop PC running the server inside WSL2 (Ubuntu) on Windows~11. Learning-dynamics experiments (E2, E4 and the multi-seed part of E6) run on a single-node HPC cluster (Intel Xeon, 16 cores, no GPU). All experiments use the Iroh~0.35 Python bindings and the public n0 DERP relays.
+
+\textbf{Networks.} Table~\ref{tab:networks} lists the networks used in the hardware experiments. For the networks added in this revision we measured NAT mapping and filtering behavior with RFC~4787/RFC~5780 STUN probes from the device itself (\texttt{scripts/nat\_classify.py} in the artifact): mapping is classified by querying five STUN servers on different IPs from one local UDP port, and filtering by RFC~5780 CHANGE-REQUEST tests. The earlier cross-ISP campaign (PC~$\leftrightarrow$~Raspberry Pi, 300~km apart) used router/ISP configurations that were labeled but not probed; we keep those labels as descriptions of the configured topology.
+
+\begin{table}[t]
+\centering
+\caption{Networks used in the hardware experiments (RFC~4787 behavior measured with STUN probes; EIM = endpoint-independent mapping; ADF = address-dependent filtering)}
+\label{tab:networks}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}l p{3.0cm} l l l@{}}
+\toprule
+\textbf{Id} & \textbf{Network} & \textbf{Mapping} & \textbf{Filtering} & \textbf{Port pres.} \\
+\midrule
+N1 & Office Wi-Fi (enterprise NAT) & EIM & ADF & yes \\
+N2 & Mobile 4G (Lowi/Vodafone) via phone hotspot: hotspot NAT + carrier NAT & EIM & ADF & no \\
+N3 & Home fixed broadband (host OS) & EIM & ADF & yes \\
+N3$'$ & N3 seen from WSL2 (additional host NAT) & EIM & ADF & no \\
+\midrule
+C1--C5 & 2025 cross-ISP campaign: base, ``full-cone'', ``symmetric'', CGNAT (mobile carrier), port-443 firewall & \multicolumn{3}{l}{configured, not probed} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Software and data.} FL experiments use $K{=}10$ clients unless stated, FedAvg (or FedGAM for the Prophet case study), $E{=}1$ local epoch, SGD (lr$=$0.01, momentum 0.9, weight decay $10^{-4}$), and $R{=}100$ rounds for E2 and E4, $R{=}50$ for E6, $R{=}20$ for E9 and $R{=}30$ for E11. E2 uses SimpleCNN (three Conv--BN--ReLU blocks of 32/64/128 channels, global average pooling and a linear head; 94{,}762 parameters) on CIFAR-10~\cite{cifar2009}. The Crop Recommendation dataset~\cite{cropdataset} contains 2{,}200 records across 22 classes, partitioned IID or with Dirichlet $\alpha \in \{0.1, 0.5, 1.0\}$. The E6 air-quality dataset covers 10 Castilla y Le\'on monitoring zones over 2011--2019 (train: 2011--2018, test: 2019) with a geographic partition (one client per zone) and an IID baseline. Multi-seed runs use a fixed seed registry ($n{=}5$); 95\% confidence intervals use the Student-$t$ distribution.
+
+\textbf{Transport in each experiment.} E2 and E4 study learning dynamics (non-IID data, partial participation) and were run with an in-process loopback transport that delivers the same serialized payloads without the network stack; we report them as statistical experiments and evaluate all transport behavior on real Iroh connections in E1, E3, E6 and E8--E11. Code, per-run results and analysis scripts are available at \url{https://github.com/raullb34/FL-Iroh}.
+
+\subsection{E1: Transport Throughput}
+\label{sec:e1}
+
+We benchmark three transport configurations across four payload sizes (100~KB, 1~MB, 10~MB, 100~MB):
+
+\begin{itemize}
+    \item \textbf{HTTP/2 (loopback)}: aiohttp server+client on localhost, serving as a ceiling baseline.
+    \item \textbf{iroh\_relay\_loopback}: two in-process Iroh nodes on the same machine, using the public DERP relay \texttt{euw1-1.relay.iroh.network}.
+    \item \textbf{iroh\_relay\_wan}: PC as server and the Raspberry Pi (300~km away, different ISP) as client, using the same public DERP relay.
+\end{itemize}
+
+Results are shown in Table~\ref{tab:e1}. HTTP/2 peaks at 573~Mbps for 1~MB payloads on loopback, dropping to 244~Mbps at 100~MB (memory bandwidth limited). The iroh relay loopback achieves 27.2~Mbps at 100~KB ($N{=}14$, preliminary). The WAN relay saturates at 2.8~Mbps independent of payload size ($N{=}30$ per cell), which points to a relay-side ceiling (server capacity or per-connection rate limiting on the public relay) rather than QUIC overhead; we did not benchmark a self-hosted relay to separate the two. In E8 the relay delivered 1~MB updates at a median 1.85~Mbps over a 4G uplink, essentially the same as the direct path on that link (1.88~Mbps), so on mobile links the access network rather than the relay was the bottleneck. For AgriMLP and AirMLP updates (14--32~KB) relay transport time is a few hundred milliseconds per round.
+
+\begin{table}[t]
+\centering
+\caption{E1: Transport Throughput Summary}
+\label{tab:e1}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Transport} & \textbf{Payload} & \textbf{Mean (Mbps)} & \textbf{P95 (Mbps)} & \textbf{N} \\
+\midrule
+HTTP/2               & 100~KB  & 208.2  & 245.5  & 30 \\
+HTTP/2               & 1~MB    & 573.6  & 603.3  & 30 \\
+HTTP/2               & 10~MB   & 479.2  & 560.3  & 30 \\
+HTTP/2               & 100~MB  & 244.6  & 248.9  & 30 \\
+\midrule
+iroh relay loopback  & 100~KB  & 27.2   & 29.2   & 14 \\
+\midrule
+iroh relay WAN       & 100~KB  & 2.26   & 2.43   & 30 \\
+iroh relay WAN       & 1~MB    & 2.75   & 2.79   & 30 \\
+iroh relay WAN       & 10~MB   & 2.81   & 2.82   & 30 \\
+iroh relay WAN       & 100~MB  & 2.81   & 2.83   & 30 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{E2: FL Convergence Under Non-IID Data}
+\label{sec:e2}
+
+We evaluate FedAvg convergence on CIFAR-10 with SimpleCNN under IID and non-IID (Dirichlet $\alpha{=}0.1$) partitioning ($K{=}10$, $E{=}1$, $R{=}100$, $n{=}5$ seeds; Table~\ref{tab:e2}).
+
+\begin{table}[t]
+\centering
+\caption{E2: FL Convergence on CIFAR-10 (SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds)}
+\label{tab:e2}
+\footnotesize
+\begin{tabular}{l r r}
+\toprule
+\textbf{Partition} & \textbf{Test Acc. (final)} & \textbf{95\% CI} \\
+\midrule
+IID                  & 65.86\% & [65.66\%, 66.06\%] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% & [39.45\%, 48.92\%] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under IID partitioning, SimpleCNN converges to 65.86\% test accuracy with a 95\% CI of $\pm$0.2pp. Severe label skew (Dirichlet $\alpha{=}0.1$) lowers accuracy to 44.18\% with a wider CI ($\pm$4.7pp), consistent with prior work~\cite{li2020federated,scaffold2020}. A single-seed sweep confirms a monotonic trend from IID (65.86\%) through $\alpha{=}1.0$ (63.95\%) and $\alpha{=}0.5$ (62.64\%) to $\alpha{=}0.1$. All runs complete their 100 rounds; each round aggregates 3.87~MB of updates ($K{=}10 \times \approx$0.387~MB).
+
+\subsection{E3: Connection Establishment Across Classified NATs}
+\label{sec:e3}
+
+\paragraph{Correction of the path classification.} The original submission counted Iroh's \emph{mixed} state as a direct path. While analysing the forced-relay experiments of this revision (\S\ref{sec:e8}), we found that with all outgoing UDP blocked---so that hole punching is impossible---Iroh reports the connection as \emph{mixed}, not \emph{relay}: it keeps a direct candidate address while the relay carries all traffic. Debug logs of every cold start record, for each candidate address, whether a probe round trip has been measured; in all \emph{mixed} cases no candidate had one, i.e., no direct path had been validated. We therefore re-classified the original campaign with the strict criterion (direct = Iroh reports \emph{direct} with a validated address) and report the corrected figures below. This supersedes the transfer-level table and the ``0\% relay'' statements of the original submission; the per-run logs and the re-classification script are in the artifact.
+
+\paragraph{Cold-start campaign.} Each attempt spawns a fresh process with a new Iroh endpoint and NAT-mapping discovery, sends one payload and records the path after a 5~s settle window; attempts are separated by a 20~s pause ($N{=}30$ per scenario). Table~\ref{tab:e3est} reports the corrected results for the original cross-ISP campaign (C1--C5) and a new campaign from the Raspberry Pi on N1 to the PC on N3$'$.
+
+\begin{table*}[t]
+\centering
+\caption{E3: cold-start connection establishment ($N{=}30$ independent attempts per scenario; strict path classification). \emph{Connected} = direct + relay-carried. Median est.\ = client-side dial-to-connection time of successful attempts. The C1 base profile ran with a remote client and therefore also traversed the WAN.}
+\label{tab:e3est}
+\footnotesize
+\begin{tabular}{l l r r r r r r}
+\toprule
+\textbf{Scenario} & \textbf{Path} & \textbf{Attempts} & \textbf{Direct} & \textbf{Relay-carried} & \textbf{Failed} & \textbf{Connected (\%)} & \textbf{Median est.} \\
+\midrule
+C1 base profile (over WAN)   & PC $\leftrightarrow$ RPi, 300~km & 30 & 25 & 4  & 1 & 96.7  & 415~ms \\
+C2 ``full-cone'' NAT         & PC $\leftrightarrow$ RPi, 300~km & 30 & 27 & 2  & 1 & 96.7  & 459~ms \\
+C3 ``symmetric'' NAT         & PC $\leftrightarrow$ RPi, 300~km & 30 & 14 & 15 & 1 & 96.7  & 391~ms \\
+C4 CGNAT (mobile carrier)    & PC $\leftrightarrow$ RPi, 300~km & 30 & 23 & 4  & 3 & 90.0  & 439~ms \\
+C5 port-443 firewall         & PC $\leftrightarrow$ RPi, 300~km & 30 & 0  & 30 & 0 & 100.0 & 1429~ms \\
+\midrule
+\textbf{C2--C5 (WAN)}        &                         & 120 & \textbf{64} & \textbf{51} & 5 & \textbf{95.8} & \\
+\midrule
+N1 $\to$ N3$'$ (new)         & RPi (office) $\to$ PC (home) & 30 & 0 & 30 & 0 & 100.0 & 176~ms \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Three observations follow. First, connectivity is robust: 115 of 120 WAN cold starts in the original campaign and 30 of 30 in the new office--home campaign established a working connection, and every failure was a first-attempt timeout without retry. Second, a validated direct path within the 5~s window is far from universal: 64 of 120 (53.3\%) in the original campaign, with the clearest gap under the scenario labeled symmetric NAT (14/30) and none under the port-443 firewall, where UDP was blocked and all 30 connections were relay-carried. Third, in the office--home campaign every cold start began relay-carried: a freshly started node dials before it has discovered its own public mapping, and the receiving side ran behind the extra WSL2 host NAT (N3$'$), which rewrites ports. The same pair of networks yields direct paths immediately once a node is long-lived (60/60 transfers home$\to$office, \S\ref{sec:e8}), which is the relevant regime for FL, where nodes stay up across rounds. Cold-start figures therefore characterize the first seconds of a connection; the steady-state path is characterized in E8.

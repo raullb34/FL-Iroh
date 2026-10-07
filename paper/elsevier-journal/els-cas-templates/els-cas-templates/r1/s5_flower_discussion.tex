@@ -1,0 +1,95 @@
+
+The closest deployable alternative to FL-Iroh for NAT-constrained FL is to run a conventional framework (Flower~\cite{flower2022}) over a WireGuard mesh VPN such as Tailscale~\cite{tailscale2023}, which gives every node a stable virtual IP and traverses NAT\slash CGNAT through DERP-style relays. Both stacks rely on relay-assisted NAT traversal and end-to-end encryption; the difference is \emph{where} connectivity lives. Table~\ref{tab:e7} contrasts the two along eight operational axes; it is an architectural comparison, complemented by an accuracy-parity check (Table~\ref{tab:e7acc}).
+
+\begin{table*}[t]
+\centering
+\caption{FL-Iroh vs.\ Flower-over-Tailscale operational comparison}
+\label{tab:e7}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{2.4cm} p{6.2cm} p{6.2cm}}
+\toprule
+\textbf{Axis} & \textbf{FL-Iroh} & \textbf{Flower + Tailscale} \\
+\midrule
+NAT / CGNAT traversal & Built into the application transport: QUIC hole-punching with transparent DERP relay fallback (E2E encrypted) & Delegated to the Tailscale overlay (WireGuard + DERP); Flower itself still needs a reachable server address \\
+Server reachability & Peer addressed by 32-byte public node ID; no routable server IP required & Clients must know the server's Tailnet IP (100.x.y.z); centralized star topology \\
+Federation membership & Allow-list of public keys enforced by the aggregator at the transport level (E10) & Tailnet membership and ACLs managed in the Tailscale control plane \\
+External infrastructure & Public or self-hosted DERP relay only (stateless, swappable) & Tailscale coordination server (control plane) $+$ DERP $+$ long-lived FL server process \\
+Extra system daemon & None---userspace library, no elevated privileges & \texttt{tailscaled} system daemon on every node (typically root / \texttt{NET\_ADMIN}) \\
+Transport encryption & End-to-end QUIC/TLS~1.3 (relay sees only ciphertext) & End-to-end WireGuard (relay sees only ciphertext) \\
+Manual setup per node & Generate key, send node ID to the coordinator, receive the aggregator's endpoint file & Install \texttt{tailscaled}, authenticate node to tailnet, discover server IP \\
+Account / ToS dependency & No account; default public relay operated by n0 (subject to its terms), fully self-hostable & Tailscale account $+$ ACL policy management (free-tier device/user caps) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{Accuracy parity.} We ran the identical FedAvg workload (SimpleCNN on CIFAR-10, $K{=}10$, $R{=}100$, the same five seeds as E2) through a Flower-compatible reference harness---an in-process simulation reusing the same model, partitions and training loop---and compared final test accuracy with E2 (Table~\ref{tab:e7acc}). The two are statistically indistinguishable under IID and $\alpha{=}0.1$ partitions. This parity is expected by construction and only confirms that FL-Iroh's data plane introduces no accuracy artifact. A live Flower deployment over a Tailscale mesh on the same hardware, measuring setup effort, round time and the resource cost of the \texttt{tailscaled} daemon on the Raspberry Pi with the monitor used in E11, is supported by the artifact but was not completed for this revision; we list it in the roadmap (\S\ref{sec:conclusion}).
+
+\begin{table}[t]
+\centering
+\caption{Transport-agnostic accuracy parity (CIFAR-10, SimpleCNN, $K{=}10$, $R{=}100$, $n{=}5$ seeds; final test accuracy, mean with 95\% CI)}
+\label{tab:e7acc}
+\scriptsize
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Partition} & \textbf{FL-Iroh (E2)} & \textbf{Flower harness} \\
+\midrule
+IID                      & 65.86\% [65.66, 66.06] & 65.98\% [65.79, 66.17] \\
+Dirichlet $\alpha{=}0.1$ & 44.18\% [39.45, 48.92] & 46.10\% [41.20, 51.00] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Connectivity: What the Relay Guarantees and What It Does Not}
+
+Across all hardware experiments the system established a working connection in 115 of 120 cold starts of the original campaign and in every cold start, session and federation round of the new campaigns, including a mobile-carrier CGNAT and a network with all UDP blocked. This is the property FL needs: a client can always reach the aggregator, and vice versa, by public key. Whether the traffic then runs over a validated direct path depends on the networks and on time. For long-lived nodes on endpoint-independent NATs (the four networks we classified, including the 4G carrier) the direct path is the steady state; at cold start, within seconds of process start, a large fraction of connections are relay-carried, and paths that end at a node behind an extra port-rewriting NAT (here WSL2) remained relay-carried. The relay is thus an operational component, not a rarely used safety net, and its capacity matters: on the public relay we measured 2.8~Mbps on a fixed-line WAN path (E1), and on a 4G uplink the relay matched the direct path (E8). Even direct connections rely on a reachable relay for rendezvous, so FL-Iroh removes the need for the relay to be operated by the federation, to hold a stable application identity, or to see plaintext---not the need for a relay to exist. Our earlier submission over-stated the direct-path rate because Iroh's \emph{mixed} state had been counted as direct; the corrected analysis is in E3.
+
+A second, less expected finding is that on the 4G CGNAT the relay path was \emph{more reliable} than the direct one (0 of 190 versus up to 27\% of transfers interrupted). Hole-punched paths through carrier NATs depend on mapping lifetimes that the carrier controls; the relay runs over a TCP connection that the carrier treats as ordinary HTTPS. Transfer-level retry turns these interruptions into delays rather than lost updates (E8), and a deployment on mobile links may reasonably prefer the relay for large transfers.
+
+\subsection{Non-IID Degradation and Mitigation}
+
+The 21.7pp accuracy drop from IID to $\alpha{=}0.1$ on CIFAR-10 is expected under FedAvg with severe label skew; for $\alpha{\geq}0.5$ accuracy remains above 62\%. FedProx~\cite{fedprox2020} or SCAFFOLD~\cite{scaffold2020} could recover part of the gap; because aggregation is a server-side function, adopting them requires no change to the transport or control plane.
+
+\subsection{Aggregation Agnosticism versus Runtime Agnosticism}
+\label{sec:agnostic}
+
+FL-Iroh's transport is agnostic to the \emph{aggregation rule} and to the \emph{model}: it frames and delivers opaque byte strings, so FedAvg, FedGAM or any other rule---and neural networks or Prophet models alike---run over the same channels with a one-line server-side change (E6). It is \emph{not} agnostic to the client \emph{runtime and platform}. The prototype serializes parameters with \texttt{torch.save}, imports PyTorch on the aggregator and clients, and requires a 64-bit Linux system with Python; on a Raspberry Pi~3B the runtime occupies about 40\% of the device's memory (E11), and Cortex-M microcontrollers are out of reach. The framing (length, payload, SHA-256) and the ALPN protocols are language-neutral, and Iroh has a native Rust implementation, so a non-Python client requires (i)~a framework-neutral tensor encoding (e.g., safetensors or CBOR arrays) and (ii)~a small native client that dials the aggregator by node ID and speaks the three ALPNs. We claim aggregation and model agnosticism; runtime agnosticism is future work.
+
+\subsection{Security, Privacy and Threat Model}
+\label{sec:threat}
+
+FL-Iroh's transport security rests on Iroh's QUIC/TLS~1.3 channel: every byte exchanged between peers, including all model parameters, is encrypted end to end and authenticated by the peers' Ed25519 keys. We consider an honest-but-curious DERP relay, a passive network adversary on the WAN path, and outsiders who know the aggregator's node ID.
+
+\textbf{What the relay sees.} The relay forwards only QUIC ciphertext and never holds session keys, so it cannot read or alter model updates. It observes metadata: the node IDs of the communicating peers, packet sizes and timing. Update size is fixed per model, so it reveals the model family rather than data content; timing may reveal round cadence.
+
+\textbf{Admission and update binding.} Unauthorized peers are rejected before any payload is read, and each round accepts at most one update per selected member (E10). This prevents outsiders from injecting updates and members from over-weighting themselves, but it does not protect against a \emph{member} that submits a poisoned update.
+
+\textbf{Privacy scope.} FL-Iroh keeps raw data on the device and protects updates in transit. It does \emph{not} make the learning process privacy-preserving in the formal sense: the aggregator receives individual updates in the clear, which can leak information about local data through gradient inversion or membership inference, and no differential privacy or secure aggregation is applied. Robust aggregation, secure aggregation and differential privacy compose with our transport without protocol changes (they act on the payloads or on the aggregation rule), and are listed in the roadmap. We have revised the wording of the paper accordingly: we describe FL-Iroh as keeping data local and encrypting updates in transit, not as a privacy-preserving learning system.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\textbf{Connectivity sample.} The hardware evaluation covers one client device, one aggregator machine, five probed networks in Spain and the five configured scenarios of the original campaign. It does not characterize NAT behavior across operators and countries, many peers behind the same CGNAT, or IPv6-only networks. The aggregator ran inside WSL2, whose additional NAT affected direct-path formation toward it (E3, E11); a native Linux aggregator would remove that layer.
+
+\textbf{Endpoint recovery.} After a Wi-Fi$\to$4G switch the Iroh endpoint did not recover by itself (E8). The watchdog that restarts it with the same key is covered by automated tests but has not yet been validated with repeated network switches in the field.
+
+\textbf{Energy.} The Raspberry Pi~3B has no power sensor; energy figures are model-based estimates. The resource monitor reads hardware sensors where available (an INA219/INA226 shunt monitor via Linux \texttt{hwmon}, or the PMIC of a Raspberry Pi~5) and should be used for measured energy in future deployments.
+
+\textbf{Scale of the federation.} The WAN federation (E11) involved three clients, one of them on a Raspberry Pi; E2, E4 and E6 used up to ten simulated clients on a server. Larger physical deployments, and the live Flower-over-Tailscale comparison, remain to be done.
+
+\textbf{Small tabular datasets.} The Crop Recommendation benchmark and the daily CyL air-quality data are static and relatively clean; they do not capture sub-hourly sensor noise, concept drift or the spatial density of real monitoring networks.
+
+\textbf{Dropout model.} E4 simulates per-round dropout; real outages and network switches were measured at the transport level (E8) and a late join in a real federation (E11), but multi-day disconnections with local data accumulation would require asynchronous FL (e.g., FedBuff~\cite{fedbuff2022}).
+
+\textbf{FedGAM.} With eight years of local data FedGAM brings no benefit over FedAvg; whether partial aggregation helps with short local histories is untested.
+
+\subsection{Deployment Considerations}
+
+FL-Iroh runs on any 64-bit Linux system with Python~3.11+ (we used Python~3.13 on the Raspberry Pi), including Raspberry Pi OS, NVIDIA Jetson and containerized edge nodes; on ARM single-board computers the CPU-only PyTorch build must be used (E11). A node joins a federation with one command that generates its key and prints its node ID for the coordinator, who adds it to the allow-list and shares the aggregator's endpoint file (node ID and relay URL), which contains no address that must be reachable. The node ID is stable across IP changes, DHCP renewals and cellular hand-offs.

@@ -1,0 +1,68 @@
+% =========================================================================
+\section{Related Work}
+\label{sec:related}
+
+We organize prior work along six axes---FL in agriculture and environmental monitoring, communication-efficient and resource-aware FL, NAT traversal, lightweight IoT protocols for FL, FL over overlays, and decentralized FL---and close with a structured comparison (Table~\ref{tab:related}).
+
+\subsection{Federated Learning for Agricultural and Environmental IoT}
+
+FL has been applied across the agri-food sector, from cross-silo data sharing among stakeholders~\cite{durrant2022} and federated intrusion detection for agricultural IoT~\cite{friha2022} to crop-yield prediction with encrypted gradients in an edge--cloud hierarchy~\cite{dey2025}, nitrous-oxide emission prediction on a farm-deployed IoT/fog architecture~\cite{killeen2025}, and leaf-disease detection with pruned attention networks~\cite{piccialli2025}. In environmental monitoring, federated models forecast PM2.5 across city-level edge servers~\cite{hu2024} and air-quality indices with energy-aware training~\cite{dey2026}, and detect anomalies in environmental sensor networks~\cite{yan2024}. Geographic heterogeneity creates natural non-IID distributions, and agronomic data are commercially sensitive. All these works assume that clients can reach an aggregator over conventional infrastructure (data centers, pre-provisioned gateways or a single-site network); none addresses the NAT-traversal barrier that rural deployments behind NAT/CGNAT face.
+
+\subsection{Communication-Efficient and Resource-Aware FL at the Edge}
+
+A large body of work reduces what FL sends: quantization and sparsification with error feedback~\cite{konecny2016,malik2026}, compressed and pruned updates with energy- and latency-aware synchronization for intermittent edge--cloud participants~\cite{bayraktar2026}, and joint analyses of communication efficiency and energy footprint for robust FL in industrial IoT~\cite{barbieri2025}. Resource use on real edge hardware has been measured on Raspberry Pi testbeds~\cite{ridolfi2023}, embedded intrusion-detection deployments~\cite{bhavsar2024} and energy-aware benchmarks under emulated device constraints~\cite{miller2026}. These approaches are complementary to ours: they reduce payloads or schedule participation, but assume a reachable server; FL-Iroh addresses reachability and transport, and could carry their compressed updates unchanged.
+
+\subsection{Non-IID Data in Resource-Constrained Federations}
+
+Non-IID data is a well-studied challenge in FL~\cite{zhao2018noniid,li2022noniid,kairouz2021}; in agriculture it arises naturally from climate zones and soil types. FedProx~\cite{fedprox2020} and SCAFFOLD~\cite{scaffold2020} counter client drift, and clustering approaches group clients with similar distributions~\cite{briggs2020cluster}. For non-neural models such as Prophet GAMs, plain FedAvg averages parameters whose meaning differs across clients (e.g., local emission trends), which motivates the partial-aggregation case study of \S\ref{sec:e6}. We use Dirichlet partitions as the standard non-IID benchmark in E2 and E4.
+
+\subsection{NAT Traversal in P2P and IoT}
+
+NAT traversal has been studied since Ford et~al.'s analysis of peer-to-peer communication across NATs~\cite{ford2005,rfc5128}, and underpins VoIP, WebRTC~\cite{webrtc2021} and file sharing. RFC~4787~\cite{rfc4787} defines the NAT mapping and filtering behaviors that determine hole-punching success; STUN~\cite{rfc8489} and TURN~\cite{rfc8656} provide the corresponding discovery and relay protocols, and measurement campaigns in the libp2p ecosystem have characterized hole-punching success in the wild~\cite{seemann2022}. DERP, developed by Tailscale~\cite{tailscale2023}, is an authenticated, encrypted, HTTPS-based relay that acts both as rendezvous and as relay of last resort---the role of TURN, without protocol compatibility---and Iroh adapts it for general-purpose P2P applications~\cite{iroh2024}. The most closely related FL study compares communication substrates (gRPC, MQTT, DDS and QUIC) for distributed learning under emulated disruption~\cite{kutlu2026}; it treats QUIC as a client--server transport and does not consider NAT traversal, peer addressing or discovery.
+
+\subsection{Lightweight IoT Protocols for FL Control and Transport}
+
+CoAP~\cite{rfc7252}, the CoRE link format~\cite{rfc6690}, the CoRE resource directory~\cite{rfc9176} and CBOR~\cite{rfc8949} form the standard stack for constrained RESTful environments. FedCoRE carries federated training over CoAP with quantized models on microcontroller-class devices~\cite{djamaa2025}, and TDMiL uses a CoAP-based aggregator for distributed training on microcontrollers~\cite{gulati2024}; MQTT~\cite{mqtt2019} and brokered protocols such as Zenoh have been compared for resilient edge FL~\cite{almeida2025}. These systems use the IoT protocol as the \emph{data} transport inside a local network. FL-Iroh instead uses CoAP and a resource directory as a \emph{control} plane for capability-based discovery and moves bulk transfers to a NAT-traversing QUIC data plane, so that the two compose across the Internet.
+
+\subsection{FL over Overlay and VPN Networks}
+
+A pragmatic way to reach NATed devices is a shared overlay network. WireGuard~\cite{wireguard2017}-based meshes such as Tailscale~\cite{tailscale2023} and ZeroTier give every node a stable virtual IP and traverse NAT/CGNAT with DERP-style relays. They delegate connectivity to a system-level daemon with elevated privileges and an account-managed coordination server, while the FL framework (e.g., Flower~\cite{flower2022}) still addresses a reachable star-topology server. FL-Iroh embeds traversal in the application transport and names peers by public key (\S\ref{sec:flower}).
+
+\subsection{Decentralized and Serverless FL}
+
+Decentralized SGD trains over sparse graphs without a parameter server~\cite{lian2017}, gossip learning merges models epidemically~\cite{hegedus2019}, including over opportunistic contacts among mobile users~\cite{rizzo2026}, BrainTorrent performs peer-to-peer FL in medical imaging~\cite{roy2019braintorrent}, and Fedstellar supports centralized, semi-decentralized and decentralized topologies on physical devices~\cite{martinezbeltran2024}. Production frameworks (Flower~\cite{flower2022}, FedML~\cite{fedml2020}, OpenFL~\cite{openfl2022}, NVIDIA FLARE~\cite{flare2022}) likewise assume a reachable coordination endpoint. These approaches generally \emph{assume} that peers can address one another---the assumption NAT and CGNAT break in the field. Decentralized networking among resource-constrained edge platforms has also been explored outside FL, e.g., congestion-aware mesh routing in UAV swarms~\cite{bakirci2023}. FL-Iroh is complementary: it keeps a logical aggregator while removing the requirement that any participant be publicly routable, and because peers are addressed by public key the same transport could carry the decentralized topologies above.
+
+\subsection{Comparison and Research Gap}
+
+Table~\ref{tab:related} compares representative recent works on the problem addressed, the key innovation, the methodology and evaluation, the main reported result, and the gap that remains with respect to the requirements of rural IoT FL. Three gaps recur: (i)~reachability of the aggregator (or of peers) is assumed rather than provided; (ii)~connectivity is evaluated in simulation or on a single local network rather than across real NATs and mobile carriers; and (iii)~discovery and federation membership are not part of the system. FL-Iroh (last row) targets all three, at the cost of a heavier client runtime than the microcontroller-oriented CoAP systems.
+
+\begin{table*}[!t]
+\centering
+\caption{Comparison of recent related work (2023--2026) with FL-Iroh}
+\label{tab:related}
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{1.75cm} p{2.6cm} p{3.0cm} p{2.9cm} p{2.6cm} p{3.6cm}@{}}
+\toprule
+\textbf{Work} & \textbf{Problem} & \textbf{Innovation} & \textbf{Methodology} & \textbf{Main result} & \textbf{Gap w.r.t.\ NAT-constrained IoT FL} \\
+\midrule
+FLyer~\cite{dey2025} & Private crop-yield prediction & Edge--cloud FL with LSTM and AES-encrypted gradients & Edge servers + cloud aggregator & $\approx$39\% lower latency, $\approx$40\% lower energy & Assumes reachable cloud; no NAT, discovery or WAN tests \\
+Killeen et~al.~\cite{killeen2025} & Smart-farming adoption barriers & IoT/fog FL architecture replacing N$_2$O sensors & Prototype on a farm; centralized vs.\ federated & FL competitive with centralized & Connectivity and NAT not studied \\
+AGRIFOLD~\cite{piccialli2025} & Leaf-disease detection & Pruned attention CNN for edge devices & Five FL algorithms on 12 datasets (simulation) & SCAFFOLD best & No networking evaluation \\
+FedDeep~\cite{hu2024} & Multi-city PM2.5 forecasting & Spatio-temporal network per edge cloud & 13 cities, edge servers & Outperforms baselines & Data-center edge; no constrained devices or NAT \\
+GreenEdge AI~\cite{dey2026} & Energy-efficient AQI forecasting & Green-aware LSTM and aggregation & Edge FL with energy metrics & 37\% lower compute cost & Reachable aggregator assumed \\
+Barbieri et~al.~\cite{barbieri2025} & Energy/carbon cost of IIoT FL & Energy and GHG monitoring incl.\ compression & Case studies, centralized and decentralized FL & Centralized FL best under tight budgets & Communication modeled; no transport/NAT \\
+Bayraktar \& Bakirci~\cite{bayraktar2026} & Bandwidth-limited edge--cloud FL & Quantized, pruned deltas; energy-aware sync & UAV/industrial vision, non-IID sites & $>$50\% less communication & Star topology with reachable cloud; no NAT \\
+Ridolfi et~al.~\cite{ridolfi2023} & FL on heterogeneous devices & Flower testbed of Raspberry Pis and VMs & Image classification on LAN & Effects of heterogeneity and heat & LAN only; reachable server \\
+EcoFL~\cite{miller2026} & System-level FL resource use & Energy-aware scheduler and profiling & Emulated RPi~4 constraints & Reproducible energy profiles & Emulated devices; no real network \\
+Kutlu~\cite{kutlu2026} & Transport choice for distributed ML & Controlled DDS/gRPC/MQTT/QUIC comparison & Physical testbed, netem disruptions & gRPC 96$\to$55\% efficiency at 20\% loss & No NAT traversal, peer addressing or discovery \\
+Almeida et~al.~\cite{almeida2025} & Resilient FL at a dynamic edge & Pluggable protocols (Zenoh/MQTT/Kafka) & Simulated worker failures & Zenoh most efficient & Brokered/routed; no NAT \\
+Fedstellar~\cite{martinezbeltran2024} & Platform for decentralized FL & Configurable topologies, live monitoring & Raspberry Pi deployment + virtual nodes & F1 up to 98\% & Nodes assumed addressable \\
+FedCoRE~\cite{djamaa2025} & FL on MCU-class AIoT & FL over CoAP with quantization & 256~KB-RAM devices & Up to 60\% less communication & Local network; no NAT/P2P \\
+TDMiL~\cite{gulati2024} & Tiny distributed ML on MCUs & CoAP aggregator + embedded runtimes & COTS boards, open testbed & Straggler mitigation compared & Single site; no WAN \\
+\midrule
+\textbf{FL-Iroh (this work)} & FL across NAT/CGNAT without public IPs & QUIC P2P data plane with public-key addressing, admission control and relay fallback; CoAP RD control plane & Real hardware across 5 RFC~4787-classified networks incl.\ mobile CGNAT; WAN federation on RPi~3B; netem sweep; 5{,}000-endpoint discovery & Connectivity in all new sessions; relay 190/190 without UDP; 29/30 WAN rounds; 19~ms RD lookup at 5{,}000 & Python/PyTorch runtime too heavy for MCUs; small physical federation; cold starts often relay-carried \\
+\bottomrule
+\end{tabular}
+\end{table*}

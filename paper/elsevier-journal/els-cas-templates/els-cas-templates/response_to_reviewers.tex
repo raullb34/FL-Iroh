@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\newcommand{\TBD}[1]{\textcolor{red}{[TBD#1]}}
+\newenvironment{comment}{\par\medskip\noindent\begin{minipage}{\linewidth}\color{blue!45!black}\itshape}{\end{minipage}\par}
+\newcommand{\reply}{\par\smallskip\noindent\textbf{Response.}~}
+\newcommand{\changes}{\par\smallskip\noindent\textbf{Changes in the manuscript.}~}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Response to the Reviewers}\\[0.4em]
+Manuscript: \emph{FL-Iroh: NAT-Transparent Federated Learning for Agricultural and Environmental IoT via QUIC P2P Transport and CoAP Service Discovery}\\
+Journal: \emph{Internet of Things} (Elsevier)
+\end{center}
+
+Dear Editor, dear Reviewers,
+
+We thank both reviewers for their careful reading and constructive comments. They led us to run a substantial set of new experiments on real hardware and to correct the analysis of our original connectivity results. In summary, the revision:
+
+\begin{itemize}[leftmargin=1.3em,itemsep=0.15em]
+\item adds six new experiments: RFC~4787 classification of all new networks, including a mobile-carrier CGNAT (Table~6); forced relay, link outages and network switches on a Raspberry Pi (E8); a packet-loss/latency/bandwidth sweep with 320 federated rounds (E9); public-key admission control on loopback and over the WAN (E10); a complete federation over the WAN with a Raspberry Pi client and per-round CPU, memory and energy (E11); and CoAP discovery scaling to 5{,}000 endpoints with a resource directory (E5, replaced);
+\item implements and evaluates federation admission control, an authenticated control channel that traverses NAT, transfer retry and endpoint recovery;
+\item \textbf{corrects} the path classification of the original NAT-traversal results. Iroh's ``mixed'' state, which we had counted as a direct path, is relay-carried. The corrected figures are reported in E3, and the ``0\% relay'' statements have been removed;
+\item corrects the hardware description: the edge device is a Raspberry Pi~3 Model~B, not a Raspberry Pi~4B;
+\item reframes FedGAM as a case study, restricts the privacy and agnosticism claims, and adds a related-work comparison table, 19 recent references (2023--2026), an abbreviation list, an expanded architecture section with a sequence diagram and the round algorithm, and a research roadmap.
+\end{itemize}
+
+Below we answer each comment. Section, table and experiment numbers refer to the revised manuscript. A version with all changes marked is provided as a separate file. All code, per-run results and analysis scripts are in the public repository (branch \texttt{revision-r1}).
+
+% ============================================================================
+\section*{Reviewer 1}
+
+\begin{comment}
+1) My first concern is the generalizability of the NAT-traversal results. Although 96.7\% direct-path rate over 150 cold-start attempts is encouraging, all of these experiments ultimately come from a single PC--Raspberry Pi hardware pair and one ISP pairing, and the NAT types were not independently verified using RFC 4787-style mapping/filtering tests. You should repeat the experiment across several routers, mobile operators, ISPs, and geographically separated peers before making broad claims about NAT/CGNAT transparency.
+\end{comment}
+\reply We agree, and addressing this comment led to the most important correction in the revision.
+
+(a)~\emph{NAT classification.} We implemented an RFC~4787/RFC~5780 STUN-based classifier (\texttt{scripts/nat\_classify.py}). It runs on the device itself, queries five STUN servers on different IPs from one local port to classify mapping, and uses CHANGE-REQUEST tests to classify filtering. We classified every network used in the new experiments: an enterprise office network, a mobile 4G carrier reached through a phone hotspot (two NAT layers), and a residential fixed-line network seen from the host OS and from WSL2 (Table~4). All four show endpoint-independent mapping and address-dependent filtering; the mobile carrier and WSL2 do not preserve ports. The scenarios of the original campaign were not probed at the time, and we now describe them as configured topologies.
+
+(b)~\emph{Additional networks and peers.} The new experiments use three further networks: office, mobile CGNAT and residential, in different locations and with different ISPs and one mobile operator. They also add two new peer pairings (Raspberry Pi in the office or on 4G $\leftrightarrow$ PC in the office or at home), on top of the original cross-ISP pair 300~km apart.
+
+(c)~\emph{Correction of the original results.} While designing the forced-relay experiment (comment~2) we found that with all UDP blocked, so that hole punching is impossible, Iroh reports the path as ``mixed'' rather than ``relay''. In the mixed state the relay carries the traffic while an unvalidated direct candidate is kept. Our original classifier counted ``mixed'' as direct. We re-analysed the debug logs of all 150 original cold starts, which record whether any direct candidate had been validated. With the strict criterion, 115 of the 120 WAN cold starts were established (95.8\%) but only 64 (53.3\%) over a validated direct path within 5~s. The port-443 scenario was entirely relay-carried, and the scenario labelled symmetric NAT was half relay-carried (Table~9). We have removed the 98.3\%/96.7\% ``direct'' and ``0\% relay'' claims from the abstract, highlights, results and conclusion, and explain the correction in E3. In long-lived sessions, which is the regime of FL, the steady-state path between endpoint-independent NATs is direct: 138/140 transfers on 4G and 60/60 transfers home$\to$office (E8).
+
+(d)~\emph{Remaining limits.} We still cover one client device, five probed networks in Spain and the original scenarios. We state this in the Limitations, and multi-operator, multi-country campaigns are the first item of the roadmap. We have toned down all claims of general ``NAT/CGNAT transparency'' accordingly.
+
+\changes Abstract; Highlights; \S1; \S4.1 and Table~6 (networks and RFC~4787 classification); \S4.4/E3 rewritten, with Table~9 (strictly classified cold starts) replacing the former transfer-level table; \S4.8/E8; \S5.1; Limitations; Conclusion.
+
+\begin{comment}
+2) Relay is described as a guaranteed fallback, yet interestingly it was never actually selected in the 150 cold-start experiments. [...] create a network configuration in which UDP hole-punching cannot succeed and then evaluate relay establishment latency, reliability, throughput, and recovery behavior.
+\end{comment}
+\reply Done (new E8). On a Raspberry Pi connected through a mobile CGNAT we blocked all outgoing UDP except DNS with an nftables rule, which makes hole punching impossible. The relay uses HTTPS over TCP and remains available. We alternated blocked and open periods during a 40-minute run with 1~MB transfers every 5~s. Results (Table~13):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Reliability.} With UDP blocked, all 190 transfers were delivered over the relay.
+\item \textbf{Fallback latency.} After blocking, the first delivery over the relay came after about 28~s. The in-flight transfer stalled but was not lost.
+\item \textbf{Throughput.} The relay delivered 1.85~Mbps, equal to the direct path on that link (1.88~Mbps), because the 4G uplink was the bottleneck.
+\item \textbf{Recovery.} After unblocking, the path returned to direct within 1.9--3.8~s.
+\end{itemize}
+The corrected analysis of comment~1 also shows that the relay was in fact used in the original campaign: all 30 cold starts of the port-443 scenario were relay-carried. Finally, in the complete WAN federation (E11) 56 of the Raspberry Pi's 58 transfers were relay-carried, because the aggregator ran behind an additional NAT, and all rounds completed. We have removed the word ``guaranteed'' and describe the relay as an operational component whose capacity matters.
+
+An unexpected finding is that on the mobile CGNAT the direct path was \emph{less} reliable than the relay. 5--27\% of direct transfers were interrupted mid-stream, versus 0 of 190 relay-carried transfers. This motivated a transfer-level retry, now part of the system (\S3.3).
+
+\changes New \S4.8 (E8) and Table~13; \S3.3; \S5.1.
+
+\begin{comment}
+3) Table 8 is essentially an architectural comparison, while the accuracy experiment uses an in-process Flower-compatible harness rather than a real Flower deployment over an actual Tailscale mesh. [...] a live head-to-head comparison on the same hardware would be much more persuasive.
+\end{comment}
+\reply We agree that a live comparison would be more persuasive. The artifact now supports it: the Flower client runs on the Raspberry Pi with the same resource monitor as FL-Iroh (E11), and the monitor also accounts for the \texttt{tailscaled} daemon. However, we could not complete it within the revision period, because the new connectivity, resilience and federation experiments of comments~1, 2, 5 and~7 took priority. We now state explicitly that Table~8 of the original submission (now Table~17) is an architectural comparison and that the accuracy parity is an in-process sanity check, and the live comparison appears in the roadmap. \TBD{If time permits before submission, replace this paragraph with the live results.} We also updated Table~17 with the public-key admission control implemented in this revision.
+
+\changes \S4.12; Tables~17--18; Table~19 (roadmap).
+
+\begin{comment}
+4) [...] there are currently no measurements of CPU utilization, memory consumption, or energy use on the Raspberry Pi. [...]
+\end{comment}
+\reply Added (E11, Table~16). We implemented a resource monitor that records per-phase CPU time, resident memory, system load and power, and used it on the Raspberry Pi~3B during a complete federation over the WAN. Per round (medians over 29 rounds):
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Local training:} 1.02~s of wall time and 2.79~s of CPU time.
+\item \textbf{Communication phases:} receiving and sending take 3.1--3.5~s of wall time, but only 0.1--0.2~s of CPU time.
+\item \textbf{Memory:} the Python/PyTorch runtime occupies 255--419~MB, about 40\% of the device's RAM.
+\end{itemize}
+Memory, rather than computation, is therefore the binding constraint. This supports our recommendation of a native client runtime (\S5.3).
+
+The Raspberry Pi~3B has no power sensor, so energy is \emph{estimated} with a utilization model based on published idle and full-load board power (1.4/3.7~W). We report it explicitly as an estimate: about 2.9~J for training and 4.5--5.2~J for the communication phases, which are dominated by idle waiting. The monitor reads hardware sensors (an INA219/INA226 shunt via Linux \texttt{hwmon}, or the PMIC of a Raspberry Pi~5) when they are present, and measured energy is listed in the roadmap.
+
+On removing the system daemon: FL-Iroh adds no daemon by design. A measured comparison against the \texttt{tailscaled} daemon on the same device is part of the live comparison of comment~3.
+
+\changes New \S4.11 (E11) and Table~16; \S5.5 (Limitations, Energy).
+
+\begin{comment}
+5) [...] most of the FL experiments themselves are executed on a 16-core Xeon HPC system [...] run complete multi-round FL training on multiple Raspberry Pi-class devices [...]
+\end{comment}
+\reply We ran a complete multi-round federation over the WAN (E11). The aggregator ran on a PC at one site (residential network) and the Raspberry Pi~3B at another (office network). Both registered by public key over the NAT-traversing control channel, without port forwarding, VPN or public IP. Two further clients ran on the PC. The Raspberry Pi joined after the first round and took part in every subsequent round: 29 of 30 rounds completed, 27 of them with all three clients, at a median of 7.9~s per round. The 30th round failed because of a round-counting artefact on the client side, which we explain in the paper.
+
+We had access to only one Raspberry Pi during the revision period, so the federation includes one physical edge device. We state this as a limitation. The statistical experiments (E2, E4, and E6 with five seeds) remain on the server. We now say explicitly that they study learning dynamics, and that all transport behavior is evaluated on real Iroh connections (E1, E3, E6, E8--E11).
+
+During this experiment we also found that the default PyPI PyTorch wheel for 64-bit ARM crashes with an illegal-instruction error on Cortex-A53/A72 boards. We document this deployment pitfall, together with its fix.
+
+\changes \S4.1 (``Transport in each experiment''); new \S4.11 (E11); Limitations.
+
+\begin{comment}
+6) Also, expand the related work with `ieeexplore.ieee.org/document/11549842' [...]
+\end{comment}
+\reply We read the paper (Bayraktar and Bakirci, ICIEAM~2026). It is now cited in the new subsection on communication-efficient and resource-aware FL, as an example of compressed, energy- and latency-aware synchronization for intermittent edge--cloud participants. It is also included in the comparison table (Table~2), where we contrast it with FL-Iroh: it reduces what is sent, whereas FL-Iroh addresses whether the aggregator can be reached at all.
+
+\changes \S2.2; Table~2.
+
+\begin{comment}
+7) Current churn experiment models dropout by simply withholding randomly selected clients [...] physically interrupting client connectivity during training, changing its IP/NAT mapping, and then measuring reconnection time and whether the client can safely rejoin subsequent rounds.
+\end{comment}
+\reply Added (E8 and E11). We renamed E4 ``robustness to client dropout (simulated)'' and state what it does and does not measure. On the Raspberry Pi we then physically took the Wi-Fi interface down for 60~s and 120~s and switched between the mobile 4G network and the office network, which changes the local address and the NAT mapping.
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{60~s outage:} no transfer was lost, and delivery resumed 15.6~s after the link returned.
+\item \textbf{120~s outage:} two transfers timed out during the outage, and delivery resumed immediately afterwards.
+\item \textbf{4G$\to$office switch:} delivery resumed after 4.3~s, over a direct path.
+\item \textbf{Office$\to$4G switch:} the Iroh endpoint did not recover by itself. We report this openly and added an endpoint watchdog that restarts it with the same key, so the node ID is preserved. The watchdog is covered by automated tests, but its field validation remains future work.
+\end{itemize}
+Rejoining at the FL level is demonstrated in E11, where the Raspberry Pi joined a running federation and was included from the next round. The aggregator accepts at most one update per selected node ID and round, so a rejoining client cannot double-count.
+
+\changes \S4.5 (E4 scope); new \S4.8 (E8); \S4.11 (E11); \S3.3 (watchdog); Limitations.
+
+\begin{comment}
+8) I would also like to see degraded-network experiments. [...] A controlled packet-loss/latency sweep would be particularly useful for showing when QUIC's behavior begins to affect FL round duration or convergence.
+\end{comment}
+\reply Added (E9, Table~14). We ran the full federated workload (10 clients, 20 rounds) and a transfer benchmark (100~KB, 1~MB, 10~MB) over real Iroh connections, inside an isolated network namespace with \texttt{tc-netem}. The conditions were: one-way delay of 25--250~ms, jitter, loss of 1--20\%, rate limits from 10~Mbit/s to 512~kbit/s, and two combined rural profiles. All 320 rounds of the 16 completed conditions finished. For 14~KB edge-model updates, impairments lengthen rounds (1.4~s to 3.7~s at 250~ms delay, 8.7~s at 20\% loss and 10.7~s at 512~kbit/s) but do not change accuracy or macro-F1. The exception is 20\% loss, where late updates reduced participation in two rounds, and the final round aggregated only five clients.
+
+QUIC's behavior becomes visible with payload size. 10~MB transfers grow to 9.5~s at 250~ms delay and to 167~s at 512~kbit/s, and they fail entirely under the harsh rural profile (75$\pm$25~ms, 10\% loss, 1~Mbit/s). A jitter profile that strongly reorders packets stalled the transfers; we report and exclude it.
+
+\changes New \S4.9 (E9) and Table~14.
+
+\begin{comment}
+9) Scalability experiment for CoAP discovery stops at 100 nodes [...] What happens at 500, 1,000, or several thousand endpoints, especially if multiple capability tags and simultaneous registrations are involved?
+\end{comment}
+\reply E5 has been redone and extended (Table~11). We first found and fixed a flaw in the original measurement: it queried a single server repeatedly and extrapolated byte counts. The new experiment runs one real CoAP server per endpoint, up to 1{,}000. It also adds an RFC~9176-style resource directory, in which endpoints register once with multiple capability tags and the aggregator answers a single lookup with server-side filtering, up to 5{,}000 endpoints.
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Probe discovery} grows linearly: 0.8--1.0~s and 460--580~KB at 1{,}000 nodes, regardless of how many nodes match.
+\item \textbf{Resource directory} cost depends on the number of matching nodes: a three-tag query over 5{,}000 endpoints takes 18.9~ms and 19.6~KB.
+\item \textbf{Concurrent registration} of all 5{,}000 endpoints succeeded without failures (median 220~ms per registration).
+\end{itemize}
+
+\changes \S3.5 (resource directory); \S4.6 (E5) and Table~11 replaced.
+
+\begin{comment}
+10) [...] the current implementation does not enforce an allow-list [...] implement and experimentally evaluate this mechanism, including unauthorized-client attempts.
+\end{comment}
+\reply Implemented and evaluated (\S3.2, E10).
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item \textbf{Persistent identity.} Every node now has a persistent Ed25519 identity.
+\item \textbf{Transport-level check.} The aggregator checks the authenticated key of every incoming connection against an allow-list \emph{before} reading any data, and rejects registrations from unknown keys.
+\item \textbf{Endpoint binding.} The NAT-traversing control channel requires the registered endpoint to belong to the authenticated sender.
+\item \textbf{Per-round binding.} Each round accepts at most one update per selected member.
+\end{itemize}
+Results (Table~15): on loopback and over the WAN, 0 of 30 unauthorized payloads were accepted. All 30 attempts were rejected and logged, in 10~ms on loopback and 0.33~s over the WAN. The allow-list adds no measurable latency to authorized transfers (11.0 vs.\ 11.1~ms), and a spoofed registration was rejected.
+
+\changes \S3.2; \S4.10 (E10) and Table~15; \S5.4; Table~17.
+
+\begin{comment}
+11) Privacy claims should also be phrased carefully. [...] You should avoid broadly describing the overall learning system as privacy-preserving.
+\end{comment}
+\reply We agree and have revised the wording throughout. FL-Iroh is now described as keeping raw data on the device and encrypting updates in transit, not as a privacy-preserving learning system. The threat model (\S5.4) adds an explicit ``Privacy scope'' paragraph. It states that the aggregator receives individual updates in the clear, which may leak information through gradient inversion or membership inference, and that no differential privacy or secure aggregation is applied. It also states that admission control does not protect against poisoned updates from members. Secure aggregation, differential privacy and robust aggregation are now part of the roadmap.
+
+\changes \S1; \S5.4; Conclusion; Table~19.
+
+\begin{comment}
+12) Air-quality experiment [...] Report macro-F1, per-class precision/recall, balanced accuracy, and a confusion matrix.
+\end{comment}
+\reply Added. The code now stores all predictions and computes accuracy, balanced accuracy, macro- and weighted-F1, per-class precision/recall/F1 and the confusion matrix. Table~12 reports these metrics for all models and the trivial baselines over five seeds. For example, the majority-class baseline reaches 22.9\% accuracy but only 33.3\% balanced accuracy and 12.4\% macro-F1. \TBD{Summarize the main findings once the multi-seed runs finish: AirMLP vs.\ persistence on macro-F1, recall of the minority \textit{Medio} class, Prophet vs.\ neural models.} Full per-class reports and confusion matrices for every configuration and seed are in the repository.
+
+\changes \S4.7 (E6) and Table~12.
+
+\begin{comment}
+13) FedGAM [...] I wonder whether FedGAM is mature enough to be presented as a substantive contribution in its current form.
+\end{comment}
+\reply We agree. FedGAM is no longer listed as a contribution. It is now presented as a case study of a model-specific aggregation rule that runs over the transport without changes, and the same-model ablation is reported as showing no benefit with eight years of local history. We also give its update rule formally (Eq.~2).
+
+\changes \S1 (contributions); \S3.7; \S4.7; Limitations.
+
+\begin{comment}
+14) A relevant effort that should also be discussed is `10.18280/ts.400524' by Bakirci [...]
+\end{comment}
+\reply We read the paper (Bakirci, \emph{Traitement du Signal} 40(5), 2023). It presents a swarm-UAV system with onboard object detection and congestion-aware mesh networking among Raspberry Pi/Jetson nodes. It does not address federated learning or Internet-scale connectivity, so we cite it briefly in the related-work subsection on decentralized networking among resource-constrained edge platforms (\S2.7).
+
+\changes \S2.7.
+
+\begin{comment}
+15) [...] You should distinguish more carefully between model/aggregation agnosticism and runtime/platform agnosticism.
+\end{comment}
+\reply We agree and added a dedicated subsection (\S5.3). The transport is agnostic to the aggregation rule and the model, but not to the client runtime or platform. The prototype serializes with \texttt{torch.save} and requires Python/PyTorch on a 64-bit Linux system, which takes about 40\% of the Raspberry Pi~3B's memory (E11) and excludes microcontrollers. We explain what a non-Python client would require: a framework-neutral tensor encoding and a native client speaking the three ALPN protocols, which Iroh's Rust implementation makes feasible. We claim aggregation and model agnosticism only.
+
+\changes \S1; \S3.4; new \S5.3; Table~19.
+
+% ============================================================================
+\section*{Reviewer 2}
+
+\begin{comment}
+1. [...] compare the recent studies in the aspects of problem statements, innovations, methodology, results, and the research gaps [...] add your paper in the last row [...]
+\end{comment}
+\reply Added (Table~2, \S2.8). The table compares 14 recent works (2023--2026) on exactly these aspects, with FL-Iroh in the last row. The text identifies three recurring gaps that FL-Iroh addresses: reachability is assumed; connectivity is evaluated in simulation or on one local network; and discovery and membership are not part of the system. It also states the price FL-Iroh pays, namely a heavier client runtime than microcontroller-oriented CoAP systems.
+
+\changes New \S2.8 and Table~2.
+
+\begin{comment}
+2. You use the older sources in your topic. It is important to add the most recent works [...]
+\end{comment}
+\reply We added 19 references from 2023--2026, organized in new or extended related-work subsections. They cover FL for agriculture and environmental monitoring; communication-efficient and resource-aware FL on edge hardware; transport comparisons for distributed learning under disruption; CoAP-based FL on constrained devices; and decentralized FL platforms. We also added the relevant standards (RFC~4787 and RFC~9176). All references were verified against their DOIs.
+
+\changes \S2; Table~2; References.
+
+\begin{comment}
+3. Add the abbreviations to the first of your paper.
+\end{comment}
+\reply Added as Table~1 (``Abbreviations'') at the beginning of the paper.
+
+\begin{comment}
+4. the explications of architecture is not sufficient and I think it needs more details.
+\end{comment}
+\reply Section~3 has been substantially expanded. It now includes:
+\begin{itemize}[leftmargin=1.3em,itemsep=0.1em]
+\item a table of software components and their responsibilities;
+\item a subsection on node identity and admission control;
+\item a detailed description of Iroh's path selection, including how we distinguish direct, mixed and relay paths, and of the transfer retry and endpoint watchdog;
+\item the wire format and acknowledgement semantics;
+\item the CoAP control plane and the resource directory, with an example lookup;
+\item a message-sequence diagram of one round (Fig.~4) and the aggregator's round algorithm (Algorithm~1, Table~4);
+\item the formal FedGAM update rule (Eq.~2).
+\end{itemize}
+
+\changes \S3 (Tables~3--4, Fig.~4, Eq.~2).
+
+\begin{comment}
+5. You can add a research road map to the conclusion section [...]
+\end{comment}
+\reply Added. The conclusion now ends with a research roadmap (Table~19) organized by horizon. The short-term engineering items cover measurement breadth, operational baselines and measured energy. The medium-term systems items cover lightweight runtimes, communication efficiency, and asynchrony and intermittency. The long-term research items cover trustworthy FL, decentralized topologies and domain models. Each item lists concrete opportunities for other researchers.
+
+\changes \S6 and Table~19.
+
+\bigskip
+We hope that the revised manuscript addresses all comments satisfactorily, and we thank the reviewers again for helping us improve the paper.
+
+Sincerely,\\
+The authors
+
+\end{document}
